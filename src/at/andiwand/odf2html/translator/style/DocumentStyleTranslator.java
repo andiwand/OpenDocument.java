@@ -9,6 +9,7 @@ import at.andiwand.common.lwxml.LWXMLUtil;
 import at.andiwand.common.lwxml.reader.LWXMLBranchDelegationReader;
 import at.andiwand.common.lwxml.reader.LWXMLReader;
 import at.andiwand.common.lwxml.reader.LWXMLStreamReader;
+import at.andiwand.odf2html.css.StyleSheetWriter;
 import at.andiwand.odf2html.odf.OpenDocument;
 
 
@@ -36,6 +37,9 @@ public abstract class DocumentStyleTranslator<T extends DocumentStyle> {
 	public void removeElementTranslator(String name) {
 		elementTranslatorMap.remove(name);
 	}
+	
+	public abstract T newDocumentStyle(StyleSheetWriter styleOut)
+			throws IOException;
 	
 	public void translate(OpenDocument document, T out) throws IOException {
 		LWXMLReader in = new LWXMLStreamReader(document.getStyles());
