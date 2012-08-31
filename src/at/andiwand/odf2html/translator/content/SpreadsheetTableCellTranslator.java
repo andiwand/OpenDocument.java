@@ -1,0 +1,69 @@
+package at.andiwand.odf2html.translator.content;
+
+import java.io.IOException;
+
+import at.andiwand.common.lwxml.LWXMLAttribute;
+import at.andiwand.common.lwxml.reader.LWXMLPushbackReader;
+import at.andiwand.common.lwxml.translator.simple.SimpleElementReplacement;
+import at.andiwand.common.lwxml.writer.LWXMLWriter;
+import at.andiwand.common.util.NumberUtil;
+
+
+public class SpreadsheetTableCellTranslator extends SimpleElementReplacement {
+	
+	private static final String NEW_ELEMENT_NAME = "td";
+	
+	private static final String STYLE_ATTRIBUTE_NAME = "table:style-name";
+	private static final String COLUMNS_REPEATED_ATTRIBUTE_NAME = "table:number-columns-repeated";
+	private static final String COLUMNS_SPANNED_ATTRIBUTE_NAME = "table:number-columns-spanned";
+	private static final String ROWS_SPANNED_ATTRIBUTE_NAME = "table:number-rows-spanned";
+	
+	private int currentRepeated;
+	private int currentWidth;
+	private LWXMLAttribute currentDefaultStyleAttribute;
+	
+	public SpreadsheetTableCellTranslator() {
+		super(NEW_ELEMENT_NAME);
+		
+		addParseAttribute(STYLE_ATTRIBUTE_NAME);
+		addParseAttribute(COLUMNS_REPEATED_ATTRIBUTE_NAME);
+		addParseAttribute(COLUMNS_SPANNED_ATTRIBUTE_NAME);
+		addParseAttribute(ROWS_SPANNED_ATTRIBUTE_NAME);
+	}
+	
+	public int getCurrentRepeated() {
+		return currentRepeated;
+	}
+	
+	public int getCurrentWidth() {
+		return currentWidth;
+	}
+	
+	public void setCurrentDefaultStyleAttribute(
+			LWXMLAttribute currentDefaultStyleAttribute) {
+		this.currentDefaultStyleAttribute = currentDefaultStyleAttribute;
+	}
+	
+	@Override
+	public void translateAttributeList(LWXMLPushbackReader in, LWXMLWriter out)
+			throws IOException {
+		super.translateAttributeList(in, out);
+		
+		if (getCurrentParsedAttribute(STYLE_ATTRIBUTE_NAME) == null)
+			out.writeAttribute(currentDefaultStyleAttribute);
+		
+		currentRepeated = NumberUtil.parseInt(
+				getCurrentParsedAttribute(COLUMNS_REPEATED_ATTRIBUTE_NAME), 1);
+		int columnsSpanned = NumberUtil.parseInt(
+				getCurrentParsedAttribute(COLUMNS_SPANNED_ATTRIBUTE_NAME), 1);
+		int rowsSpanned = NumberUtil.parseInt(
+				getCurrentParsedAttribute(ROWS_SPANNED_ATTRIBUTE_NAME), 1);
+		
+		currentWidth = currentRepeated * columnsSpanned;
+		
+		if (columnsSpanned > 1)
+			out.writeAttribute("colspan", "" + columnsSpanned);
+		if (rowsSpanned > 1) out.writeAttribute("rowspan", "" + rowsSpanned);
+	}
+	
+}
