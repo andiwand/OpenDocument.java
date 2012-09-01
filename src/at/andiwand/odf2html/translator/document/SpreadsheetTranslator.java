@@ -9,6 +9,7 @@ import at.andiwand.common.lwxml.reader.LWXMLStreamReader;
 import at.andiwand.common.lwxml.writer.LWXMLWriter;
 import at.andiwand.odf2html.css.StyleSheetWriter;
 import at.andiwand.odf2html.odf.OpenDocument;
+import at.andiwand.odf2html.translator.FileCache;
 import at.andiwand.odf2html.translator.content.SpreadsheetContentTranslator;
 import at.andiwand.odf2html.translator.style.SpreadsheetStyle;
 import at.andiwand.odf2html.translator.style.SpreadsheetStyleTranslator;
@@ -17,6 +18,14 @@ import at.andiwand.odf2html.translator.style.SpreadsheetStyleTranslator;
 public class SpreadsheetTranslator extends DocumentTranslator {
 	
 	private static final String AUTOMATIC_STYLES_ELEMENT_NAME = "office:automatic-styles";
+	
+	public SpreadsheetTranslator() {
+		super();
+	}
+	
+	public SpreadsheetTranslator(FileCache fileCache) {
+		super(fileCache);
+	}
 	
 	public SpreadsheetStyle translateStyle(OpenDocument document,
 			LWXMLReader in, StyleSheetWriter out) throws IOException {

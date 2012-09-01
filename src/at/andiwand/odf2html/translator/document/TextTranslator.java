@@ -9,6 +9,7 @@ import at.andiwand.common.lwxml.reader.LWXMLStreamReader;
 import at.andiwand.common.lwxml.writer.LWXMLWriter;
 import at.andiwand.odf2html.css.StyleSheetWriter;
 import at.andiwand.odf2html.odf.OpenDocument;
+import at.andiwand.odf2html.translator.FileCache;
 import at.andiwand.odf2html.translator.content.TextContentTranslator;
 import at.andiwand.odf2html.translator.style.TextStyle;
 import at.andiwand.odf2html.translator.style.TextStyleTranslator;
@@ -18,8 +19,16 @@ public class TextTranslator extends DocumentTranslator {
 	
 	private static final String AUTOMATIC_STYLES_ELEMENT_NAME = "office:automatic-styles";
 	
-	public TextStyle translateStyle(OpenDocument document,
-			LWXMLReader in, StyleSheetWriter out) throws IOException {
+	public TextTranslator() {
+		super();
+	}
+	
+	public TextTranslator(FileCache fileCache) {
+		super(fileCache);
+	}
+	
+	public TextStyle translateStyle(OpenDocument document, LWXMLReader in,
+			StyleSheetWriter out) throws IOException {
 		TextStyle result = new TextStyle(out);
 		TextStyleTranslator styleTranslator = new TextStyleTranslator();
 		
@@ -31,9 +40,8 @@ public class TextTranslator extends DocumentTranslator {
 		return result;
 	}
 	
-	public void translateContent(OpenDocument document,
-			TextStyle style, LWXMLReader in, LWXMLWriter out)
-			throws IOException {
+	public void translateContent(OpenDocument document, TextStyle style,
+			LWXMLReader in, LWXMLWriter out) throws IOException {
 		TextContentTranslator contentTranslator = new TextContentTranslator(
 				document.getOpenDocumentFile(), style, fileCache);
 		contentTranslator.translate(in, out);
