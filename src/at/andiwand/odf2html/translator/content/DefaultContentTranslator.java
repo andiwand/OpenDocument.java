@@ -9,12 +9,7 @@ public abstract class DefaultContentTranslator extends ContentTranslator {
 	
 	public DefaultContentTranslator(OpenDocumentFile documentFile,
 			DocumentStyle style, ImageTranslator imageTranslator) {
-		StyleAttributeTranslator styleAttributeTranslator = new StyleAttributeTranslator(
-				style);
-		addStaticAttributeTranslator("text:style-name",
-				styleAttributeTranslator);
-		addStaticAttributeTranslator("table:style-name",
-				styleAttributeTranslator);
+		translateStyle(style);
 		
 		addElementTranslator("text:span", "span");
 		addElementTranslator("text:a", new SimpleElementReplacement("a") {
@@ -27,6 +22,20 @@ public abstract class DefaultContentTranslator extends ContentTranslator {
 		addElementTranslator("text:tab", new TabTranslator());
 		addElementTranslator("draw:frame", new FrameTranslator());
 		addElementTranslator("draw:image", imageTranslator);
+	}
+	
+	protected void translateStyle(DocumentStyle style) {
+		StyleAttributeTranslator styleAttributeTranslator = new StyleAttributeTranslator(
+				style);
+		translateStyleAttribute(styleAttributeTranslator);
+	}
+	
+	protected void translateStyleAttribute(
+			StyleAttributeTranslator styleAttributeTranslator) {
+		addStaticAttributeTranslator("text:style-name",
+				styleAttributeTranslator);
+		addStaticAttributeTranslator("table:style-name",
+				styleAttributeTranslator);
 	}
 	
 }

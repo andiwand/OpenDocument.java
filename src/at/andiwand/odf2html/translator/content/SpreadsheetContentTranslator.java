@@ -37,4 +37,13 @@ public class SpreadsheetContentTranslator extends DefaultContentTranslator {
 		addElementTranslator("text:h", paragraphTranslator);
 	}
 	
+	@Override
+	protected void translateStyleAttribute(
+			StyleAttributeTranslator styleAttributeTranslator) {
+		super.translateStyleAttribute(styleAttributeTranslator);
+		
+		addStaticAttributeTranslator("draw:text-style-name",
+				styleAttributeTranslator);
+	}
+	
 }
