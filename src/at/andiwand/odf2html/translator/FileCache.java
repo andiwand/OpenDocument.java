@@ -8,12 +8,22 @@ import java.util.Set;
 
 public class FileCache {
 	
+	private static final String DEFAULT_DIRECTORY = "/tmp";
+	
 	private boolean autoClean;
 	
 	private File2URITranslator uriTranslator;
 	
 	private final File directory;
 	private Set<File> cachedFiles;
+	
+	public FileCache() {
+		this(DEFAULT_DIRECTORY);
+	}
+	
+	public FileCache(boolean autoClean) {
+		this(DEFAULT_DIRECTORY, autoClean);
+	}
 	
 	public FileCache(String directory) {
 		this(new File(directory), true);

@@ -9,12 +9,10 @@ import at.andiwand.odf2html.translator.FileCache;
 
 public abstract class DocumentTranslator {
 	
-	private static final String DEFAULT_TMP_PATH = "/tmp";
-	
 	protected final FileCache fileCache;
 	
 	public DocumentTranslator() {
-		this(new FileCache(DEFAULT_TMP_PATH));
+		this(new FileCache());
 	}
 	
 	public DocumentTranslator(FileCache fileCache) {
