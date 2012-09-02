@@ -14,3 +14,7 @@ span {
 	white-space: pre;
 	word-wrap: break-word;
 }
+
+table {
+	border-collapse: collapse;
+}
