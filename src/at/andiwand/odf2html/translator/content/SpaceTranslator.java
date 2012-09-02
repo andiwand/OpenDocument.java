@@ -7,6 +7,7 @@ import at.andiwand.common.lwxml.LWXMLUtil;
 import at.andiwand.common.lwxml.reader.LWXMLPushbackReader;
 import at.andiwand.common.lwxml.translator.simple.SimpleElementTranslator;
 import at.andiwand.common.lwxml.writer.LWXMLWriter;
+import at.andiwand.common.util.NumberUtil;
 import at.andiwand.common.util.StringUtil;
 
 
@@ -17,8 +18,8 @@ public class SpaceTranslator extends SimpleElementTranslator {
 	@Override
 	public void translateStartElement(LWXMLPushbackReader in, LWXMLWriter out)
 			throws IOException {
-		int count = Integer.parseInt(LWXMLUtil.parseSingleAttributes(in,
-				COUNT_ATTRIBUTE_NAME));
+		int count = NumberUtil.parseInt(LWXMLUtil.parseSingleAttributes(in,
+				COUNT_ATTRIBUTE_NAME), 1);
 		out.writeCharacters(StringUtil.multiply(' ', count));
 	}
 	

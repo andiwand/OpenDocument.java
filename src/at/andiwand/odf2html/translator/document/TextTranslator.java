@@ -76,7 +76,7 @@ public class TextTranslator extends DocumentTranslator {
 		out.writeEndElement("style");
 		
 		out.writeEndElement("head");
-		out.writeStartElement("body");
+		out.writeEmptyStartElement("body");
 		
 		translateContent(document, style, in, out);
 		

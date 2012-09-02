@@ -193,6 +193,9 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 		untilShapesTmpOut.writeTo(out);
 		untilShapesTmpOut.reset();
 		
+		LWXMLUtil.flushUntilStartElement(in, COLUMN_ELEMENT_NAME);
+		in.unreadEvent(COLUMN_ELEMENT_NAME);
+		
 		translateColumns(in, out);
 		translateRows(in, out);
 		
