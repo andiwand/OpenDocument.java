@@ -20,7 +20,7 @@ public class LocatedOpenDocumentFile extends OpenDocumentFile {
 		try {
 			zipFile = new ZipFile(file);
 		} catch (ZipException e) {
-			throw new IOException("zip exception", e);
+			throw new IOException("zip exception");
 		}
 	}
 	
@@ -41,7 +41,7 @@ public class LocatedOpenDocumentFile extends OpenDocumentFile {
 			
 			return result;
 		} catch (ZipException e) {
-			throw new IOException("zip exception", e);
+			throw new IOException("zip exception");
 		}
 	}
 	
@@ -59,7 +59,7 @@ public class LocatedOpenDocumentFile extends OpenDocumentFile {
 			
 			throw new FileNotFoundException("file does not exist");
 		} catch (ZipException e) {
-			throw new IOException("zip exception", e);
+			throw new IOException("zip exception");
 		}
 	}
 	
