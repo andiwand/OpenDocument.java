@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.Deque;
@@ -23,7 +24,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
 import at.andiwand.common.component.JFrameUtil;
-import at.andiwand.common.io.FluidInputStreamReader;
 import at.andiwand.common.lwxml.LWXMLConstants;
 import at.andiwand.common.lwxml.LWXMLEvent;
 import at.andiwand.common.lwxml.reader.LWXMLReader;
@@ -101,7 +101,7 @@ public class XMLViewer extends JFrame {
 	}
 	
 	public void open(InputStream in, String rootTitle) throws IOException {
-		open(new FluidInputStreamReader(in), rootTitle);
+		open(new InputStreamReader(in), rootTitle);
 	}
 	
 	public void open(Reader reader, String rootTitle) throws IOException {

@@ -4,10 +4,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 
 import at.andiwand.common.io.CharacterStreamUtil;
-import at.andiwand.common.io.FluidInputStreamReader;
 import at.andiwand.common.io.UntilCharacterReader;
 import at.andiwand.common.util.StringUtil;
 
@@ -19,7 +19,7 @@ public class StyleSheetParser {
 	}
 	
 	public StyleSheet parse(InputStream in) throws IOException {
-		return parse(new FluidInputStreamReader(in));
+		return parse(new InputStreamReader(in));
 	}
 	
 	public StyleSheet parse(Reader in) throws IOException {

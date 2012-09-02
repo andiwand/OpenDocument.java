@@ -2,6 +2,7 @@ package at.andiwand.odf2html.odf;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -10,7 +11,6 @@ import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
 import at.andiwand.common.io.CharacterStreamUtil;
-import at.andiwand.common.io.FluidInputStreamReader;
 import at.andiwand.common.lwxml.LWXMLEvent;
 import at.andiwand.common.lwxml.reader.LWXMLReader;
 import at.andiwand.common.lwxml.reader.LWXMLReaderException;
@@ -135,8 +135,8 @@ public abstract class OpenDocumentFile {
 			if (in == null)
 				throw new IllegalStateException("mimetype file does not exist");
 			
-			mimetype = CharacterStreamUtil
-					.readAsString(new FluidInputStreamReader(in));
+			mimetype = CharacterStreamUtil.readAsString(new InputStreamReader(
+					in));
 		}
 		
 		return mimetype;
