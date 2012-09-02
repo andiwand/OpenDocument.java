@@ -22,6 +22,8 @@ public class SpreadsheetContentTranslator extends DefaultContentTranslator {
 			SpreadsheetStyle style, ImageTranslator imageTranslator) {
 		super(documentFile, style, imageTranslator);
 		
+		addElementTranslator("draw:frame", new FrameTranslator());
+		
 		SpreadsheetTableTranslator tableTranslator = new SpreadsheetTableTranslator(
 				style, this);
 		addElementTranslator("table:table", tableTranslator);

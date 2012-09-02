@@ -22,6 +22,8 @@ public class TextContentTranslator extends DefaultContentTranslator {
 			TextStyle style, ImageTranslator imageTranslator) {
 		super(documentFile, style, imageTranslator);
 		
+		addElementTranslator("draw:frame", new FrameTranslator(false));
+		
 		addElementTranslator("text:list", "ul");
 		addElementTranslator("text:list-item", "li");
 		

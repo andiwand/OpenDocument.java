@@ -20,7 +20,6 @@ public abstract class DefaultContentTranslator extends ContentTranslator {
 		
 		addElementTranslator("text:s", new SpaceTranslator());
 		addElementTranslator("text:tab", new TabTranslator());
-		addElementTranslator("draw:frame", new FrameTranslator());
 		addElementTranslator("draw:image", imageTranslator);
 	}
 	
