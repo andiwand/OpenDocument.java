@@ -24,15 +24,8 @@ public class SpreadsheetContentTranslator extends DefaultContentTranslator {
 		
 		addElementTranslator("draw:frame", new FrameTranslator());
 		
-		SpreadsheetTableTranslator tableTranslator = new SpreadsheetTableTranslator(
-				style, this);
-		addElementTranslator("table:table", tableTranslator);
-		addElementTranslator("table:table-column",
-				new SpreadsheetTableColumnTranslator());
-		addElementTranslator("table:table-row",
-				new SpreadsheetTableRowTranslator());
-		addElementTranslator("table:table-cell",
-				new SpreadsheetTableCellTranslator());
+		addElementTranslator("table:table", new SpreadsheetTableTranslator(
+				style, this));
 		
 		ParagraphTranslator paragraphTranslator = new ParagraphTranslator();
 		addElementTranslator("text:p", paragraphTranslator);

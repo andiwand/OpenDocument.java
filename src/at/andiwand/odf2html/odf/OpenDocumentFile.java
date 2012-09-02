@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
-import at.andiwand.common.io.CharacterStreamUtil;
+import at.andiwand.common.io.CharStreamUtil;
 import at.andiwand.common.lwxml.LWXMLEvent;
 import at.andiwand.common.lwxml.reader.LWXMLReader;
 import at.andiwand.common.lwxml.reader.LWXMLReaderException;
@@ -135,8 +135,7 @@ public abstract class OpenDocumentFile {
 			if (in == null)
 				throw new IllegalStateException("mimetype file does not exist");
 			
-			mimetype = CharacterStreamUtil.readAsString(new InputStreamReader(
-					in));
+			mimetype = CharStreamUtil.readAsString(new InputStreamReader(in));
 		}
 		
 		return mimetype;

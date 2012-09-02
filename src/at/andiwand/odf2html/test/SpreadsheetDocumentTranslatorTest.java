@@ -2,10 +2,13 @@ package at.andiwand.odf2html.test;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 
 import javax.swing.JFileChooser;
 
-import at.andiwand.common.io.CharArrayWriter;
+import at.andiwand.common.io.FlushingWriter;
+import at.andiwand.common.io.TeeWriter;
 import at.andiwand.common.lwxml.writer.LWXMLStreamWriter;
 import at.andiwand.common.lwxml.writer.LWXMLWriter;
 import at.andiwand.odf2html.odf.LocatedOpenDocumentFile;
@@ -26,17 +29,16 @@ public class SpreadsheetDocumentTranslatorTest {
 		OpenDocumentFile documentFile = new LocatedOpenDocumentFile(file);
 		OpenDocument document = documentFile.getAsOpenDocument();
 		
-		CharArrayWriter writer = new CharArrayWriter();
+		File htmlFile = new File(file.getPath() + ".html");
+		FileWriter fileWriter = new FileWriter(htmlFile);
+		Writer writer = new TeeWriter(fileWriter, new FlushingWriter(
+				new OutputStreamWriter(System.out)));
 		LWXMLWriter out = new LWXMLStreamWriter(writer);
 		
 		SpreadsheetTranslator translator = new SpreadsheetTranslator();
 		translator.translate(document, out);
 		
 		out.close();
-		
-		File htmlFile = new File(file.getPath() + ".html");
-		FileWriter fileWriter = new FileWriter(htmlFile);
-		writer.writeTo(fileWriter);
 		fileWriter.close();
 		
 		Runtime.getRuntime().exec("google-chrome " + htmlFile.getPath());

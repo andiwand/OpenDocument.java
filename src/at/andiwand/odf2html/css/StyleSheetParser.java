@@ -7,7 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
-import at.andiwand.common.io.CharacterStreamUtil;
+import at.andiwand.common.io.CharStreamUtil;
 import at.andiwand.common.io.UntilCharacterReader;
 import at.andiwand.common.util.StringUtil;
 
@@ -34,12 +34,11 @@ public class StyleSheetParser {
 	}
 	
 	private String parseSelector(Reader in) throws IOException {
-		int c = CharacterStreamUtil.flushWhitespace(in);
+		int c = CharStreamUtil.flushWhitespace(in);
 		if (c == -1) return null;
 		
 		return ((char) c)
-				+ StringUtil.trimRight(CharacterStreamUtil.readUntilChar(in,
-						'{'));
+				+ StringUtil.trimRight(CharStreamUtil.readUntilChar(in, '{'));
 	}
 	
 	private StyleDefinition parseDefinition(Reader in) throws IOException {
@@ -57,18 +56,16 @@ public class StyleSheetParser {
 	}
 	
 	private StyleProperty parseProperty(Reader in) throws IOException {
-		int c = CharacterStreamUtil.flushWhitespace(in);
+		int c = CharStreamUtil.flushWhitespace(in);
 		if (c == -1) return null;
 		
 		String name = ((char) c)
-				+ StringUtil.trimRight(CharacterStreamUtil.readUntilChar(in,
-						':'));
+				+ StringUtil.trimRight(CharStreamUtil.readUntilChar(in, ':'));
 		
-		c = CharacterStreamUtil.flushWhitespace(in);
+		c = CharStreamUtil.flushWhitespace(in);
 		
 		String value = ((char) c)
-				+ StringUtil.trimRight(CharacterStreamUtil.readUntilChar(in,
-						';'));
+				+ StringUtil.trimRight(CharStreamUtil.readUntilChar(in, ';'));
 		
 		return new StyleProperty(name, value);
 	}
