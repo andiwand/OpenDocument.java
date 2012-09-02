@@ -2,6 +2,10 @@
 	margin: 0px;
 }
 
+body {
+	padding: 5px;
+}
+
 td {
 	vertical-align: top;
 }
