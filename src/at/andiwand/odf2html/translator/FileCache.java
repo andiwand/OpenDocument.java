@@ -10,6 +10,13 @@ public class FileCache {
 	
 	private static final String DEFAULT_DIRECTORY = "/tmp";
 	
+	public static final File2URITranslator DEFAULT_FILE2URI_TRANSLATOR = new File2URITranslator() {
+		@Override
+		public URI translate(File file) {
+			return file.toURI();
+		}
+	};
+	
 	private boolean autoClean;
 	
 	private File2URITranslator uriTranslator;
@@ -22,7 +29,7 @@ public class FileCache {
 	}
 	
 	public FileCache(boolean autoClean) {
-		this(DEFAULT_DIRECTORY, autoClean);
+		this(new File(DEFAULT_DIRECTORY), autoClean);
 	}
 	
 	public FileCache(String directory) {
@@ -33,22 +40,16 @@ public class FileCache {
 		this(directory, true);
 	}
 	
-	public FileCache(String directory, boolean autoClean) {
-		this(new File(directory), autoClean,
-				File2URITranslator.DEFAULT_INSTANCE);
-	}
-	
 	public FileCache(File directory, boolean autoClean) {
-		this(directory, autoClean, File2URITranslator.DEFAULT_INSTANCE);
+		this(directory, DEFAULT_FILE2URI_TRANSLATOR, autoClean);
 	}
 	
-	public FileCache(String directory, boolean autoClean,
-			File2URITranslator uriTranslator) {
-		this(new File(directory), autoClean, uriTranslator);
+	public FileCache(File directory, File2URITranslator uriTranslator) {
+		this(directory, uriTranslator, true);
 	}
 	
-	public FileCache(File directory, boolean autoClean,
-			File2URITranslator uriTranslator) {
+	public FileCache(File directory, File2URITranslator uriTranslator,
+			boolean autoClean) {
 		this.autoClean = autoClean;
 		this.uriTranslator = uriTranslator;
 		this.directory = directory;
