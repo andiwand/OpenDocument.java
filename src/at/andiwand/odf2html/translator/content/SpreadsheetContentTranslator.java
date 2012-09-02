@@ -27,7 +27,8 @@ public class SpreadsheetContentTranslator extends DefaultContentTranslator {
 		addElementTranslator("table:table", new SpreadsheetTableTranslator(
 				style, this));
 		
-		ParagraphTranslator paragraphTranslator = new ParagraphTranslator();
+		SpreadsheetParagraphTranslator paragraphTranslator = new SpreadsheetParagraphTranslator(
+				this);
 		addElementTranslator("text:p", paragraphTranslator);
 		addElementTranslator("text:h", paragraphTranslator);
 	}

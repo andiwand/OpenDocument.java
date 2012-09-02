@@ -54,7 +54,7 @@ public class SpreadsheetTranslator extends DocumentTranslator {
 		StyleSheetWriter styleOut = new StyleSheetWriter(out);
 		
 		// TODO: remove bad hack
-		out.writeCharacters("<!DOCTYPE html>");
+		// out.writeCharacters("<!DOCTYPE html>");
 		
 		out.writeStartElement("html");
 		out.writeStartElement("head");
