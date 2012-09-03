@@ -9,18 +9,17 @@ import at.andiwand.odf2html.translator.style.TextStyle;
 public class TextContentTranslator extends DefaultContentTranslator {
 	
 	public TextContentTranslator(OpenDocumentFile documentFile, TextStyle style) {
-		this(documentFile, style, new InlineImageTranslator(documentFile));
+		this(style, new InlineImageTranslator(documentFile));
 	}
 	
 	public TextContentTranslator(OpenDocumentFile documentFile,
 			TextStyle style, FileCache fileCache) {
-		this(documentFile, style, new CachedImageTranslator(documentFile,
-				fileCache));
+		this(style, new CachedImageTranslator(documentFile, fileCache));
 	}
 	
-	public TextContentTranslator(OpenDocumentFile documentFile,
-			TextStyle style, ImageTranslator imageTranslator) {
-		super(documentFile, style, imageTranslator);
+	public TextContentTranslator(TextStyle style,
+			ImageTranslator imageTranslator) {
+		super(style, imageTranslator);
 		
 		addElementTranslator("draw:frame", new FrameTranslator(false));
 		

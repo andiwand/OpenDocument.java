@@ -1,14 +1,13 @@
 package at.andiwand.odf2html.translator.content;
 
 import at.andiwand.commons.lwxml.translator.simple.SimpleElementReplacement;
-import at.andiwand.odf2html.odf.OpenDocumentFile;
 import at.andiwand.odf2html.translator.style.DocumentStyle;
 
 
 public abstract class DefaultContentTranslator extends ContentTranslator {
 	
-	public DefaultContentTranslator(OpenDocumentFile documentFile,
-			DocumentStyle style, ImageTranslator imageTranslator) {
+	public DefaultContentTranslator(DocumentStyle style,
+			ImageTranslator imageTranslator) {
 		translateStyle(style);
 		
 		addElementTranslator("text:span", "span");

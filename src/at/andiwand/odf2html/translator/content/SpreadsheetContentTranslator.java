@@ -23,7 +23,7 @@ public class SpreadsheetContentTranslator extends DefaultContentTranslator {
 	public SpreadsheetContentTranslator(OpenDocumentFile documentFile,
 			SpreadsheetStyle style, ImageTranslator imageTranslator)
 			throws IOException {
-		super(documentFile, style, imageTranslator);
+		super(style, imageTranslator);
 		
 		addElementTranslator("draw:frame", new FrameTranslator());
 		

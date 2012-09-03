@@ -6,7 +6,7 @@ import java.util.Map;
 
 import at.andiwand.commons.lwxml.LWXMLEvent;
 import at.andiwand.commons.lwxml.LWXMLUtil;
-import at.andiwand.commons.lwxml.reader.LWXMLBranchDelegationReader;
+import at.andiwand.commons.lwxml.reader.LWXMLDelegationReader;
 import at.andiwand.commons.lwxml.reader.LWXMLReader;
 import at.andiwand.commons.lwxml.reader.LWXMLStreamReader;
 import at.andiwand.odf2html.css.StyleSheetWriter;
@@ -49,7 +49,7 @@ public abstract class DocumentStyleTranslator<T extends DocumentStyle> {
 	}
 	
 	public void translate(LWXMLReader in, T out) throws IOException {
-		LWXMLBranchDelegationReader din = new LWXMLBranchDelegationReader(in);
+		LWXMLDelegationReader din = new LWXMLDelegationReader(in);
 		
 		while (true) {
 			LWXMLEvent event = din.readEvent();
@@ -59,10 +59,10 @@ public abstract class DocumentStyleTranslator<T extends DocumentStyle> {
 				String startElement = din.readValue();
 				StyleElementTranslator<? super T> elementTranslator = elementTranslatorMap
 						.get(startElement);
-				LWXMLReader bin = din.getBranchReader();
+				LWXMLReader ein = din.getElementReader();
 				if (elementTranslator == null) break;
 				
-				elementTranslator.translate(bin, out);
+				elementTranslator.translate(ein, out);
 				
 				break;
 			case END_EMPTY_ELEMENT:

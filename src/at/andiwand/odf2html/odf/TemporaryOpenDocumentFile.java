@@ -10,7 +10,8 @@ import at.andiwand.commons.io.ByteStreamUtil;
 
 public class TemporaryOpenDocumentFile extends LocatedOpenDocumentFile {
 	
-	private static final String PREFIX = "ooreadertmp";
+	private static final String PREFIX = "odf2html";
+	private static final String SUFFIX = "tmp";
 	
 	public TemporaryOpenDocumentFile(File file) throws IOException {
 		super(file);
@@ -18,7 +19,7 @@ public class TemporaryOpenDocumentFile extends LocatedOpenDocumentFile {
 	
 	public TemporaryOpenDocumentFile(InputStream inputStream)
 			throws IOException {
-		super(File.createTempFile(PREFIX, ""));
+		super(File.createTempFile(PREFIX, SUFFIX));
 		FileOutputStream outputStream = new FileOutputStream(getFile());
 		ByteStreamUtil.writeStreamBuffered(inputStream, outputStream);
 		outputStream.close();

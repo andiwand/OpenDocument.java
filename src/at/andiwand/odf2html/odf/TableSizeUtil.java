@@ -7,7 +7,7 @@ import java.util.Set;
 
 import at.andiwand.commons.lwxml.LWXMLEvent;
 import at.andiwand.commons.lwxml.LWXMLUtil;
-import at.andiwand.commons.lwxml.reader.LWXMLBranchDelegationReader;
+import at.andiwand.commons.lwxml.reader.LWXMLDelegationReader;
 import at.andiwand.commons.lwxml.reader.LWXMLReader;
 import at.andiwand.commons.util.ArrayUtil;
 import at.andiwand.commons.util.NumberUtil;
@@ -82,7 +82,7 @@ public class TableSizeUtil {
 			throws IOException {
 		Map<String, TableSize> result = new LinkedHashMap<String, TableSize>();
 		
-		LWXMLBranchDelegationReader din = new LWXMLBranchDelegationReader(in);
+		LWXMLDelegationReader din = new LWXMLDelegationReader(in);
 		
 		while (true) {
 			LWXMLEvent event = din.readEvent();
@@ -90,7 +90,7 @@ public class TableSizeUtil {
 			switch (event) {
 			case START_ELEMENT:
 				if (in.readValue().equals(TABLE_ELEMENT_NAME))
-					parseTableDimension(din.getBranchReader(), result);
+					parseTableDimension(din.getElementReader(), result);
 				break;
 			case END_DOCUMENT:
 				return result;
@@ -104,7 +104,7 @@ public class TableSizeUtil {
 		
 		String name = LWXMLUtil.parseSingleAttributes(in, TABLE_NAME_ATTRIBUTE);
 		
-		LWXMLBranchDelegationReader din = new LWXMLBranchDelegationReader(in);
+		LWXMLDelegationReader din = new LWXMLDelegationReader(in);
 		
 		while (true) {
 			LWXMLEvent event = din.readEvent();
@@ -112,7 +112,8 @@ public class TableSizeUtil {
 			switch (event) {
 			case START_ELEMENT:
 				if (!din.readValue().equals(ROW_ELEMENT_NAME)) break;
-				TableRowDimension rowDimension = parseRow(din.getBranchReader());
+				TableRowDimension rowDimension = parseRow(din
+						.getElementReader());
 				result.addRowDimension(rowDimension);
 				break;
 			case END_DOCUMENT:
@@ -130,7 +131,7 @@ public class TableSizeUtil {
 				ROWS_REPEATED_ATTRIBUTE_NAME), 1);
 		result.rows = repeated;
 		
-		LWXMLBranchDelegationReader din = new LWXMLBranchDelegationReader(in);
+		LWXMLDelegationReader din = new LWXMLDelegationReader(in);
 		
 		while (true) {
 			LWXMLEvent event = din.readEvent();
@@ -139,7 +140,7 @@ public class TableSizeUtil {
 			case START_ELEMENT:
 				if (!din.readValue().equals(CELL_ELEMENT_NAME)) break;
 				TableCellDimension cellDimension = parseCell(din
-						.getBranchReader());
+						.getElementReader());
 				result.addCellDimension(cellDimension);
 				break;
 			case END_DOCUMENT:
@@ -161,12 +162,7 @@ public class TableSizeUtil {
 		int columns = repeated * span;
 		
 		result.columns = columns;
-		
-		// TODO: improve (could contain empty p tag)
-		if ((in.getCurrentEvent() != LWXMLEvent.END_DOCUMENT)
-				&& in.getCurrentEvent() != LWXMLEvent.END_ATTRIBUTE_LIST)
-			LWXMLUtil.flushStartElement(in);
-		result.empty = in.readEvent() == LWXMLEvent.END_DOCUMENT;
+		result.empty = OpenDocumentUtil.isEmptyElement(in);
 		
 		return result;
 	}
