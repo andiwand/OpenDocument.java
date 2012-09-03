@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
+import java.util.Map;
 
 import at.andiwand.common.lwxml.LWXMLAttribute;
 import at.andiwand.common.lwxml.LWXMLEvent;
@@ -19,16 +19,16 @@ import at.andiwand.common.lwxml.translator.simple.SimpleElementReplacement;
 import at.andiwand.common.lwxml.writer.LWXMLEventListWriter;
 import at.andiwand.common.lwxml.writer.LWXMLWriter;
 import at.andiwand.common.util.iterator.CycleIterator;
+import at.andiwand.odf2html.odf.TableSize;
 import at.andiwand.odf2html.translator.style.DocumentStyle;
 
 
-// TODO: separate translator
-// TODO: improve
 public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 	
 	private static final String NEW_ELEMENT_NAME = "table";
 	
 	private static final String TABLE_ELEMENT_NAME = "table:table";
+	private static final String TABLE_NAME_ATTRIBUTE_NAME = "table:name";
 	private static final String SHAPES_ELEMENT_NAME = "table:shapes";
 	private static final String COLUMN_ELEMENT_NAME = "table:table-column";
 	private static final String ROW_ELEMENT_NAME = "table:table-row";
@@ -41,24 +41,25 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 	
 	private final DocumentStyle style;
 	private final ContentTranslator contentTranslator;
+	private final Map<String, TableSize> tableMap;
+	
+	private TableSize currentTableSize;
 	
 	// TODO: implement collapsed list
 	private final List<String> currentColumnDefaultStyles = new LinkedList<String>();
 	private Iterator<String> currentColumnDefaultStylesIterator;
 	
-	private final Queue<LWXMLEventListWriter> currentEmptyRowStartElementQueue = new LinkedList<LWXMLEventListWriter>();
-	private final Queue<Integer> currentEmptyRowRepeatedQueue = new LinkedList<Integer>();
-	private final Queue<LWXMLEventListWriter> currentEmptyCellStartElementQueue = new LinkedList<LWXMLEventListWriter>();
-	private final Queue<Integer> currentEmptyCellRepeatedQueue = new LinkedList<Integer>();
-	
 	private final LWXMLEventListWriter untilShapesTmpOut = new LWXMLEventListWriter();
 	
 	public SpreadsheetTableTranslator(DocumentStyle style,
-			ContentTranslator contentTranslator) {
+			ContentTranslator contentTranslator, Map<String, TableSize> tableMap) {
 		super(NEW_ELEMENT_NAME);
 		
 		this.style = style;
 		this.contentTranslator = contentTranslator;
+		this.tableMap = tableMap;
+		
+		addParseAttribute(TABLE_NAME_ATTRIBUTE_NAME);
 		
 		addNewAttribute("border", "0");
 		addNewAttribute("cellspacing", "0");
@@ -84,10 +85,6 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 		cellTranslator.removeAttributeTranslator(attributeName);
 	}
 	
-	private int getCurrentColumnCount() {
-		return currentColumnDefaultStyles.size();
-	}
-	
 	private LWXMLAttribute getCurrentColumnDefaultStyleAttribute() {
 		if (currentColumnDefaultStylesIterator == null)
 			currentColumnDefaultStylesIterator = new CycleIterator<String>(
@@ -111,62 +108,6 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 		}
 	}
 	
-	private boolean hasEmptyRowQueued() {
-		return !currentEmptyRowStartElementQueue.isEmpty();
-	}
-	
-	private void writeEmptyRowQueue(LWXMLWriter out) throws IOException {
-		Iterator<Integer> currentEmptyRowRepeatedIterator = currentEmptyRowRepeatedQueue
-				.iterator();
-		Iterator<LWXMLEventListWriter> cellStartElementIterator = currentEmptyCellStartElementQueue
-				.iterator();
-		Iterator<Integer> cellRepeatedIterator = currentEmptyCellRepeatedQueue
-				.iterator();
-		
-		for (LWXMLEventListWriter rowStartElement : currentEmptyRowStartElementQueue) {
-			int rowRepeated = currentEmptyRowRepeatedIterator.next();
-			LWXMLEventListWriter cellStartElement = cellStartElementIterator
-					.next();
-			int cellRepeated = cellRepeatedIterator.next();
-			
-			writeEmptyRow(rowStartElement, rowRepeated, cellStartElement,
-					cellRepeated, out);
-		}
-	}
-	
-	private void writeEmptyRow(LWXMLEventListWriter rowStartElement,
-			int rowRepeated, LWXMLEventListWriter cellStartElement,
-			int cellRepeated, LWXMLWriter out) throws IOException {
-		for (int i = 0; i < rowRepeated; i++) {
-			rowStartElement.writeTo(out);
-			
-			writeEmptyCell(cellStartElement, cellRepeated, out);
-			
-			// TODO: bad style
-			out.writeEndElement("tr");
-		}
-	}
-	
-	private void writeEmptyCell(LWXMLEventListWriter cellStartElement,
-			int cellRepeated, LWXMLWriter out) throws IOException {
-		for (int i = 0; i < cellRepeated; i++) {
-			cellStartElement.writeTo(out);
-			
-			out.writeStartElement("br");
-			out.writeEndEmptyElement();
-			
-			// TODO: bad style
-			out.writeEndElement("td");
-		}
-	}
-	
-	private void clearEmptyRowQueue() {
-		currentEmptyRowStartElementQueue.clear();
-		currentEmptyRowRepeatedQueue.clear();
-		currentEmptyCellStartElementQueue.clear();
-		currentEmptyCellRepeatedQueue.clear();
-	}
-	
 	@Override
 	public void translateStartElement(LWXMLPushbackReader in, LWXMLWriter out)
 			throws IOException {
@@ -177,6 +118,9 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 	public void translateAttributeList(LWXMLPushbackReader in, LWXMLWriter out)
 			throws IOException {
 		super.translateAttributeList(in, untilShapesTmpOut);
+		
+		currentTableSize = tableMap
+				.get(getCurrentParsedAttribute(TABLE_NAME_ATTRIBUTE_NAME));
 	}
 	
 	@Override
@@ -267,8 +211,7 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 	
 	private void translateRows(LWXMLPushbackReader in, LWXMLWriter out)
 			throws IOException {
-		loop:
-		while (true) {
+		for (int i = 0; i < currentTableSize.getRows();) {
 			LWXMLEvent event = in.readEvent();
 			
 			switch (event) {
@@ -281,12 +224,12 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 						throw new LWXMLIllegalEventException(event);
 					
 					in.unreadEvent(elementName);
-					translateRow(in, out);
+					i += translateRow(in, out);
 				} else if (elementName.equals(TABLE_ELEMENT_NAME)) {
 					if (event != LWXMLEvent.END_ELEMENT)
 						throw new LWXMLIllegalEventException(event);
 					
-					break loop;
+					return;
 				} else {
 					throw new LWXMLIllegalElementException(elementName);
 				}
@@ -296,42 +239,41 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 				throw new LWXMLIllegalEventException(event);
 			}
 		}
+		
+		LWXMLUtil.flushUntilEndElement(in, TABLE_ELEMENT_NAME);
 	}
 	
-	// TODO: improve (caching)
-	private void translateRow(LWXMLPushbackReader in, LWXMLWriter out)
+	// TODO: improve repeated
+	private int translateRow(LWXMLPushbackReader in, LWXMLWriter out)
 			throws IOException {
-		LWXMLEventListWriter tmpOut = new LWXMLEventListWriter();
+		LWXMLWriter tmpOut = new LWXMLEventListWriter();
 		
 		rowTranslation.translate(in, tmpOut);
 		int repeated = rowTranslation.getCurrentRepeated();
 		
 		tmpOut.flush();
 		
-		if (translateCells(in, tmpOut)) {
-			in.readEvent();
-			currentEmptyRowStartElementQueue.add(tmpOut);
-			currentEmptyRowRepeatedQueue.add(repeated);
-			return;
-		} else if (hasEmptyRowQueued()) {
-			writeEmptyRowQueue(out);
-			clearEmptyRowQueue();
+		if (repeated == 1) {
+			((LWXMLEventListWriter) tmpOut).writeTo(out);
+			tmpOut = out;
 		}
 		
+		translateCells(in, tmpOut);
 		rowTranslation.translate(in, tmpOut);
 		
-		for (int i = 0; i < repeated; i++) {
-			tmpOut.writeTo(out);
+		if (repeated > 1) {
+			for (int i = 0; i < repeated; i++) {
+				((LWXMLEventListWriter) tmpOut).writeTo(out);
+			}
 		}
+		
+		return repeated;
 	}
 	
-	private boolean translateCells(LWXMLPushbackReader in, LWXMLWriter out)
+	// TODO: improve repeated
+	private void translateCells(LWXMLPushbackReader in, LWXMLWriter out)
 			throws IOException {
-		boolean result = false;
-		int currentWidth = 0;
-		
-		loop:
-		while (true) {
+		for (int i = 0; i < currentTableSize.getColumns();) {
 			LWXMLEvent event = in.readEvent();
 			
 			switch (event) {
@@ -344,10 +286,8 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 						throw new LWXMLIllegalEventException(event);
 					
 					in.unreadEvent(elementName);
-					result = translateCell(in, out);
-					currentWidth += cellTranslator.getCurrentWidth();
-					if (currentWidth > getCurrentColumnCount())
-						throw new IllegalStateException();
+					translateCell(in, out);
+					i += cellTranslator.getCurrentWidth();
 				} else if (elementName.equals(COVERED_CELL_ELEMENT_NAME)) {
 					LWXMLUtil.flushEmptyElement(in);
 				} else if (elementName.equals(ROW_ELEMENT_NAME)) {
@@ -355,7 +295,7 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 						throw new LWXMLIllegalEventException(event);
 					
 					in.unreadEvent(elementName);
-					break loop;
+					return;
 				} else {
 					throw new LWXMLIllegalElementException(elementName);
 				}
@@ -366,46 +306,31 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 			}
 		}
 		
-		return result;
+		LWXMLUtil.flushUntilEndElement(in, ROW_ELEMENT_NAME);
+		in.unreadEvent(ROW_ELEMENT_NAME);
 	}
 	
-	// TODO: improve (caching)
-	private boolean translateCell(LWXMLPushbackReader in, LWXMLWriter out)
+	private void translateCell(LWXMLPushbackReader in, LWXMLWriter out)
 			throws IOException {
 		LWXMLWriter tmpOut = new LWXMLEventListWriter();
 		
 		translateCellStart(in, tmpOut);
 		int repeated = cellTranslator.getCurrentRepeated();
-		int width = cellTranslator.getCurrentWidth();
 		
 		tmpOut.flush();
-		
-		// TODO: exclude
-		if (in.touchEvent().isEndElement()) {
-			if (width == getCurrentColumnCount()) {
-				in.readEvent();
-				currentEmptyCellStartElementQueue
-						.add((LWXMLEventListWriter) tmpOut);
-				currentEmptyCellRepeatedQueue.add(repeated);
-				return true;
-			}
-		}
 		
 		if (repeated == 1) {
 			((LWXMLEventListWriter) tmpOut).writeTo(out);
 			tmpOut = out;
+			repeated--;
 		}
 		
 		translateCellContent(in, tmpOut);
-		translateCellEnd(in, tmpOut);
+		cellTranslator.translate(in, tmpOut);
 		
-		if (repeated > 1) {
-			for (int i = 0; i < repeated; i++) {
-				((LWXMLEventListWriter) tmpOut).writeTo(out);
-			}
+		for (int i = 0; i < repeated; i++) {
+			((LWXMLEventListWriter) tmpOut).writeTo(out);
 		}
-		
-		return false;
 	}
 	
 	private void translateCellStart(LWXMLPushbackReader in, LWXMLWriter out)
@@ -419,14 +344,15 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 	
 	private void translateCellContent(LWXMLPushbackReader in, LWXMLWriter out)
 			throws IOException {
+		if (in.touchEvent().isEndElement()) {
+			out.writeStartElement("br");
+			out.writeEndEmptyElement();
+			return;
+		}
+		
 		LWXMLBranchReader bin = new LWXMLBranchReader(in);
 		contentTranslator.translate(bin, out);
 		in.unreadEvent();
-	}
-	
-	private void translateCellEnd(LWXMLPushbackReader in, LWXMLWriter out)
-			throws IOException {
-		cellTranslator.translate(in, out);
 	}
 	
 	@Override

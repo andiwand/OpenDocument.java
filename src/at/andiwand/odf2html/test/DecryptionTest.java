@@ -13,8 +13,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.swing.JFileChooser;
 
-import org.apache.commons.codec.binary.Base64;
-
+import at.andiwand.common.codec.Base64;
 import at.andiwand.common.io.ByteStreamUtil;
 import at.andiwand.odf2html.odf.TemporaryOpenDocumentFile;
 import de.rtner.security.auth.spi.MacBasedPRF;
@@ -39,7 +38,7 @@ public class DecryptionTest {
 		MessageDigest digest = MessageDigest.getInstance("SHA1");
 		byte[] md = digest.digest("password".getBytes());
 		
-		byte[] salt = Base64.decodeBase64("WAk+2ZssqTdcHFwpbDPQng==");
+		byte[] salt = Base64.decodeChars("WAk+2ZssqTdcHFwpbDPQng==");
 		
 		MacBasedPRF macBasedPRF = new MacBasedPRF("HmacSHA1");
 		PBKDF2Parameters pbkdf2Parameters = new PBKDF2Parameters(salt, 1024);
@@ -49,7 +48,7 @@ public class DecryptionTest {
 		Key key = new SecretKeySpec(dk, "Blowfish");
 		
 		IvParameterSpec iv = new IvParameterSpec(Base64
-				.decodeBase64("xgVWDFN09qI="));
+				.decodeChars("xgVWDFN09qI="));
 		
 		Cipher cipher = Cipher.getInstance("Blowfish/CFB/NoPadding");
 		cipher.init(Cipher.DECRYPT_MODE, key, iv);

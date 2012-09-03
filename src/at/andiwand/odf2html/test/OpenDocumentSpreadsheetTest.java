@@ -23,7 +23,7 @@ public class OpenDocumentSpreadsheetTest {
 				.getAsOpenDocumentSpreadsheet();
 		
 		System.out.println(spreadsheet.getTableCount());
-		System.out.println(spreadsheet.getTableNames());
+		System.out.println(spreadsheet.getTableMap());
 	}
 	
 }

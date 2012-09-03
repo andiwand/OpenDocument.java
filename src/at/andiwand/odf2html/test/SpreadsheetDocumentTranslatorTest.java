@@ -35,7 +35,7 @@ public class SpreadsheetDocumentTranslatorTest {
 		out.close();
 		fileWriter.close();
 		
-		Runtime.getRuntime().exec("firefox " + htmlFile.getPath());
+		Runtime.getRuntime().exec("google-chrome " + htmlFile.getPath());
 		
 		// CharArrayReader reader = new CharArrayReader(writer.toCharArray());
 		//

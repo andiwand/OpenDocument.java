@@ -11,29 +11,31 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
-        <javaElement handleIdentifier="=commons/src&lt;at.andiwand.common.network"/>
-        <javaElement handleIdentifier="=commons/src&lt;at.andiwand.common.math.matrix"/>
         <javaElement handleIdentifier="=commons/src&lt;at.andiwand.common.util.comparator"/>
-        <javaElement handleIdentifier="=commons/src&lt;at.andiwand.common.math"/>
         <javaElement handleIdentifier="=commons/src&lt;at.andiwand.common.util.collections"/>
+        <javaElement handleIdentifier="=commons/src&lt;at.andiwand.common.math"/>
         <javaElement handleIdentifier="=commons/src&lt;at.andiwand.common.xml"/>
+        <javaElement handleIdentifier="=commons/src&lt;at.andiwand.common.codec"/>
         <javaElement handleIdentifier="=commons/src&lt;at.andiwand.common.util"/>
-        <javaElement handleIdentifier="=commons/src&lt;at.andiwand.common.io"/>
         <javaElement handleIdentifier="=commons/src&lt;at.andiwand.common.lwxml"/>
-        <javaElement handleIdentifier="=commons/src&lt;at.andiwand.common.lwxml.reader"/>
         <javaElement handleIdentifier="=commons/src&lt;at.andiwand.common.network.mac"/>
-        <javaElement handleIdentifier="=commons/src&lt;at.andiwand.common.component"/>
         <javaElement handleIdentifier="=commons/src&lt;at.andiwand.common.math.vector"/>
         <javaElement handleIdentifier="=commons/src&lt;at.andiwand.common.lwxml.translator.simple"/>
-        <javaElement handleIdentifier="=commons/src&lt;at.andiwand.common.lwxml.writer"/>
-        <javaElement handleIdentifier="=commons/src&lt;at.andiwand.common.lwxml.path"/>
         <javaElement handleIdentifier="=commons/src&lt;at.andiwand.common.network.ip"/>
-        <javaElement handleIdentifier="=commons/src&lt;at.andiwand.common.graphics"/>
+        <javaElement handleIdentifier="=commons/src&lt;at.andiwand.common.lwxml.path"/>
         <javaElement handleIdentifier="=commons/src&lt;at.andiwand.common.lwxml.translator"/>
-        <javaElement handleIdentifier="=commons/src&lt;at.andiwand.common.util.iterator"/>
         <javaElement handleIdentifier="=commons/src&lt;at.andiwand.common.xml.namespace"/>
-        <javaElement handleIdentifier="=commons/src&lt;at.andiwand.common.cli"/>
+        <javaElement handleIdentifier="=commons/src&lt;at.andiwand.common.network"/>
+        <javaElement handleIdentifier="=commons/src&lt;at.andiwand.common.math.matrix"/>
+        <javaElement handleIdentifier="=commons/src&lt;at.andiwand.common.util.collections.primitive"/>
+        <javaElement handleIdentifier="=commons/src&lt;at.andiwand.common.io"/>
+        <javaElement handleIdentifier="=commons/src&lt;at.andiwand.common.lwxml.reader"/>
+        <javaElement handleIdentifier="=commons/src&lt;at.andiwand.common.component"/>
+        <javaElement handleIdentifier="=commons/src&lt;at.andiwand.common.lwxml.writer"/>
+        <javaElement handleIdentifier="=commons/src&lt;at.andiwand.common.graphics"/>
+        <javaElement handleIdentifier="=commons/src&lt;at.andiwand.common.util.iterator"/>
         <javaElement handleIdentifier="=commons/src&lt;at.andiwand.common.lwxml.visitor"/>
+        <javaElement handleIdentifier="=commons/src&lt;at.andiwand.common.cli"/>
         <javaElement handleIdentifier="=commons/src&lt;at.andiwand.common.math.graph"/>
     </selectedElements>
 </jardesc>

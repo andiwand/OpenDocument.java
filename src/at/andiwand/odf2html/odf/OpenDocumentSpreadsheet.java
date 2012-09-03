@@ -2,10 +2,11 @@ package at.andiwand.odf2html.odf;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.List;
+import java.util.Map;
 
 import at.andiwand.common.lwxml.LWXMLUtil;
 import at.andiwand.common.lwxml.reader.LWXMLReaderException;
+import at.andiwand.common.lwxml.reader.LWXMLStreamReader;
 
 
 public class OpenDocumentSpreadsheet extends OpenDocument {
@@ -13,14 +14,13 @@ public class OpenDocumentSpreadsheet extends OpenDocument {
 	private static final String MIMETYPE = "application/vnd.oasis.opendocument.spreadsheet";
 	
 	private static final String TABLE_COUNT_ATTRIBUTE = "meta:table-count";
-	private static final String TABLE_NAME_ATTRIBUTE = "table:name";
 	
 	public static boolean checkMimetype(String mimetype) {
 		return mimetype.startsWith(MIMETYPE);
 	}
 	
 	private int tableCount = -1;
-	private List<String> tableNames;
+	private Map<String, TableSize> tableMap;
 	
 	public OpenDocumentSpreadsheet(OpenDocumentFile openDocumentFile)
 			throws IOException {
@@ -42,20 +42,19 @@ public class OpenDocumentSpreadsheet extends OpenDocument {
 	}
 	
 	// TODO: improve with path/query (0.00000000001% necessary)
-	public List<String> getTableNames() throws IOException {
-		if (tableNames == null) {
+	public Map<String, TableSize> getTableMap() throws IOException {
+		if (tableMap == null) {
 			try {
-				tableNames = Collections.unmodifiableList(LWXMLUtil
-						.getAllAttributeValue(getContent(),
-								TABLE_NAME_ATTRIBUTE));
+				tableMap = Collections.unmodifiableMap(TableSizeUtil
+						.parseTableMap(new LWXMLStreamReader(getContent())));
 			} catch (LWXMLReaderException e) {
 				throw new IllegalStateException("lwxml exception", e);
 			}
 			
-			if (tableCount == -1) tableCount = tableNames.size();
+			if (tableCount == -1) tableCount = tableMap.size();
 		}
 		
-		return tableNames;
+		return tableMap;
 	}
 	
 	@Override

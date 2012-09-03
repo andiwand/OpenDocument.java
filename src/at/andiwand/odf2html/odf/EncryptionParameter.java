@@ -4,8 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.codec.binary.Base64;
-
+import at.andiwand.common.codec.Base64;
 import at.andiwand.common.lwxml.LWXMLEvent;
 import at.andiwand.common.lwxml.reader.LWXMLReader;
 import at.andiwand.common.lwxml.reader.LWXMLStreamReader;
@@ -36,7 +35,7 @@ public class EncryptionParameter {
 	private static final String START_KEY_GENERATOR_ATTRIBUTE = "manifest:start-key-generation-name";
 	private static final String START_KEY_SIZE_ATTRIBUTE = "manifest:key-size";
 	
-	// TODO: improve with path/query (0.01% necessary)
+	// TODO: improve with path/query (0.0001% necessary)
 	public static Map<String, EncryptionParameter> parseEncryptionParameters(
 			OpenDocumentFile documentFile) throws IOException {
 		Map<String, EncryptionParameter> result = new HashMap<String, EncryptionParameter>();
@@ -91,14 +90,14 @@ public class EncryptionParameter {
 				encryptionParameter.setChecksumType(attributeValue);
 			} else if (attributeName.equals(CHECKSUM_ATTRIBUTE)) {
 				encryptionParameter.setChecksum(Base64
-						.decodeBase64(attributeValue));
+						.decodeChars(attributeValue));
 			}
 		} else if (node.equals(ALGORITHM_ELEMENT)) {
 			if (attributeName.equals(ALGORITHM_ATTRIBUTE)) {
 				encryptionParameter.setAlgorithm(attributeValue);
 			} else if (attributeName.equals(INITIALISATION_VECTOR_ATTRIBUTE)) {
 				encryptionParameter.setInitialisationVector(Base64
-						.decodeBase64(attributeValue));
+						.decodeChars(attributeValue));
 			}
 		} else if (node.equals(KEY_DERIVATION_ELEMENT)) {
 			if (attributeName.equals(KEY_DERIVATION_ATTRIBUTE)) {
@@ -110,8 +109,7 @@ public class EncryptionParameter {
 				encryptionParameter.setIterationCount(Integer
 						.parseInt(attributeValue));
 			} else if (attributeName.equals(SALT_ATTRIBUTE)) {
-				encryptionParameter
-						.setSalt(Base64.decodeBase64(attributeValue));
+				encryptionParameter.setSalt(Base64.decodeChars(attributeValue));
 			}
 		} else if (node.equals(START_KEY_GENERATION_ELEMENT)) {
 			if (attributeName.equals(START_KEY_GENERATOR_ATTRIBUTE)) {
