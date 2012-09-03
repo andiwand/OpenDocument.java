@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import at.andiwand.common.codec.Base64;
-import at.andiwand.common.lwxml.LWXMLEvent;
-import at.andiwand.common.lwxml.reader.LWXMLReader;
-import at.andiwand.common.lwxml.reader.LWXMLStreamReader;
+import at.andiwand.commons.codec.Base64;
+import at.andiwand.commons.lwxml.LWXMLEvent;
+import at.andiwand.commons.lwxml.reader.LWXMLReader;
+import at.andiwand.commons.lwxml.reader.LWXMLStreamReader;
 
 
 public class EncryptionParameter {

@@ -5,8 +5,8 @@ import java.io.FileWriter;
 
 import javax.swing.JFileChooser;
 
-import at.andiwand.common.lwxml.writer.LWXMLStreamWriter;
-import at.andiwand.common.lwxml.writer.LWXMLWriter;
+import at.andiwand.commons.lwxml.writer.LWXMLStreamWriter;
+import at.andiwand.commons.lwxml.writer.LWXMLWriter;
 import at.andiwand.odf2html.odf.LocatedOpenDocumentFile;
 import at.andiwand.odf2html.odf.OpenDocument;
 import at.andiwand.odf2html.odf.OpenDocumentFile;

@@ -23,11 +23,11 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
-import at.andiwand.common.component.JFrameUtil;
-import at.andiwand.common.lwxml.LWXMLConstants;
-import at.andiwand.common.lwxml.LWXMLEvent;
-import at.andiwand.common.lwxml.reader.LWXMLReader;
-import at.andiwand.common.lwxml.reader.LWXMLStreamReader;
+import at.andiwand.commons.lwxml.LWXMLConstants;
+import at.andiwand.commons.lwxml.LWXMLEvent;
+import at.andiwand.commons.lwxml.reader.LWXMLReader;
+import at.andiwand.commons.lwxml.reader.LWXMLStreamReader;
+import at.andiwand.commons.swing.JFrameUtil;
 
 
 public class XMLViewer extends JFrame {

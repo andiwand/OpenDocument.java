@@ -2,7 +2,7 @@ package at.andiwand.odf2html.translator.document;
 
 import java.io.IOException;
 
-import at.andiwand.common.lwxml.writer.LWXMLWriter;
+import at.andiwand.commons.lwxml.writer.LWXMLWriter;
 import at.andiwand.odf2html.odf.OpenDocument;
 import at.andiwand.odf2html.translator.FileCache;
 

@@ -3,7 +3,7 @@ package at.andiwand.odf2html.odf;
 import java.io.IOException;
 import java.io.InputStream;
 
-import at.andiwand.common.lwxml.path.LWXMLPath;
+import at.andiwand.commons.lwxml.path.LWXMLPath;
 
 
 public abstract class OpenDocument {

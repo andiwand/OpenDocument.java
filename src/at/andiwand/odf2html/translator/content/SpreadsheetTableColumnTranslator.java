@@ -2,10 +2,10 @@ package at.andiwand.odf2html.translator.content;
 
 import java.io.IOException;
 
-import at.andiwand.common.lwxml.reader.LWXMLPushbackReader;
-import at.andiwand.common.lwxml.translator.simple.SimpleElementReplacement;
-import at.andiwand.common.lwxml.writer.LWXMLWriter;
-import at.andiwand.common.util.NumberUtil;
+import at.andiwand.commons.lwxml.reader.LWXMLPushbackReader;
+import at.andiwand.commons.lwxml.translator.simple.SimpleElementReplacement;
+import at.andiwand.commons.lwxml.writer.LWXMLWriter;
+import at.andiwand.commons.util.NumberUtil;
 
 
 public class SpreadsheetTableColumnTranslator extends SimpleElementReplacement {

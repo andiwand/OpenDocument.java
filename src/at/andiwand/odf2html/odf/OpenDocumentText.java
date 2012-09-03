@@ -2,8 +2,8 @@ package at.andiwand.odf2html.odf;
 
 import java.io.IOException;
 
-import at.andiwand.common.lwxml.LWXMLUtil;
-import at.andiwand.common.lwxml.reader.LWXMLReaderException;
+import at.andiwand.commons.lwxml.LWXMLUtil;
+import at.andiwand.commons.lwxml.reader.LWXMLReaderException;
 
 
 public class OpenDocumentText extends OpenDocument {

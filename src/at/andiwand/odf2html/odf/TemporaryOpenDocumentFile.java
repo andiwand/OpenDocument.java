@@ -5,7 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import at.andiwand.common.io.ByteStreamUtil;
+import at.andiwand.commons.io.ByteStreamUtil;
 
 
 public class TemporaryOpenDocumentFile extends LocatedOpenDocumentFile {

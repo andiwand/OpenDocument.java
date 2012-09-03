@@ -2,11 +2,11 @@ package at.andiwand.odf2html.translator.content;
 
 import java.io.IOException;
 
-import at.andiwand.common.lwxml.LWXMLUtil;
-import at.andiwand.common.lwxml.reader.LWXMLPushbackReader;
-import at.andiwand.common.lwxml.translator.simple.SimpleElementTranslator;
-import at.andiwand.common.lwxml.writer.LWXMLEventListWriter;
-import at.andiwand.common.lwxml.writer.LWXMLWriter;
+import at.andiwand.commons.lwxml.LWXMLUtil;
+import at.andiwand.commons.lwxml.reader.LWXMLPushbackReader;
+import at.andiwand.commons.lwxml.translator.simple.SimpleElementTranslator;
+import at.andiwand.commons.lwxml.writer.LWXMLEventListWriter;
+import at.andiwand.commons.lwxml.writer.LWXMLWriter;
 
 
 public class ParagraphTranslator extends SimpleElementTranslator {

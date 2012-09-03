@@ -1,6 +1,6 @@
 package at.andiwand.odf2html.translator.content;
 
-import at.andiwand.common.lwxml.translator.simple.SimpleElementReplacement;
+import at.andiwand.commons.lwxml.translator.simple.SimpleElementReplacement;
 import at.andiwand.odf2html.odf.OpenDocumentFile;
 import at.andiwand.odf2html.translator.style.DocumentStyle;
 

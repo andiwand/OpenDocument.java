@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import at.andiwand.common.lwxml.LWXMLEvent;
-import at.andiwand.common.lwxml.LWXMLUtil;
-import at.andiwand.common.lwxml.reader.LWXMLBranchDelegationReader;
-import at.andiwand.common.lwxml.reader.LWXMLReader;
-import at.andiwand.common.lwxml.reader.LWXMLStreamReader;
+import at.andiwand.commons.lwxml.LWXMLEvent;
+import at.andiwand.commons.lwxml.LWXMLUtil;
+import at.andiwand.commons.lwxml.reader.LWXMLBranchDelegationReader;
+import at.andiwand.commons.lwxml.reader.LWXMLReader;
+import at.andiwand.commons.lwxml.reader.LWXMLStreamReader;
 import at.andiwand.odf2html.css.StyleSheetWriter;
 import at.andiwand.odf2html.odf.OpenDocument;
 

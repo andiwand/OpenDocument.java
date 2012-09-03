@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import at.andiwand.common.lwxml.LWXMLAttribute;
+import at.andiwand.commons.lwxml.LWXMLAttribute;
 import at.andiwand.odf2html.css.StyleProperty;
 import at.andiwand.odf2html.css.StyleSheet;
 import at.andiwand.odf2html.css.StyleSheetParser;

@@ -5,12 +5,12 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-import at.andiwand.common.lwxml.LWXMLEvent;
-import at.andiwand.common.lwxml.LWXMLUtil;
-import at.andiwand.common.lwxml.reader.LWXMLBranchDelegationReader;
-import at.andiwand.common.lwxml.reader.LWXMLReader;
-import at.andiwand.common.util.ArrayUtil;
-import at.andiwand.common.util.NumberUtil;
+import at.andiwand.commons.lwxml.LWXMLEvent;
+import at.andiwand.commons.lwxml.LWXMLUtil;
+import at.andiwand.commons.lwxml.reader.LWXMLBranchDelegationReader;
+import at.andiwand.commons.lwxml.reader.LWXMLReader;
+import at.andiwand.commons.util.ArrayUtil;
+import at.andiwand.commons.util.NumberUtil;
 
 
 public class TableSizeUtil {

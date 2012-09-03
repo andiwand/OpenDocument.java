@@ -4,12 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 
-import at.andiwand.common.lwxml.LWXMLIllegalEventException;
-import at.andiwand.common.lwxml.LWXMLUtil;
-import at.andiwand.common.lwxml.reader.LWXMLPushbackReader;
-import at.andiwand.common.lwxml.translator.LWXMLTranslatorException;
-import at.andiwand.common.lwxml.translator.simple.SimpleElementReplacement;
-import at.andiwand.common.lwxml.writer.LWXMLWriter;
+import at.andiwand.commons.lwxml.LWXMLIllegalEventException;
+import at.andiwand.commons.lwxml.LWXMLUtil;
+import at.andiwand.commons.lwxml.reader.LWXMLPushbackReader;
+import at.andiwand.commons.lwxml.translator.LWXMLTranslatorException;
+import at.andiwand.commons.lwxml.translator.simple.SimpleElementReplacement;
+import at.andiwand.commons.lwxml.writer.LWXMLWriter;
 
 
 // TODO: implement charts

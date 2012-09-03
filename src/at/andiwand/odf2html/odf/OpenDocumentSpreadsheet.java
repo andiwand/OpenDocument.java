@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 
-import at.andiwand.common.lwxml.LWXMLUtil;
-import at.andiwand.common.lwxml.reader.LWXMLReaderException;
-import at.andiwand.common.lwxml.reader.LWXMLStreamReader;
+import at.andiwand.commons.lwxml.LWXMLUtil;
+import at.andiwand.commons.lwxml.reader.LWXMLReaderException;
+import at.andiwand.commons.lwxml.reader.LWXMLStreamReader;
 
 
 public class OpenDocumentSpreadsheet extends OpenDocument {

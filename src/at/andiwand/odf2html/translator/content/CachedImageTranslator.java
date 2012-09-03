@@ -7,7 +7,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Writer;
 
-import at.andiwand.common.io.ByteStreamUtil;
+import at.andiwand.commons.io.ByteStreamUtil;
 import at.andiwand.odf2html.odf.OpenDocumentFile;
 import at.andiwand.odf2html.translator.FileCache;
 

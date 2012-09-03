@@ -26,8 +26,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
 import net.lingala.zip4j.exception.ZipException;
-import at.andiwand.common.component.JFrameUtil;
-import at.andiwand.common.lwxml.reader.LWXMLReaderException;
+import at.andiwand.commons.lwxml.reader.LWXMLReaderException;
+import at.andiwand.commons.swing.JFrameUtil;
 import at.andiwand.odf2html.odf.LocatedOpenDocumentFile;
 import at.andiwand.odf2html.odf.OpenDocumentFile;
 

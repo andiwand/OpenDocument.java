@@ -13,8 +13,8 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.swing.JFileChooser;
 
-import at.andiwand.common.codec.Base64;
-import at.andiwand.common.io.ByteStreamUtil;
+import at.andiwand.commons.codec.Base64;
+import at.andiwand.commons.io.ByteStreamUtil;
 import at.andiwand.odf2html.odf.TemporaryOpenDocumentFile;
 import de.rtner.security.auth.spi.MacBasedPRF;
 import de.rtner.security.auth.spi.PBKDF2Engine;

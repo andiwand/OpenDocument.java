@@ -22,6 +22,7 @@ public class OpenDocumentTextTest {
 		OpenDocumentText text = documentFile.getAsOpenDocumentText();
 		
 		System.out.println(documentFile.isEncrypted());
+		System.out.println(documentFile.isPasswordValid("password"));
 		if (documentFile.isEncrypted()) documentFile.setPassword("password");
 		System.out.println(text.getPageCount());
 		System.out.println(text.useSoftPageBreaks());

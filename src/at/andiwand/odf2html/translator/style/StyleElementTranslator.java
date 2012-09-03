@@ -2,7 +2,7 @@ package at.andiwand.odf2html.translator.style;
 
 import java.io.IOException;
 
-import at.andiwand.common.lwxml.reader.LWXMLReader;
+import at.andiwand.commons.lwxml.reader.LWXMLReader;
 
 
 public abstract class StyleElementTranslator<T extends DocumentStyle> {

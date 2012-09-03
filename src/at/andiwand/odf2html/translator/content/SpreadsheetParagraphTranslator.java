@@ -2,14 +2,14 @@ package at.andiwand.odf2html.translator.content;
 
 import java.io.IOException;
 
-import at.andiwand.common.lwxml.LWXMLIllegalEventException;
-import at.andiwand.common.lwxml.LWXMLUtil;
-import at.andiwand.common.lwxml.reader.LWXMLBranchReader;
-import at.andiwand.common.lwxml.reader.LWXMLPushbackReader;
-import at.andiwand.common.lwxml.reader.LWXMLReader;
-import at.andiwand.common.lwxml.translator.simple.SimpleElementReplacement;
-import at.andiwand.common.lwxml.writer.LWXMLEventListWriter;
-import at.andiwand.common.lwxml.writer.LWXMLWriter;
+import at.andiwand.commons.lwxml.LWXMLIllegalEventException;
+import at.andiwand.commons.lwxml.LWXMLUtil;
+import at.andiwand.commons.lwxml.reader.LWXMLBranchReader;
+import at.andiwand.commons.lwxml.reader.LWXMLPushbackReader;
+import at.andiwand.commons.lwxml.reader.LWXMLReader;
+import at.andiwand.commons.lwxml.translator.simple.SimpleElementReplacement;
+import at.andiwand.commons.lwxml.writer.LWXMLEventListWriter;
+import at.andiwand.commons.lwxml.writer.LWXMLWriter;
 
 
 public class SpreadsheetParagraphTranslator extends SimpleElementReplacement {

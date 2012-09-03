@@ -6,6 +6,7 @@ import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.zip.ZipException;
 
@@ -14,6 +15,8 @@ import javax.crypto.CipherInputStream;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import at.andiwand.commons.util.collections.CollectionUtil;
+import at.andiwand.commons.util.comparator.MapEntryValueComparator;
 import de.rtner.security.auth.spi.MacBasedPRF;
 import de.rtner.security.auth.spi.PBKDF2Engine;
 import de.rtner.security.auth.spi.PBKDF2Parameters;
@@ -22,29 +25,31 @@ import de.rtner.security.auth.spi.PBKDF2Parameters;
 // TODO: improve class design
 public class OpenDocumentCryptoUtil {
 	
+	private static final Comparator<EncryptionParameter> PLAIN_SIZE_COMPERATOR = new Comparator<EncryptionParameter>() {
+		@Override
+		public int compare(EncryptionParameter o1, EncryptionParameter o2) {
+			return o1.getPlainSize() - o2.getPlainSize();
+		}
+	};
+	
+	private static final MapEntryValueComparator<EncryptionParameter> ENTRY_PLAIN_SIZE_COMPERATOR = new MapEntryValueComparator<EncryptionParameter>(
+			PLAIN_SIZE_COMPERATOR);
+	
 	public static boolean validatePassword(String password,
 			OpenDocumentFile documentFile) throws IOException {
 		Map<String, EncryptionParameter> encryptionParameterMap = documentFile
 				.getEncryptionParameterMap();
 		
-		int minPlainSize = Integer.MAX_VALUE;
-		String path = null;
-		EncryptionParameter encryptionParameter = null;
+		Map.Entry<String, EncryptionParameter> smallest = CollectionUtil
+				.getSmallest(ENTRY_PLAIN_SIZE_COMPERATOR,
+						encryptionParameterMap.entrySet());
 		
-		for (Map.Entry<String, EncryptionParameter> entry : encryptionParameterMap
-				.entrySet()) {
-			if (minPlainSize > entry.getValue().getPlainSize()) {
-				minPlainSize = entry.getValue().getPlainSize();
-				path = entry.getKey();
-				encryptionParameter = entry.getValue();
-				break;
-			}
-		}
-		
-		if (path == null) return true;
-		InputStream inputStream = getPlainInputStream(documentFile
+		if (smallest == null) return true;
+		String path = smallest.getKey();
+		EncryptionParameter encryptionParameter = smallest.getValue();
+		InputStream in = getPlainInputStream(documentFile
 				.getRawFileStream(path), encryptionParameter, password);
-		return validatePassword(password, encryptionParameter, inputStream);
+		return validatePassword(password, encryptionParameter, in);
 	}
 	
 	public static boolean validatePassword(String password,
@@ -65,6 +70,9 @@ public class OpenDocumentCryptoUtil {
 			byte[] bytes = new byte[1024];
 			int count = in.read(bytes);
 			digest.update(bytes, 0, count);
+			
+			System.out.println(count);
+			System.out.println(Arrays.toString(Arrays.copyOf(bytes, count)));
 			
 			if (!Arrays.equals(checksum, digest.digest())) return false;
 		} catch (ZipException e) {

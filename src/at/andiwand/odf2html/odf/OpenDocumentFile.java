@@ -10,12 +10,12 @@ import java.util.Set;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
-import at.andiwand.common.io.CharStreamUtil;
-import at.andiwand.common.lwxml.LWXMLEvent;
-import at.andiwand.common.lwxml.reader.LWXMLReader;
-import at.andiwand.common.lwxml.reader.LWXMLReaderException;
-import at.andiwand.common.lwxml.reader.LWXMLStreamReader;
-import at.andiwand.common.util.ArrayUtil;
+import at.andiwand.commons.io.CharStreamUtil;
+import at.andiwand.commons.lwxml.LWXMLEvent;
+import at.andiwand.commons.lwxml.reader.LWXMLReader;
+import at.andiwand.commons.lwxml.reader.LWXMLReaderException;
+import at.andiwand.commons.lwxml.reader.LWXMLStreamReader;
+import at.andiwand.commons.util.ArrayUtil;
 
 
 public abstract class OpenDocumentFile {

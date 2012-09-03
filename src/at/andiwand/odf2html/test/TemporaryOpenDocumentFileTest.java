@@ -5,7 +5,7 @@ import java.io.InputStream;
 
 import javax.swing.JFileChooser;
 
-import at.andiwand.common.io.ByteStreamUtil;
+import at.andiwand.commons.io.ByteStreamUtil;
 import at.andiwand.odf2html.odf.TemporaryOpenDocumentFile;
 
 
