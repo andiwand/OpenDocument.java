@@ -10,26 +10,35 @@ import at.andiwand.odf2html.translator.style.SpreadsheetStyle;
 public class SpreadsheetContentTranslator extends DefaultContentTranslator {
 	
 	public SpreadsheetContentTranslator(OpenDocumentFile documentFile,
-			SpreadsheetStyle style) throws IOException {
-		this(documentFile, style, new InlineImageTranslator(documentFile));
+			SpreadsheetStyle style, int tableIndex) throws IOException {
+		this(documentFile, style, new InlineImageTranslator(documentFile),
+				tableIndex);
 	}
 	
 	public SpreadsheetContentTranslator(OpenDocumentFile documentFile,
-			SpreadsheetStyle style, FileCache fileCache) throws IOException {
-		this(documentFile, style, new CachedImageTranslator(documentFile,
-				fileCache));
-	}
-	
-	public SpreadsheetContentTranslator(OpenDocumentFile documentFile,
-			SpreadsheetStyle style, ImageTranslator imageTranslator)
+			SpreadsheetStyle style, FileCache fileCache, int tableIndex)
 			throws IOException {
+		this(documentFile, style, new CachedImageTranslator(documentFile,
+				fileCache), tableIndex);
+	}
+	
+	public SpreadsheetContentTranslator(OpenDocumentFile documentFile,
+			SpreadsheetStyle style, ImageTranslator imageTranslator,
+			int tableIndex) throws IOException {
 		super(style, imageTranslator);
 		
 		addElementTranslator("draw:frame", new FrameTranslator());
 		
-		addElementTranslator("table:table", new SpreadsheetTableTranslator(
-				style, this, documentFile.getAsOpenDocumentSpreadsheet()
-						.getTableMap()));
+		SpreadsheetTableTranslator tableTranslator;
+		if (tableIndex == -1) {
+			tableTranslator = new SpreadsheetTableTranslator(style, this,
+					documentFile.getAsOpenDocumentSpreadsheet().getTableMap());
+		} else {
+			tableTranslator = new SpreadsheetSingleTableTranslator(style, this,
+					documentFile.getAsOpenDocumentSpreadsheet().getTableMap(),
+					tableIndex);
+		}
+		addElementTranslator("table:table", tableTranslator);
 		
 		SpreadsheetParagraphTranslator paragraphTranslator = new SpreadsheetParagraphTranslator(
 				this);

@@ -2,7 +2,6 @@ package at.andiwand.odf2html.translator.document;
 
 import java.io.IOException;
 
-import at.andiwand.commons.lwxml.LWXMLException;
 import at.andiwand.commons.lwxml.LWXMLUtil;
 import at.andiwand.commons.lwxml.reader.LWXMLReader;
 import at.andiwand.commons.lwxml.reader.LWXMLStreamReader;
@@ -41,15 +40,20 @@ public class SpreadsheetTranslator extends DocumentTranslator {
 	}
 	
 	public void translateContent(OpenDocument document, SpreadsheetStyle style,
-			LWXMLReader in, LWXMLWriter out) throws IOException {
+			LWXMLReader in, LWXMLWriter out, int tableIndex) throws IOException {
 		SpreadsheetContentTranslator contentTranslator = new SpreadsheetContentTranslator(
-				document.getOpenDocumentFile(), style, fileCache);
+				document.getOpenDocumentFile(), style, fileCache, tableIndex);
 		contentTranslator.translate(in, out);
 	}
 	
 	@Override
 	public void translate(OpenDocument document, LWXMLWriter out)
-			throws LWXMLException, IOException {
+			throws IOException {
+		translate(document, out, -1);
+	}
+	
+	public void translate(OpenDocument document, LWXMLWriter out, int tableIndex)
+			throws IOException {
 		LWXMLReader in = new LWXMLStreamReader(document.getContent());
 		StyleSheetWriter styleOut = new StyleSheetWriter(out);
 		
@@ -78,7 +82,7 @@ public class SpreadsheetTranslator extends DocumentTranslator {
 		out.writeEndElement("head");
 		out.writeEmptyStartElement("body");
 		
-		translateContent(document, style, in, out);
+		translateContent(document, style, in, out, tableIndex);
 		
 		out.writeEndElement("body");
 		out.writeEndElement("html");
