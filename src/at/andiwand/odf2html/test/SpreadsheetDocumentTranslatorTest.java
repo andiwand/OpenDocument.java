@@ -30,7 +30,11 @@ public class SpreadsheetDocumentTranslatorTest {
 		LWXMLWriter out = new LWXMLStreamWriter(fileWriter);
 		
 		SpreadsheetTranslator translator = new SpreadsheetTranslator();
+		
+		long start = System.nanoTime();
 		translator.translate(document, out);
+		long end = System.nanoTime();
+		System.out.println((end - start) / 1000000000d);
 		
 		out.close();
 		fileWriter.close();

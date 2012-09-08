@@ -78,9 +78,9 @@ public class TableSizeUtil {
 	private static final Set<String> CELL_ATTRIBUTES = ArrayUtil.toHashSet(
 			COLUMNS_REPEATED_ATTRIBUTE_NAME, COLUMNS_SPANNED_ATTRIBUTE_NAME);
 	
-	public static Map<String, TableSize> parseTableMap(LWXMLReader in)
+	public static LinkedHashMap<String, TableSize> parseTableMap(LWXMLReader in)
 			throws IOException {
-		Map<String, TableSize> result = new LinkedHashMap<String, TableSize>();
+		LinkedHashMap<String, TableSize> result = new LinkedHashMap<String, TableSize>();
 		
 		LWXMLDelegationReader din = new LWXMLDelegationReader(in);
 		

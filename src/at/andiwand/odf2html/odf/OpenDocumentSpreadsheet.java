@@ -1,6 +1,7 @@
 package at.andiwand.odf2html.odf;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
@@ -55,6 +56,11 @@ public class OpenDocumentSpreadsheet extends OpenDocument {
 		}
 		
 		return tableMap;
+	}
+	
+	public Collection<String> getTableNames() throws IOException {
+		if (tableMap == null) getTableMap();
+		return tableMap.keySet();
 	}
 	
 	@Override
