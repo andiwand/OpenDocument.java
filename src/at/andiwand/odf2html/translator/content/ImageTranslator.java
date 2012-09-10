@@ -1,6 +1,5 @@
 package at.andiwand.odf2html.translator.content;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 
@@ -39,9 +38,6 @@ public abstract class ImageTranslator extends SimpleElementReplacement {
 			out.writeAttribute("alt", "charts are not implemented so far... :/");
 			return;
 		}
-		
-		System.out.println(path);
-		System.out.println(new File(path).getPath());
 		
 		out.writeAttribute("alt", path);
 		

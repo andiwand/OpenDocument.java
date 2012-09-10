@@ -175,13 +175,12 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 				} else if (elementName.equals(ROW_ELEMENT_NAME)) {
 					in.unreadEvent(elementName);
 					break loop;
-				} else {
-					throw new LWXMLIllegalElementException(elementName);
 				}
 				
 				break;
-			default:
-				throw new LWXMLIllegalEventException(event);
+			case END_EMPTY_ELEMENT:
+			case END_ELEMENT:
+				break;
 			}
 		}
 		
@@ -222,13 +221,9 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 						throw new LWXMLIllegalEventException(event);
 					
 					return;
-				} else {
-					throw new LWXMLIllegalElementException(elementName);
 				}
 				
 				break;
-			default:
-				throw new LWXMLIllegalEventException(event);
 			}
 		}
 		
