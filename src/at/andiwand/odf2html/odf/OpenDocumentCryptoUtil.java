@@ -15,7 +15,7 @@ import javax.crypto.CipherInputStream;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-import at.andiwand.commons.util.collections.CollectionUtil;
+import at.andiwand.commons.util.collection.CollectionUtil;
 import at.andiwand.commons.util.comparator.MapEntryValueComparator;
 import de.rtner.security.auth.spi.MacBasedPRF;
 import de.rtner.security.auth.spi.PBKDF2Engine;

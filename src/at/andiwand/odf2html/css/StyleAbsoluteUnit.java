@@ -3,7 +3,7 @@ package at.andiwand.odf2html.css;
 import java.util.Map;
 
 import at.andiwand.commons.util.ArrayUtil;
-import at.andiwand.commons.util.collections.KeyGenerator;
+import at.andiwand.commons.util.collection.KeyGenerator;
 
 
 public enum StyleAbsoluteUnit {
