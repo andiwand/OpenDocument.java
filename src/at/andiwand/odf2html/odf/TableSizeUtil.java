@@ -7,7 +7,7 @@ import java.util.Set;
 
 import at.andiwand.commons.lwxml.LWXMLEvent;
 import at.andiwand.commons.lwxml.LWXMLUtil;
-import at.andiwand.commons.lwxml.reader.LWXMLDelegationReader;
+import at.andiwand.commons.lwxml.reader.LWXMLElementDelegationReader;
 import at.andiwand.commons.lwxml.reader.LWXMLReader;
 import at.andiwand.commons.util.ArrayUtil;
 import at.andiwand.commons.util.NumberUtil;
@@ -82,7 +82,7 @@ public class TableSizeUtil {
 			throws IOException {
 		LinkedHashMap<String, TableSize> result = new LinkedHashMap<String, TableSize>();
 		
-		LWXMLDelegationReader din = new LWXMLDelegationReader(in);
+		LWXMLElementDelegationReader din = new LWXMLElementDelegationReader(in);
 		
 		while (true) {
 			LWXMLEvent event = din.readEvent();
@@ -104,7 +104,7 @@ public class TableSizeUtil {
 		
 		String name = LWXMLUtil.parseSingleAttributes(in, TABLE_NAME_ATTRIBUTE);
 		
-		LWXMLDelegationReader din = new LWXMLDelegationReader(in);
+		LWXMLElementDelegationReader din = new LWXMLElementDelegationReader(in);
 		
 		while (true) {
 			LWXMLEvent event = din.readEvent();
@@ -131,7 +131,7 @@ public class TableSizeUtil {
 				ROWS_REPEATED_ATTRIBUTE_NAME), 1);
 		result.rows = repeated;
 		
-		LWXMLDelegationReader din = new LWXMLDelegationReader(in);
+		LWXMLElementDelegationReader din = new LWXMLElementDelegationReader(in);
 		
 		while (true) {
 			LWXMLEvent event = din.readEvent();

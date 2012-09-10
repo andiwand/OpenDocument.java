@@ -23,6 +23,7 @@ import at.andiwand.odf2html.odf.TableSize;
 import at.andiwand.odf2html.translator.style.DocumentStyle;
 
 
+// TODO: implement remove methods
 public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 	
 	private static final String NEW_ELEMENT_NAME = "table";
@@ -74,15 +75,6 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 		columnTranslation.addAttributeTranslator(attributeName, translator);
 		rowTranslation.addAttributeTranslator(attributeName, translator);
 		cellTranslator.addAttributeTranslator(attributeName, translator);
-	}
-	
-	@Override
-	public void removeAttributeTranslator(String attributeName) {
-		super.removeAttributeTranslator(attributeName);
-		
-		columnTranslation.removeAttributeTranslator(attributeName);
-		rowTranslation.removeAttributeTranslator(attributeName);
-		cellTranslator.removeAttributeTranslator(attributeName);
 	}
 	
 	private LWXMLAttribute getCurrentColumnDefaultStyleAttribute() {

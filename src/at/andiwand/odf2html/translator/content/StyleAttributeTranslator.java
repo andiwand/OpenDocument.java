@@ -14,7 +14,7 @@ public class StyleAttributeTranslator implements SimpleAttributeTranslator {
 	}
 	
 	@Override
-	public LWXMLAttribute translateAttribute(String name, String value) {
+	public LWXMLAttribute translate(String name, String value) {
 		return style.getStyleAttribute(value);
 	}
 	

@@ -6,7 +6,7 @@ import java.util.Map;
 
 import at.andiwand.commons.lwxml.LWXMLEvent;
 import at.andiwand.commons.lwxml.LWXMLUtil;
-import at.andiwand.commons.lwxml.reader.LWXMLDelegationReader;
+import at.andiwand.commons.lwxml.reader.LWXMLElementDelegationReader;
 import at.andiwand.commons.lwxml.reader.LWXMLReader;
 import at.andiwand.commons.lwxml.reader.LWXMLStreamReader;
 import at.andiwand.odf2html.css.StyleSheetWriter;
@@ -49,7 +49,7 @@ public abstract class DocumentStyleTranslator<T extends DocumentStyle> {
 	}
 	
 	public void translate(LWXMLReader in, T out) throws IOException {
-		LWXMLDelegationReader din = new LWXMLDelegationReader(in);
+		LWXMLElementDelegationReader din = new LWXMLElementDelegationReader(in);
 		
 		while (true) {
 			LWXMLEvent event = din.readEvent();
