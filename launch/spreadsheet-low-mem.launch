@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
+<stringAttribute key="bad_container_name" value="/odf2html/asdf"/>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/odf2html/src/at/andiwand/odf2html/test/SpreadsheetDocumentTranslatorTest.java"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="1"/>
+</listAttribute>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="at.andiwand.odf2html.test.SpreadsheetDocumentTranslatorTest"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="odf2html"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xmx2M"/>
+</launchConfiguration>
