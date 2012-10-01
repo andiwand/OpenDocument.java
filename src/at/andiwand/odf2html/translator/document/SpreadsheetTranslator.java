@@ -36,6 +36,7 @@ public class SpreadsheetTranslator extends DocumentTranslator {
 		LWXMLUtil.flushUntilStartElement(in, AUTOMATIC_STYLES_ELEMENT_NAME);
 		styleTranslator.translate(in, result);
 		
+		result.close();
 		return result;
 	}
 	

@@ -105,4 +105,8 @@ public class DocumentStyle {
 		styleOut.writeProperty(name, value);
 	}
 	
+	public void close() throws IOException {
+		if (styleOut.isDefinitionStarted()) styleOut.writeEndDefinition();
+	}
+	
 }

@@ -60,6 +60,8 @@ public class GeneralStyleElementTranslator extends
 				new VerticalAlignPropertyTranslator());
 		addDirectionPropertyTranslator("fo:border",
 				new BorderPropertyTranslator());
+		
+		addPropertyTranslator("fo:margin", new MarginPropertyTranslator());
 	}
 	
 	public void addPropertyTranslator(String attributeName) {
@@ -141,6 +143,7 @@ public class GeneralStyleElementTranslator extends
 				String attributeValue = in.readFollowingValue();
 				StyleProperty property = translator.translate(attributeName,
 						attributeValue);
+				if (property == null) break;
 				out.writeProperty(property);
 				
 				break;
