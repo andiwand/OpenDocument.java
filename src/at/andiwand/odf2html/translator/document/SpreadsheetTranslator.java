@@ -8,19 +8,15 @@ import at.andiwand.commons.lwxml.reader.LWXMLStreamReader;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
 import at.andiwand.odf2html.css.StyleSheetWriter;
 import at.andiwand.odf2html.odf.OpenDocument;
-import at.andiwand.odf2html.translator.FileCache;
 import at.andiwand.odf2html.translator.content.SpreadsheetContentTranslator;
 import at.andiwand.odf2html.translator.style.SpreadsheetStyle;
 import at.andiwand.odf2html.translator.style.SpreadsheetStyleTranslator;
+import at.andiwand.odf2html.util.FileCache;
 
 
 public class SpreadsheetTranslator extends DocumentTranslator {
 	
 	private static final String AUTOMATIC_STYLES_ELEMENT_NAME = "office:automatic-styles";
-	
-	public SpreadsheetTranslator() {
-		super();
-	}
 	
 	public SpreadsheetTranslator(FileCache fileCache) {
 		super(fileCache);
@@ -65,6 +61,10 @@ public class SpreadsheetTranslator extends DocumentTranslator {
 		out.writeStartElement("head");
 		
 		// TODO: dynamic
+		out.writeStartElement("base");
+		out.writeAttribute("target", "_blank");
+		out.writeEndElement("base");
+		
 		out.writeStartElement("meta");
 		out.writeAttribute("http-equiv", "Content-Type");
 		out.writeAttribute("content", "text/html; charset=UTF-8");

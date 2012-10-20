@@ -2,8 +2,8 @@ package at.andiwand.odf2html.translator.content;
 
 import at.andiwand.commons.lwxml.translator.simple.SimpleElementReplacement;
 import at.andiwand.odf2html.odf.OpenDocumentFile;
-import at.andiwand.odf2html.translator.FileCache;
 import at.andiwand.odf2html.translator.style.TextStyle;
+import at.andiwand.odf2html.util.FileCache;
 
 
 public class TextContentTranslator extends DefaultContentTranslator {

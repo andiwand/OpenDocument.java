@@ -11,6 +11,8 @@ import at.andiwand.odf2html.odf.LocatedOpenDocumentFile;
 import at.andiwand.odf2html.odf.OpenDocument;
 import at.andiwand.odf2html.odf.OpenDocumentFile;
 import at.andiwand.odf2html.translator.document.SpreadsheetTranslator;
+import at.andiwand.odf2html.util.DefaultFileCache;
+import at.andiwand.odf2html.util.FileCache;
 
 
 public class SpreadsheetDocumentTranslatorTest {
@@ -29,7 +31,8 @@ public class SpreadsheetDocumentTranslatorTest {
 		FileWriter fileWriter = new FileWriter(htmlFile);
 		LWXMLWriter out = new LWXMLStreamWriter(fileWriter);
 		
-		SpreadsheetTranslator translator = new SpreadsheetTranslator();
+		FileCache fileCache = new DefaultFileCache("/tmp/odr/");
+		SpreadsheetTranslator translator = new SpreadsheetTranslator(fileCache);
 		
 		long start = System.nanoTime();
 		translator.translate(document, out);

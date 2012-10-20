@@ -9,7 +9,7 @@ import java.io.Writer;
 
 import at.andiwand.commons.io.ByteStreamUtil;
 import at.andiwand.odf2html.odf.OpenDocumentFile;
-import at.andiwand.odf2html.translator.FileCache;
+import at.andiwand.odf2html.util.FileCache;
 
 
 public class CachedImageTranslator extends ImageTranslator {
@@ -29,14 +29,14 @@ public class CachedImageTranslator extends ImageTranslator {
 	public void writeSource(String path, Writer out) throws IOException {
 		String imageName = new File(path).getName();
 		
-		if (!fileCache.isFileCached(imageName)) {
-			File file = fileCache.getNewCachedFile(imageName);
+		if (!fileCache.isFile(imageName)) {
+			File file = fileCache.getFile(imageName);
 			InputStream fileIn = documentFile.getFileStream(path);
 			OutputStream fileOut = new FileOutputStream(file);
 			streamUtil.writeStream(fileIn, fileOut);
 		}
 		
-		out.write(fileCache.getCachedFileURI(imageName).toString());
+		out.write(fileCache.getFileURI(imageName).toString());
 	}
 	
 }
