@@ -15,11 +15,15 @@ public class DefaultFileCache extends AbstractFileCache {
 	private final File directory;
 	
 	public DefaultFileCache(String directory) {
-		this(new File(directory));
+		this(new File(directory), File2URITranslator.DEFAULT);
 	}
 	
-	public DefaultFileCache(File directory) {
-		super(File2URITranslator.DEFAULT);
+	public DefaultFileCache(String directory, File2URITranslator uriTranslator) {
+		this(new File(directory), uriTranslator);
+	}
+	
+	public DefaultFileCache(File directory, File2URITranslator uriTranslator) {
+		super(uriTranslator);
 		
 		if (!directory.exists() && !directory.mkdir())
 			throw new IllegalStateException();
