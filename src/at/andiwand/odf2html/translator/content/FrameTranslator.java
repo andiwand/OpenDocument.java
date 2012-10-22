@@ -52,8 +52,9 @@ public class FrameTranslator extends SimpleElementReplacement {
 		String width = getCurrentParsedAttribute(WIDTH_ATTRIBUTE_NAME);
 		String height = getCurrentParsedAttribute(HEIGHT_ATTRIBUTE_NAME);
 		
-		if ((width == null) || (height == null))
-			throw new IllegalStateException();
+		// TODO: stupid stuff
+		// if ((width == null) || (height == null))
+		// 	throw new IllegalStateException();
 		
 		style += "width:" + width + ";";
 		style += "height:" + height + ";";
