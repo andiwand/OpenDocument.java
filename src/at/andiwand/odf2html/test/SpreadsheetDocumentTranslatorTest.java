@@ -27,6 +27,9 @@ public class SpreadsheetDocumentTranslatorTest {
 		OpenDocumentFile documentFile = new LocatedOpenDocumentFile(file);
 		OpenDocument document = documentFile.getAsOpenDocument();
 		
+		System.out.println(document.getAsOpenDocumentSpreadsheet()
+				.getTableMap());
+		
 		File htmlFile = new File(file.getPath() + ".html");
 		FileWriter fileWriter = new FileWriter(htmlFile);
 		LWXMLWriter out = new LWXMLStreamWriter(fileWriter);
