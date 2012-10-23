@@ -12,15 +12,6 @@ import at.andiwand.odf2html.util.FileCache;
 public class TemporaryOpenDocumentFile extends LocatedOpenDocumentFile {
 	
 	private static int lastIdentity;
-	private static String lastName;
-	
-	public static int getLastIdentity() {
-		return lastIdentity;
-	}
-	
-	public static String getLastName() {
-		return lastName;
-	}
 	
 	public TemporaryOpenDocumentFile(File file) throws IOException {
 		super(file);
@@ -28,12 +19,15 @@ public class TemporaryOpenDocumentFile extends LocatedOpenDocumentFile {
 	
 	public TemporaryOpenDocumentFile(InputStream inputStream,
 			FileCache fileCache) throws IOException {
-		// TODO: ugly
-		super(fileCache
-				.getFile(lastName = ("odf-" + (lastIdentity++) + ".odt")));
-		OutputStream outputStream = fileCache.getFileOutputStream(lastName);
+		// TODO: fix ugly
+		String name = "odf-" + (lastIdentity++) + ".odt";
+		File file = fileCache.newFile(name);
+		
+		OutputStream outputStream = fileCache.getFileOutputStream(name);
 		ByteStreamUtil.writeStreamBuffered(inputStream, outputStream);
 		outputStream.close();
+		
+		init(file);
 	}
 	
 }

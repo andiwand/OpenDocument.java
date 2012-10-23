@@ -15,12 +15,18 @@ import at.andiwand.commons.util.EnumerationUtil;
 
 public class LocatedOpenDocumentFile extends OpenDocumentFile {
 	
-	private final File file;
-	private final ZipFile zipFile;
+	private File file;
+	private ZipFile zipFile;
 	
 	private Map<String, ZipEntry> entryMap;
 	
+	protected LocatedOpenDocumentFile() {}
+	
 	public LocatedOpenDocumentFile(File file) throws IOException {
+		init(file);
+	}
+	
+	protected void init(File file) throws IOException {
 		this.file = file;
 		this.zipFile = new ZipFile(file);
 	}
