@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry excluding="at/andiwand/odf2html/translator-old/|at/andiwand/odf2html/translator-old/" kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="lib" path="lib/zip4j_1.3.1.jar"/>
 	<classpathentry kind="lib" path="lib/commons.jar" sourcepath="/commons"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

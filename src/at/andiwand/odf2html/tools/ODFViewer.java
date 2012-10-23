@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -25,8 +26,6 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
-import net.lingala.zip4j.exception.ZipException;
-import at.andiwand.commons.lwxml.reader.LWXMLReaderException;
 import at.andiwand.commons.swing.JFrameUtil;
 import at.andiwand.odf2html.odf.LocatedOpenDocumentFile;
 import at.andiwand.odf2html.odf.OpenDocumentFile;
@@ -135,7 +134,8 @@ public class ODFViewer extends JFrame {
 			documentFile.setPassword(password);
 		}
 		
-		List<String> fileList = documentFile.getFileList();
+		List<String> fileList = new ArrayList<String>(documentFile
+				.getFileNames());
 		Collections.sort(fileList);
 		
 		DefaultMutableTreeNode root = generateTree(fileList, file.getName());
@@ -182,8 +182,7 @@ public class ODFViewer extends JFrame {
 		open(new File(string));
 	}
 	
-	private void subOpen(String file) throws ZipException,
-			LWXMLReaderException, IOException {
+	private void subOpen(String file) throws IOException {
 		if (file.endsWith(".xml")) {
 			InputStream inputStream = documentFile.getFileStream(file);
 			XMLViewer viewer = new XMLViewer(inputStream, file);

@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.zip.Inflater;
@@ -76,9 +75,9 @@ public abstract class OpenDocumentFile {
 		return encryptionParameterMap;
 	}
 	
-	public abstract List<String> getFileList() throws IOException;
+	public abstract Set<String> getFileNames() throws IOException;
 	
-	protected abstract InputStream getRawFileStream(String path)
+	protected abstract InputStream getRawFileStream(String name)
 			throws IOException;
 	
 	public InputStream getFileStream(String path) throws IOException {

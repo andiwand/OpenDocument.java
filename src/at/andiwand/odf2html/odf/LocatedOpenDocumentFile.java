@@ -4,66 +4,53 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
-import net.lingala.zip4j.core.ZipFile;
-import net.lingala.zip4j.exception.ZipException;
-import net.lingala.zip4j.model.FileHeader;
+import at.andiwand.commons.util.EnumerationUtil;
 
 
 public class LocatedOpenDocumentFile extends OpenDocumentFile {
 	
+	private final File file;
 	private final ZipFile zipFile;
 	
+	private Map<String, ZipEntry> entryMap;
+	
 	public LocatedOpenDocumentFile(File file) throws IOException {
-		try {
-			zipFile = new ZipFile(file);
-		} catch (ZipException e) {
-			// TODO: log e
-			throw new IOException("zip exception");
-		}
+		this.file = file;
+		this.zipFile = new ZipFile(file);
 	}
 	
 	public File getFile() {
-		return zipFile.getFile();
+		return file;
 	}
 	
 	@Override
-	@SuppressWarnings("unchecked")
-	public List<String> getFileList() throws IOException {
-		try {
-			List<FileHeader> fileHeaders = zipFile.getFileHeaders();
-			List<String> result = new ArrayList<String>(fileHeaders.size());
+	public Set<String> getFileNames() throws IOException {
+		if (entryMap == null) {
+			entryMap = new HashMap<String, ZipEntry>();
 			
-			for (FileHeader fileHeader : fileHeaders) {
-				result.add(fileHeader.getFileName());
+			for (ZipEntry entry : EnumerationUtil.iterable(zipFile.entries())) {
+				entryMap.put(entry.getName(), entry);
 			}
-			
-			return result;
-		} catch (ZipException e) {
-			// TODO: log e
-			throw new IOException("zip exception");
 		}
+		
+		return entryMap.keySet();
 	}
 	
-	// TODO: exception
 	@Override
-	@SuppressWarnings("unchecked")
-	protected InputStream getRawFileStream(String path) throws IOException {
-		try {
-			List<FileHeader> fileHeaders = zipFile.getFileHeaders();
-			
-			for (FileHeader fileHeader : fileHeaders) {
-				if (!path.equals(fileHeader.getFileName())) continue;
-				return zipFile.getInputStream(fileHeader);
-			}
-			
-			throw new FileNotFoundException("file does not exist");
-		} catch (ZipException e) {
-			// TODO: log e
-			throw new IOException("zip exception");
-		}
+	protected InputStream getRawFileStream(String name) throws IOException {
+		if (entryMap == null) getFileNames();
+		
+		ZipEntry entry = entryMap.get(name);
+		if (entry == null)
+			throw new FileNotFoundException("file does not exist: " + name);
+		
+		return zipFile.getInputStream(entry);
 	}
 	
 }
