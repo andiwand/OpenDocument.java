@@ -17,6 +17,7 @@ public class TemporaryOpenDocumentFile extends LocatedOpenDocumentFile {
 		super(file);
 	}
 	
+	// TODO: improve
 	public TemporaryOpenDocumentFile(InputStream inputStream,
 			FileCache fileCache) throws IOException {
 		// TODO: fix ugly
