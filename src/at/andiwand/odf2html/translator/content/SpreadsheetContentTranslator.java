@@ -29,6 +29,7 @@ public class SpreadsheetContentTranslator extends DefaultContentTranslator {
 		
 		addElementTranslator("draw:frame", new FrameTranslator());
 		
+		addElementTranslator("table:tracked-changes", new NothingTranslator());
 		SpreadsheetTableTranslator tableTranslator;
 		if (tableIndex == -1) {
 			tableTranslator = new SpreadsheetTableTranslator(style, this,
