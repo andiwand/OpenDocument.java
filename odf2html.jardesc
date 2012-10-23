@@ -17,6 +17,7 @@
         <javaElement handleIdentifier="=odf2html/src&lt;at.andiwand.odf2html.translator.content"/>
         <javaElement handleIdentifier="=odf2html/src&lt;at.andiwand.odf2html.translator.style"/>
         <javaElement handleIdentifier="=odf2html/src&lt;at.andiwand.odf2html.css"/>
+        <javaElement handleIdentifier="=odf2html/src&lt;at.andiwand.odf2html.util"/>
         <javaElement handleIdentifier="=odf2html/src&lt;de.rtner.misc"/>
         <javaElement handleIdentifier="=odf2html/src&lt;at.andiwand.odf2html.odf"/>
         <javaElement handleIdentifier="=odf2html/src&lt;de.rtner"/>

@@ -276,6 +276,9 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 					translateCell(in, out);
 					i += cellTranslator.getCurrentWidth();
 				} else if (elementName.equals(COVERED_CELL_ELEMENT_NAME)) {
+					System.out.println(elementName);
+					System.out.println(in.readEvent());
+					System.out.println(in.readValue());
 					LWXMLUtil.flushEmptyElement(in);
 				} else if (elementName.equals(ROW_ELEMENT_NAME)) {
 					if (event != LWXMLEvent.END_ELEMENT)

@@ -30,6 +30,7 @@ import at.andiwand.commons.lwxml.reader.LWXMLReaderException;
 import at.andiwand.commons.swing.JFrameUtil;
 import at.andiwand.odf2html.odf.LocatedOpenDocumentFile;
 import at.andiwand.odf2html.odf.OpenDocumentFile;
+import at.andiwand.odf2html.test.TestFileChooser;
 
 
 public class ODFViewer extends JFrame {
@@ -115,14 +116,12 @@ public class ODFViewer extends JFrame {
 		});
 	}
 	
-	public ODFViewer(File file) throws IOException {
-		this();
-		open(file);
+	public void setFileChooser(JFileChooser fileChooser) {
+		this.fileChooser = fileChooser;
 	}
 	
-	public ODFViewer(String string) throws IOException {
-		this();
-		open(string);
+	public JFileChooser getFileChooser() {
+		return fileChooser;
 	}
 	
 	public void open(File file) throws IOException {
@@ -198,6 +197,7 @@ public class ODFViewer extends JFrame {
 	
 	public static void main(String[] args) {
 		ODFViewer viewer = new ODFViewer();
+		viewer.setFileChooser(new TestFileChooser());
 		viewer.setSize(600, 500);
 		JFrameUtil.centerFrame(viewer);
 		viewer.setDefaultCloseOperation(EXIT_ON_CLOSE);
