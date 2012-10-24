@@ -24,6 +24,7 @@ import at.andiwand.odf2html.translator.style.DocumentStyle;
 
 
 // TODO: implement remove methods
+// TODO: renew source
 public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 	
 	private static final String NEW_ELEMENT_NAME = "table";
@@ -249,8 +250,7 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 		rowTranslation.translate(in, tmpOut);
 		
 		if (repeated > 1) {
-			// TODO: fix dirty fix
-			if (repeated > 10) repeated = 10;
+			// TODO: hotfix limit repeated?
 			for (int i = 0; i < repeated; i++) {
 				((LWXMLEventListWriter) tmpOut).writeTo(out);
 			}
@@ -275,8 +275,8 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 						throw new LWXMLIllegalEventException(event);
 					
 					in.unreadEvent(elementName);
-					translateCell(in, out);
-					i += cellTranslator.getCurrentWidth();
+					i += translateCell(in, out, currentTableSize.getColumns()
+							- i);
 				} else if (elementName.equals(COVERED_CELL_ELEMENT_NAME)) {
 					// TODO: fix this really
 					// LWXMLUtil.flushEmptyElement(in);
@@ -301,27 +301,31 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 		in.unreadEvent(ROW_ELEMENT_NAME);
 	}
 	
-	private void translateCell(LWXMLPushbackReader in, LWXMLWriter out)
-			throws IOException {
+	private int translateCell(LWXMLPushbackReader in, LWXMLWriter out,
+			int maxRepeated) throws IOException {
 		LWXMLWriter tmpOut = new LWXMLEventListWriter();
 		
 		translateCellStart(in, tmpOut);
-		int repeated = cellTranslator.getCurrentRepeated();
+		int repeated = Math.min(maxRepeated, cellTranslator
+				.getCurrentRepeated());
 		
 		tmpOut.flush();
 		
 		if (repeated == 1) {
 			((LWXMLEventListWriter) tmpOut).writeTo(out);
 			tmpOut = out;
-			repeated--;
 		}
 		
 		translateCellContent(in, tmpOut);
 		cellTranslator.translate(in, tmpOut);
 		
-		for (int i = 0; i < repeated; i++) {
-			((LWXMLEventListWriter) tmpOut).writeTo(out);
+		if (repeated > 1) {
+			for (int i = 0; i < repeated; i++) {
+				((LWXMLEventListWriter) tmpOut).writeTo(out);
+			}
 		}
+		
+		return repeated;
 	}
 	
 	private void translateCellStart(LWXMLPushbackReader in, LWXMLWriter out)

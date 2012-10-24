@@ -128,7 +128,7 @@ public abstract class OpenDocumentFile {
 	
 	public String getMimetype() throws IOException {
 		if (mimetype == null) {
-			// TODO: improve mimetype fix
+			// TODO: improve mimetype fix -> other method for switching
 			if (isFile(MIMETYPE_PATH)) {
 				InputStream in = getRawFileStream(MIMETYPE_PATH);
 				mimetype = CharStreamUtil
