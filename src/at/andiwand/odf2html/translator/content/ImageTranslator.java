@@ -26,23 +26,22 @@ public abstract class ImageTranslator extends SimpleElementReplacement {
 	@Override
 	public void translateAttributeList(LWXMLPushbackReader in, LWXMLWriter out)
 			throws IOException {
-		String path = LWXMLUtil.parseSingleAttributes(in, PATH_ATTRIBUTE_NAME);
-		if (path == null) throw new LWXMLTranslatorException();
+		String name = LWXMLUtil.parseSingleAttributes(in, PATH_ATTRIBUTE_NAME);
+		if (name == null) throw new LWXMLTranslatorException();
 		// TODO: remove and implement path resolver
-		path = path.replaceAll("\\./", "");
+		name = name.replaceAll("\\./", "");
 		
 		out.writeAttribute("style", "width: 100%; heigth: 100%");
 		
 		// TODO: improve
-		if (path.contains(OBJECT_REPLACEMENT_STRING)) {
+		if (name.contains(OBJECT_REPLACEMENT_STRING)) {
 			out.writeAttribute("alt", "charts are not implemented so far... :/");
-			return;
+		} else {
+			out.writeAttribute("alt", "Image not found: " + name);
+			
+			out.writeAttribute("src", "");
+			writeSource(name, out);
 		}
-		
-		out.writeAttribute("alt", path);
-		
-		out.writeAttribute("src", "");
-		writeSource(path, out);
 	}
 	
 	@Override
@@ -59,7 +58,7 @@ public abstract class ImageTranslator extends SimpleElementReplacement {
 		throw new LWXMLIllegalEventException(in);
 	}
 	
-	public abstract void writeSource(String path, Writer out)
+	public abstract void writeSource(String name, Writer out)
 			throws IOException;
 	
 }

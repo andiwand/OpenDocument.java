@@ -26,12 +26,12 @@ public class CachedImageTranslator extends ImageTranslator {
 	}
 	
 	@Override
-	public void writeSource(String path, Writer out) throws IOException {
-		String imageName = new File(path).getName();
+	public void writeSource(String name, Writer out) throws IOException {
+		String imageName = new File(name).getName();
 		
-		if (!fileCache.isFile(imageName)) {
-			File file = fileCache.getFile(imageName);
-			InputStream fileIn = documentFile.getFileStream(path);
+		if (!fileCache.isFile(imageName) && documentFile.isFile(name)) {
+			File file = fileCache.newFile(imageName);
+			InputStream fileIn = documentFile.getFileStream(name);
 			OutputStream fileOut = new FileOutputStream(file);
 			streamUtil.writeStream(fileIn, fileOut);
 		}

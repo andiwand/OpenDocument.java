@@ -16,19 +16,19 @@
         <javaElement handleIdentifier="=commons/src&lt;at.andiwand.commons.lwxml.reader"/>
         <javaElement handleIdentifier="=commons/src&lt;at.andiwand.commons.swing"/>
         <javaElement handleIdentifier="=commons/src&lt;at.andiwand.commons.network"/>
-        <javaElement handleIdentifier="=commons/src&lt;at.andiwand.commons.lwxml.path"/>
         <javaElement handleIdentifier="=commons/src&lt;at.andiwand.commons.xml.namespace"/>
+        <javaElement handleIdentifier="=commons/src&lt;at.andiwand.commons.lwxml.path"/>
         <javaElement handleIdentifier="=commons/src&lt;at.andiwand.commons.graphics"/>
         <javaElement handleIdentifier="=commons/src&lt;at.andiwand.commons.util.iterator"/>
-        <javaElement handleIdentifier="=commons/src&lt;at.andiwand.commons.codec"/>
         <javaElement handleIdentifier="=commons/src&lt;at.andiwand.commons.math.graph"/>
+        <javaElement handleIdentifier="=commons/src&lt;at.andiwand.commons.codec"/>
         <javaElement handleIdentifier="=commons/src&lt;at.andiwand.commons.util.comparator"/>
         <javaElement handleIdentifier="=commons/src&lt;at.andiwand.commons.lwxml"/>
         <javaElement handleIdentifier="=commons/src&lt;at.andiwand.commons.io"/>
-        <javaElement handleIdentifier="=commons/src&lt;at.andiwand.commons.lwxml.translator.simple"/>
         <javaElement handleIdentifier="=commons/src&lt;at.andiwand.commons.xml"/>
-        <javaElement handleIdentifier="=commons/src&lt;at.andiwand.commons.lwxml.visitor"/>
+        <javaElement handleIdentifier="=commons/src&lt;at.andiwand.commons.lwxml.translator.simple"/>
         <javaElement handleIdentifier="=commons/src&lt;at.andiwand.commons.util.collection.primitive"/>
+        <javaElement handleIdentifier="=commons/src&lt;at.andiwand.commons.lwxml.visitor"/>
         <javaElement handleIdentifier="=commons/src&lt;at.andiwand.commons.math"/>
         <javaElement handleIdentifier="=commons/src&lt;at.andiwand.commons.lwxml.translator"/>
         <javaElement handleIdentifier="=commons/src&lt;at.andiwand.commons.cli"/>

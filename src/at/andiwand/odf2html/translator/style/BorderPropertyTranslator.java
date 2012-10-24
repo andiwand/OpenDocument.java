@@ -30,7 +30,7 @@ public class BorderPropertyTranslator implements GeneralPropertyTranslator {
 	}
 	
 	private static final Pattern SIZE_PATTERN = Pattern
-			.compile("(\\d+(\\.\\d+)?)\\s*(\\w+)");
+			.compile("(\\d+(\\.\\d+)?)\\s*?(\\w*)");
 	
 	private final Map<StyleAbsoluteUnit, Double> limitMap;
 	
@@ -57,13 +57,15 @@ public class BorderPropertyTranslator implements GeneralPropertyTranslator {
 			double unitValue = Double.parseDouble(matcher.group(1));
 			String symbol = matcher.group(3);
 			StyleAbsoluteUnit unit = StyleAbsoluteUnit.getBySymbol(symbol);
-			if (unit == null)
-				throw new IllegalStateException("unknown symbol: " + symbol);
-			double limit = limitMap.get(unit);
 			
-			if (unitValue < limit) {
-				value = value.substring(0, matcher.start()) + "1px"
-						+ value.substring(matcher.end());
+			// TODO: log unknown symbol
+			if (unit != null) {
+				double limit = limitMap.get(unit);
+				
+				if (unitValue < limit) {
+					value = value.substring(0, matcher.start()) + "1px"
+							+ value.substring(matcher.end());
+				}
 			}
 		}
 		

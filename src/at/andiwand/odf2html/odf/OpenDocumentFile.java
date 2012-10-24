@@ -12,7 +12,6 @@ import java.util.zip.InflaterInputStream;
 import at.andiwand.commons.io.CharStreamUtil;
 import at.andiwand.commons.lwxml.LWXMLEvent;
 import at.andiwand.commons.lwxml.reader.LWXMLReader;
-import at.andiwand.commons.lwxml.reader.LWXMLReaderException;
 import at.andiwand.commons.lwxml.reader.LWXMLStreamReader;
 import at.andiwand.commons.util.ArrayUtil;
 
@@ -31,15 +30,10 @@ public abstract class OpenDocumentFile {
 	private String password;
 	
 	public boolean isEncrypted() throws IOException {
-		if (encryptionParameterMap == null) {
-			try {
-				encryptionParameterMap = Collections
-						.unmodifiableMap(EncryptionParameter
-								.parseEncryptionParameters(this));
-			} catch (LWXMLReaderException e) {
-				throw new IllegalStateException("lwxml exception", e);
-			}
-		}
+		if (encryptionParameterMap == null)
+			encryptionParameterMap = Collections
+					.unmodifiableMap(EncryptionParameter
+							.parseEncryptionParameters(this));
 		
 		return !encryptionParameterMap.isEmpty();
 	}
@@ -74,6 +68,8 @@ public abstract class OpenDocumentFile {
 		
 		return encryptionParameterMap;
 	}
+	
+	public abstract boolean isFile(String name) throws IOException;
 	
 	public abstract Set<String> getFileNames() throws IOException;
 	
@@ -131,9 +127,6 @@ public abstract class OpenDocumentFile {
 	public String getMimetype() throws IOException {
 		if (mimetype == null) {
 			InputStream in = getRawFileStream(MIMETYPE_PATH);
-			if (in == null)
-				throw new IllegalStateException("mimetype file does not exist");
-			
 			mimetype = CharStreamUtil.readAsString(new InputStreamReader(in));
 		}
 		

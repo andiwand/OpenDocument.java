@@ -38,6 +38,12 @@ public class LocatedOpenDocumentFile extends OpenDocumentFile {
 	}
 	
 	@Override
+	public boolean isFile(String name) throws IOException {
+		if (entryMap == null) getFileNames();
+		return entryMap.containsKey(name);
+	}
+	
+	@Override
 	public Set<String> getFileNames() throws IOException {
 		if (entryMap == null) {
 			entryMap = new HashMap<String, ZipEntry>();
