@@ -16,12 +16,12 @@ public class CachedImageTranslator extends ImageTranslator {
 	
 	private final ByteStreamUtil streamUtil = new ByteStreamUtil();
 	
-	private final OpenDocumentFile documentFile;
 	private final FileCache fileCache;
 	
 	public CachedImageTranslator(OpenDocumentFile documentFile,
 			FileCache fileCache) {
-		this.documentFile = documentFile;
+		super(documentFile);
+		
 		this.fileCache = fileCache;
 	}
 	
@@ -29,7 +29,7 @@ public class CachedImageTranslator extends ImageTranslator {
 	public void writeSource(String name, Writer out) throws IOException {
 		String imageName = new File(name).getName();
 		
-		if (!fileCache.isFile(imageName) && documentFile.isFile(name)) {
+		if (!fileCache.isFile(imageName)) {
 			File file = fileCache.newFile(imageName);
 			InputStream fileIn = documentFile.getFileStream(name);
 			OutputStream fileOut = new FileOutputStream(file);

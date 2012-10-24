@@ -14,10 +14,8 @@ public class InlineImageTranslator extends ImageTranslator {
 	
 	private final ByteStreamUtil byteStreamUtil = new ByteStreamUtil();
 	
-	private final OpenDocumentFile documentFile;
-	
 	public InlineImageTranslator(OpenDocumentFile documentFile) {
-		this.documentFile = documentFile;
+		super(documentFile);
 	}
 	
 	@Override

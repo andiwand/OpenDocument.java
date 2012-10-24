@@ -9,6 +9,7 @@ import at.andiwand.commons.lwxml.reader.LWXMLPushbackReader;
 import at.andiwand.commons.lwxml.translator.LWXMLTranslatorException;
 import at.andiwand.commons.lwxml.translator.simple.SimpleElementReplacement;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
+import at.andiwand.odf2html.odf.OpenDocumentFile;
 
 
 // TODO: implement charts
@@ -19,8 +20,12 @@ public abstract class ImageTranslator extends SimpleElementReplacement {
 	
 	private static final String OBJECT_REPLACEMENT_STRING = "ObjectReplacement";
 	
-	public ImageTranslator() {
+	protected final OpenDocumentFile documentFile;
+	
+	public ImageTranslator(OpenDocumentFile documentFile) {
 		super(NEW_ELEMENT_NAME);
+		
+		this.documentFile = documentFile;
 	}
 	
 	@Override
@@ -35,12 +40,13 @@ public abstract class ImageTranslator extends SimpleElementReplacement {
 		
 		// TODO: improve
 		if (name.contains(OBJECT_REPLACEMENT_STRING)) {
-			out.writeAttribute("alt", "charts are not implemented so far... :/");
+			out.writeAttribute("alt", "Charts are not implemented so far... :/");
 		} else {
 			out.writeAttribute("alt", "Image not found: " + name);
 			
 			out.writeAttribute("src", "");
-			writeSource(name, out);
+			if (documentFile.isFile(name)) writeSource(name, out);
+			else out.write(name);
 		}
 	}
 	
