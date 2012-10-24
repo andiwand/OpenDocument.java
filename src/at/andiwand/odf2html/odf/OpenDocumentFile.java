@@ -172,7 +172,7 @@ public abstract class OpenDocumentFile {
 			return getAsOpenDocumentPresentation();
 		}
 		
-		throw new IllegalStateException("unsupported mimetype");
+		throw new IllegalMimeTypeException(mimetype);
 	}
 	
 	public OpenDocumentText getAsOpenDocumentText() throws IOException {

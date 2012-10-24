@@ -1,7 +1,6 @@
 package at.andiwand.odf2html.odf;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -62,7 +61,7 @@ public class LocatedOpenDocumentFile extends OpenDocumentFile {
 		
 		ZipEntry entry = entryMap.get(name);
 		if (entry == null)
-			throw new FileNotFoundException("file does not exist: " + name);
+			throw new ZipEntryNotFoundException("entry does not exist: " + name);
 		
 		return zipFile.getInputStream(entry);
 	}
