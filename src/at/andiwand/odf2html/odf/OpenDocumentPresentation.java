@@ -10,7 +10,7 @@ import at.andiwand.commons.lwxml.reader.LWXMLReaderException;
 
 public class OpenDocumentPresentation extends OpenDocument {
 	
-	private static final String MIMETYPE = "application/vnd.oasis.opendocument.presentation";
+	public static final String MIMETYPE = "application/vnd.oasis.opendocument.presentation";
 	
 	private static final String PAGE_NAME_ATTRIBUTE = "draw:name";
 	

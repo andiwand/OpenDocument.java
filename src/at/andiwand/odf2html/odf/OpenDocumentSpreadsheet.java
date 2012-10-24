@@ -12,7 +12,7 @@ import at.andiwand.commons.lwxml.reader.LWXMLStreamReader;
 
 public class OpenDocumentSpreadsheet extends OpenDocument {
 	
-	private static final String MIMETYPE = "application/vnd.oasis.opendocument.spreadsheet";
+	public static final String MIMETYPE = "application/vnd.oasis.opendocument.spreadsheet";
 	
 	private static final String TABLE_COUNT_ATTRIBUTE = "meta:table-count";
 	

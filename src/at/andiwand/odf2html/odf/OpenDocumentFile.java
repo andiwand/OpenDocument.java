@@ -11,6 +11,8 @@ import java.util.zip.InflaterInputStream;
 
 import at.andiwand.commons.io.CharStreamUtil;
 import at.andiwand.commons.lwxml.LWXMLEvent;
+import at.andiwand.commons.lwxml.LWXMLUtil;
+import at.andiwand.commons.lwxml.path.LWXMLPath;
 import at.andiwand.commons.lwxml.reader.LWXMLReader;
 import at.andiwand.commons.lwxml.reader.LWXMLStreamReader;
 import at.andiwand.commons.util.ArrayUtil;
@@ -126,8 +128,30 @@ public abstract class OpenDocumentFile {
 	
 	public String getMimetype() throws IOException {
 		if (mimetype == null) {
-			InputStream in = getRawFileStream(MIMETYPE_PATH);
-			mimetype = CharStreamUtil.readAsString(new InputStreamReader(in));
+			// TODO: improve mimetype fix
+			if (isFile(MIMETYPE_PATH)) {
+				InputStream in = getRawFileStream(MIMETYPE_PATH);
+				mimetype = CharStreamUtil
+						.readAsString(new InputStreamReader(in));
+			} else {
+				LWXMLReader in = new LWXMLStreamReader(
+						getFileStream("content.xml"));
+				LWXMLUtil.flushUntilPath(in, new LWXMLPath(
+						"office:document-content/office:body/"));
+				LWXMLUtil.flushStartElement(in);
+				
+				in.readEvent();
+				String node = in.readValue();
+				
+				// TODO: complete
+				if (node.equals("office:text")) {
+					mimetype = OpenDocumentText.MIMETYPE;
+				} else if (node.equals("office:spreadsheet")) {
+					mimetype = OpenDocumentSpreadsheet.MIMETYPE;
+				} else {
+					throw new IllegalStateException("unsupported file");
+				}
+			}
 		}
 		
 		return mimetype;

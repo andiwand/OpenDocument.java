@@ -8,7 +8,7 @@ import at.andiwand.commons.lwxml.reader.LWXMLReaderException;
 
 public class OpenDocumentText extends OpenDocument {
 	
-	private static final String MIMETYPE = "application/vnd.oasis.opendocument.text";
+	public static final String MIMETYPE = "application/vnd.oasis.opendocument.text";
 	
 	private static final String PAGE_COUNT_ATTRIBUTE = "meta:page-count";
 	private static final String SOFT_PAGE_BREAKS_ATTRIBUTE = "text:use-soft-page-breaks";
