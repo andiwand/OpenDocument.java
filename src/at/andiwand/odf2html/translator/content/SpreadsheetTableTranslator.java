@@ -250,7 +250,7 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 		
 		if (repeated > 1) {
 			// TODO: fix dirty fix
-			if (repeated > 50) repeated = 50;
+			if (repeated > 10) repeated = 10;
 			for (int i = 0; i < repeated; i++) {
 				((LWXMLEventListWriter) tmpOut).writeTo(out);
 			}
