@@ -56,23 +56,28 @@ public class OpenDocumentCryptoUtil {
 			EncryptionParameter encryptionParameter, InputStream in)
 			throws IOException {
 		try {
-			String checksumAlgorithm = encryptionParameter.getChecksumType();
+			String checksumAlgorithm = encryptionParameter.getChecksumType()
+					.toLowerCase();
 			byte[] checksum = encryptionParameter.getChecksum();
 			
-			String[] tmp = checksumAlgorithm.split("/");
-			checksumAlgorithm = tmp[0];
-			if (!tmp[1].equalsIgnoreCase("1K"))
+			if (!checksumAlgorithm.contains("1k"))
 				throw new UnsupportedEncryptionException(
-						"unsupported checksum type: "
+						"unsupported checksum: "
 								+ encryptionParameter.getChecksumType());
+			if (checksumAlgorithm.contains("sha256")) {
+				checksumAlgorithm = "SHA-256";
+			} else if (checksumAlgorithm.contains("sha1")) {
+				checksumAlgorithm = "SHA-1";
+			} else {
+				throw new UnsupportedEncryptionException(
+						"cannot identify checksum algorithm: "
+								+ checksumAlgorithm);
+			}
 			
 			MessageDigest digest = MessageDigest.getInstance(checksumAlgorithm);
 			byte[] bytes = new byte[1024];
 			int count = in.read(bytes);
 			digest.update(bytes, 0, count);
-			
-			System.out.println(count);
-			System.out.println(Arrays.toString(Arrays.copyOf(bytes, count)));
 			
 			if (!Arrays.equals(checksum, digest.digest())) return false;
 		} catch (ZipException e) {
@@ -88,42 +93,53 @@ public class OpenDocumentCryptoUtil {
 	
 	public static InputStream getPlainInputStream(InputStream in,
 			EncryptionParameter encryptionParameter, String password) {
-		try {
-			String keyDerivation = encryptionParameter.getKeyDerivation();
-			if (!keyDerivation.equalsIgnoreCase("PBKDF2"))
-				throw new UnsupportedEncryptionException(
-						"unsupported key derivation: " + keyDerivation);
-			
-			String startKeyGeneration = encryptionParameter
-					.getStartKeyGeneration();
-			// TODO: password charset
-			byte[] passwordBytes = password.getBytes();
-			
-			byte[] salt = encryptionParameter.getSalt();
-			int iterationCount = encryptionParameter.getIterationCount();
-			int keySize = encryptionParameter.getKeySize();
-			String algorithm = encryptionParameter.getAlgorithm().toLowerCase();
-			
-			byte[] initialisationVector = encryptionParameter
-					.getInitialisationVector();
-			
-			// TODO: improve
-			String transformation;
-			if (algorithm.contains("blowfish")) {
-				algorithm = "Blowfish";
-				transformation = "Blowfish/CFB/NoPadding";
-			} else if (algorithm.contains("aes")) {
-				algorithm = "AES";
-				transformation = "AES/CBC/NoPadding";
+		String keyDerivation = encryptionParameter.getKeyDerivation();
+		if (!keyDerivation.equalsIgnoreCase("PBKDF2"))
+			throw new UnsupportedEncryptionException(
+					"unsupported key derivation: " + keyDerivation);
+		
+		String startKeyGeneration = encryptionParameter.getStartKeyGeneration()
+				.toLowerCase();
+		// TODO: password charset
+		byte[] passwordBytes = password.getBytes();
+		
+		byte[] salt = encryptionParameter.getSalt();
+		int iterationCount = encryptionParameter.getIterationCount();
+		int keySize = encryptionParameter.getKeySize();
+		String algorithm = encryptionParameter.getAlgorithm().toLowerCase();
+		
+		byte[] initialisationVector = encryptionParameter
+				.getInitialisationVector();
+		
+		// TODO: improve
+		String transformation;
+		if (algorithm.contains("blowfish")) {
+			algorithm = "Blowfish";
+			transformation = "Blowfish/CFB/NoPadding";
+		} else if (algorithm.contains("aes")) {
+			algorithm = "AES";
+			transformation = "AES/CBC/NoPadding";
+		} else {
+			throw new UnsupportedEncryptionException(
+					"cannot identify crypto algorithm: " + algorithm);
+		}
+		
+		// odf 1.0
+		if (keySize == -1) keySize = 16;
+		if (startKeyGeneration == null) {
+			startKeyGeneration = "SHA-1";
+		} else {
+			if (startKeyGeneration.contains("sha256")) {
+				startKeyGeneration = "SHA-256";
+			} else if (startKeyGeneration.contains("sha1")) {
+				startKeyGeneration = "SHA-1";
 			} else {
 				throw new UnsupportedEncryptionException(
-						"cannot identify algorithm: " + algorithm);
+						"cannot identify mac algorithm: " + startKeyGeneration);
 			}
-			
-			// ODF 1.0
-			if (startKeyGeneration == null) startKeyGeneration = "SHA1";
-			if (keySize == -1) keySize = 16;
-			
+		}
+		
+		try {
 			MessageDigest digest = MessageDigest
 					.getInstance(startKeyGeneration);
 			byte[] md = digest.digest(passwordBytes);

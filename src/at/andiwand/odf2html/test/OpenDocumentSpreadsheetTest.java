@@ -12,7 +12,7 @@ import at.andiwand.odf2html.odf.OpenDocumentSpreadsheet;
 public class OpenDocumentSpreadsheetTest {
 	
 	public static void main(String[] args) throws Exception {
-		JFileChooser fileChooser = new JFileChooser();
+		JFileChooser fileChooser = new TestFileChooser();
 		int option = fileChooser.showOpenDialog(null);
 		
 		if (option == JFileChooser.CANCEL_OPTION) return;
@@ -22,6 +22,9 @@ public class OpenDocumentSpreadsheetTest {
 		OpenDocumentSpreadsheet spreadsheet = documentFile
 				.getAsOpenDocumentSpreadsheet();
 		
+		System.out.println(documentFile.isEncrypted());
+		System.out.println(documentFile.isPasswordValid("test"));
+		if (documentFile.isEncrypted()) documentFile.setPassword("test");
 		System.out.println(spreadsheet.getTableCount());
 		System.out.println(spreadsheet.getTableMap());
 	}

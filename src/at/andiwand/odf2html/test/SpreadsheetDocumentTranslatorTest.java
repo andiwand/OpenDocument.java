@@ -25,6 +25,7 @@ public class SpreadsheetDocumentTranslatorTest {
 		
 		File file = fileChooser.getSelectedFile();
 		OpenDocumentFile documentFile = new LocatedOpenDocumentFile(file);
+		documentFile.setPassword("test");
 		OpenDocument document = documentFile.getAsOpenDocument();
 		
 		System.out.println(document.getAsOpenDocumentSpreadsheet()

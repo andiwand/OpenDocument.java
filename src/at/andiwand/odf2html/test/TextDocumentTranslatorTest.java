@@ -26,6 +26,7 @@ public class TextDocumentTranslatorTest {
 		
 		File file = fileChooser.getSelectedFile();
 		OpenDocumentFile documentFile = new LocatedOpenDocumentFile(file);
+		documentFile.setPassword("test");
 		OpenDocument document = documentFile.getAsOpenDocument();
 		
 		CharArrayWriter writer = new CharArrayWriter();

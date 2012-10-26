@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.zip.Inflater;
@@ -11,8 +12,6 @@ import java.util.zip.InflaterInputStream;
 
 import at.andiwand.commons.io.CharStreamUtil;
 import at.andiwand.commons.lwxml.LWXMLEvent;
-import at.andiwand.commons.lwxml.LWXMLUtil;
-import at.andiwand.commons.lwxml.path.LWXMLPath;
 import at.andiwand.commons.lwxml.reader.LWXMLReader;
 import at.andiwand.commons.lwxml.reader.LWXMLStreamReader;
 import at.andiwand.commons.util.ArrayUtil;
@@ -27,6 +26,7 @@ public abstract class OpenDocumentFile {
 			.toHashSet(new String[] {MIMETYPE_PATH, MANIFEST_PATH});
 	
 	private String mimetype;
+	private Map<String, String> mimetypeMap;
 	
 	private Map<String, EncryptionParameter> encryptionParameterMap;
 	private String password;
@@ -91,12 +91,19 @@ public abstract class OpenDocumentFile {
 		return inputStream;
 	}
 	
-	// TODO: improve
 	public String getFileMimetype(String path) throws IOException {
+		if (mimetypeMap == null) mimetypeMap = getFileMimetypeImpl();
+		
+		return mimetypeMap.get(path);
+	}
+	
+	public Map<String, String> getFileMimetypeImpl() throws IOException {
+		Map<String, String> result = new HashMap<String, String>();
+		
 		LWXMLReader in = new LWXMLStreamReader(getManifest());
 		
 		String mimetype = null;
-		String fullPath = null;
+		String path = null;
 		
 		while (true) {
 			LWXMLEvent event = in.readEvent();
@@ -109,52 +116,35 @@ public abstract class OpenDocumentFile {
 				if (attributeName.equals("manifest:media-type")) {
 					mimetype = in.readFollowingValue();
 				} else if (attributeName.equals("manifest:full-path")) {
-					fullPath = in.readFollowingValue();
+					path = in.readFollowingValue();
 				}
 				
 				break;
 			case END_ATTRIBUTE_LIST:
-				if ((mimetype != null) && (path.equals(fullPath)))
-					return mimetype;
+				if (mimetype != null) result.put(path, mimetype);
 				
 				mimetype = null;
-				fullPath = null;
+				path = null;
 				break;
 			}
 		}
 		
-		return null;
+		return result;
 	}
 	
 	public String getMimetype() throws IOException {
-		if (mimetype == null) {
-			// TODO: improve mimetype fix -> other method for switching
-			if (isFile(MIMETYPE_PATH)) {
-				InputStream in = getRawFileStream(MIMETYPE_PATH);
-				mimetype = CharStreamUtil
-						.readAsString(new InputStreamReader(in));
-			} else {
-				LWXMLReader in = new LWXMLStreamReader(
-						getFileStream("content.xml"));
-				LWXMLUtil.flushUntilPath(in, new LWXMLPath(
-						"office:document-content/office:body/"));
-				LWXMLUtil.flushStartElement(in);
-				
-				in.readEvent();
-				String node = in.readValue();
-				
-				// TODO: complete
-				if (node.equals("office:text")) {
-					mimetype = OpenDocumentText.MIMETYPE;
-				} else if (node.equals("office:spreadsheet")) {
-					mimetype = OpenDocumentSpreadsheet.MIMETYPE;
-				} else {
-					throw new IllegalStateException("unsupported file");
-				}
-			}
-		}
+		if (mimetype == null) mimetype = getMimetypeImpl();
 		
 		return mimetype;
+	}
+	
+	private String getMimetypeImpl() throws IOException {
+		if (isFile(MIMETYPE_PATH)) {
+			InputStream in = getRawFileStream(MIMETYPE_PATH);
+			return CharStreamUtil.readAsString(new InputStreamReader(in));
+		} else {
+			return getFileMimetype("/");
+		}
 	}
 	
 	public InputStream getManifest() throws IOException {
