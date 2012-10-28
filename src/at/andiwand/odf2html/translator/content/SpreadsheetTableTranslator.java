@@ -182,6 +182,8 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 			case END_EMPTY_ELEMENT:
 			case END_ELEMENT:
 				break;
+			default:
+				break;
 			}
 		}
 		
@@ -224,6 +226,8 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 					return;
 				}
 				
+				break;
+			default:
 				break;
 			}
 		}

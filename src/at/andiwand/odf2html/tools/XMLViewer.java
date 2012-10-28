@@ -159,10 +159,14 @@ public class XMLViewer extends JFrame {
 				currentNode.add(new DefaultMutableTreeNode("<!-- "
 						+ in.readValue() + " -->"));
 				break;
+			default:
+				break;
 			}
 		}
 		
 		treeModel.setRoot(rootNode);
+		
+		in.close();
 	}
 	
 	public static void main(String[] args) {

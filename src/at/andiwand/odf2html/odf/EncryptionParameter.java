@@ -70,6 +70,8 @@ public class EncryptionParameter {
 							attributeName, attributeValue);
 				}
 				break;
+			default:
+				break;
 			}
 		}
 		

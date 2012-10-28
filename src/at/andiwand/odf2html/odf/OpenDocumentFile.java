@@ -126,8 +126,12 @@ public abstract class OpenDocumentFile {
 				mimetype = null;
 				path = null;
 				break;
+			default:
+				break;
 			}
 		}
+		
+		in.close();
 		
 		return result;
 	}

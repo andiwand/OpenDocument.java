@@ -34,6 +34,8 @@ public class OpenDocumentUtil {
 				return true;
 			case END_DOCUMENT:
 				throw new LWXMLIllegalEventException(event);
+			default:
+				break;
 			}
 		}
 	}

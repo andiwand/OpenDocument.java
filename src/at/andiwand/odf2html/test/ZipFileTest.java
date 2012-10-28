@@ -16,6 +16,8 @@ public class ZipFileTest {
 		for (ZipEntry entry : EnumerationUtil.iterable(zipFile.entries())) {
 			System.out.println(entry.getName());
 		}
+		
+		zipFile.close();
 	}
 	
 }

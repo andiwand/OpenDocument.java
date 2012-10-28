@@ -69,6 +69,8 @@ public abstract class DocumentStyleTranslator<T extends DocumentStyle> {
 			case END_ELEMENT:
 			case END_DOCUMENT:
 				return;
+			default:
+				break;
 			}
 		}
 	}

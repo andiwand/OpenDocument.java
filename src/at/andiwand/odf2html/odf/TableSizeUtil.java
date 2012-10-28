@@ -94,6 +94,8 @@ public class TableSizeUtil {
 				break;
 			case END_DOCUMENT:
 				return result;
+			default:
+				break;
 			}
 		}
 	}
@@ -119,6 +121,8 @@ public class TableSizeUtil {
 			case END_DOCUMENT:
 				tableMap.put(name, result.getTableSize());
 				return;
+			default:
+				break;
 			}
 		}
 	}
@@ -145,6 +149,8 @@ public class TableSizeUtil {
 				break;
 			case END_DOCUMENT:
 				return result;
+			default:
+				break;
 			}
 		}
 	}

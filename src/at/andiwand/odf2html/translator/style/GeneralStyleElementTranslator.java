@@ -149,6 +149,8 @@ public class GeneralStyleElementTranslator extends
 				break;
 			case END_DOCUMENT:
 				break loop;
+			default:
+				break;
 			}
 		}
 	}
