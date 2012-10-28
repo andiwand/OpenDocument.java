@@ -79,16 +79,16 @@ public abstract class OpenDocumentFile {
 			throws IOException;
 	
 	public InputStream getFileStream(String path) throws IOException {
-		InputStream inputStream = getRawFileStream(path);
-		if (!isFileEncrypted(path)) return inputStream;
+		InputStream in = getRawFileStream(path);
+		if (!isFileEncrypted(path)) return in;
 		
 		if (password == null)
 			throw new NullPointerException("password cannot be null");
 		EncryptionParameter encryptionParameter = getEncryptionParameter(path);
-		inputStream = OpenDocumentCryptoUtil.getPlainInputStream(inputStream,
+		in = OpenDocumentCryptoUtil.getPlainInputStream(in,
 				encryptionParameter, password);
-		inputStream = new InflaterInputStream(inputStream, new Inflater(true));
-		return inputStream;
+		in = new InflaterInputStream(in, new Inflater(true));
+		return in;
 	}
 	
 	public String getFileMimetype(String path) throws IOException {

@@ -2,19 +2,23 @@ package at.andiwand.odf2html.odf;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.DigestInputStream;
 import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Map;
-import java.util.zip.ZipException;
+import java.util.zip.Inflater;
+import java.util.zip.InflaterInputStream;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import at.andiwand.commons.io.ByteStreamUtil;
+import at.andiwand.commons.io.CountingInputStream;
 import at.andiwand.commons.util.collection.CollectionUtil;
 import at.andiwand.commons.util.comparator.MapEntryValueComparator;
 import de.rtner.security.auth.spi.MacBasedPRF;
@@ -35,6 +39,15 @@ public class OpenDocumentCryptoUtil {
 	private static final MapEntryValueComparator<EncryptionParameter> ENTRY_PLAIN_SIZE_COMPERATOR = new MapEntryValueComparator<EncryptionParameter>(
 			PLAIN_SIZE_COMPERATOR);
 	
+	// TODO: optimize with buffer?
+	public static int getDeflatedSize(InputStream in) throws IOException {
+		CountingInputStream cin = new CountingInputStream(in);
+		InflaterInputStream iin = new InflaterInputStream(cin, new Inflater(
+				true), 1);
+		ByteStreamUtil.flushBytewise(iin);
+		return cin.count();
+	}
+	
 	public static boolean validatePassword(String password,
 			OpenDocumentFile documentFile) throws IOException {
 		Map<String, EncryptionParameter> encryptionParameterMap = documentFile
@@ -49,12 +62,15 @@ public class OpenDocumentCryptoUtil {
 		EncryptionParameter encryptionParameter = smallest.getValue();
 		InputStream in = getPlainInputStream(documentFile
 				.getRawFileStream(path), encryptionParameter, password);
-		return validatePassword(password, encryptionParameter, in);
+		int deflatedSize = getDeflatedSize(in);
+		in = getPlainInputStream(documentFile.getRawFileStream(path),
+				encryptionParameter, password);
+		return validatePassword(password, encryptionParameter, in, deflatedSize);
 	}
 	
 	public static boolean validatePassword(String password,
-			EncryptionParameter encryptionParameter, InputStream in)
-			throws IOException {
+			EncryptionParameter encryptionParameter, InputStream in,
+			int deflatedSize) throws IOException {
 		try {
 			String checksumAlgorithm = encryptionParameter.getChecksumType()
 					.toLowerCase();
@@ -75,13 +91,11 @@ public class OpenDocumentCryptoUtil {
 			}
 			
 			MessageDigest digest = MessageDigest.getInstance(checksumAlgorithm);
-			byte[] bytes = new byte[1024];
-			int count = in.read(bytes);
-			digest.update(bytes, 0, count);
+			DigestInputStream din = new DigestInputStream(in, digest);
+			ByteStreamUtil.skipBytewise(din, Math.min(deflatedSize, 1024));
+			byte[] calculatedChecksum = digest.digest();
 			
-			if (!Arrays.equals(checksum, digest.digest())) return false;
-		} catch (ZipException e) {
-			return false;
+			if (!Arrays.equals(checksum, calculatedChecksum)) return false;
 		} catch (NoSuchAlgorithmException e) {
 			throw new UnsupportedEncryptionException(
 					"unsupported message digest: "
@@ -156,10 +170,7 @@ public class OpenDocumentCryptoUtil {
 			
 			Cipher cipher = Cipher.getInstance(transformation);
 			cipher.init(Cipher.DECRYPT_MODE, key, iv);
-			
-			in = new CipherInputStream(in, cipher);
-			
-			return in;
+			return new CipherInputStream(in, cipher);
 		} catch (Exception e) {
 			throw new UnsupportedEncryptionException(e);
 		}
