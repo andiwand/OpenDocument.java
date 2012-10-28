@@ -297,7 +297,8 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 				
 				break;
 			default:
-				throw new LWXMLIllegalEventException(event);
+				// TODO: log
+				break;
 			}
 		}
 		
