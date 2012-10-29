@@ -9,7 +9,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
-import java.util.Deque;
 import java.util.LinkedList;
 
 import javax.swing.JFileChooser;
@@ -108,13 +107,15 @@ public class XMLViewer extends JFrame {
 		LWXMLReader in = new LWXMLStreamReader(reader);
 		
 		DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode(rootTitle);
-		Deque<DefaultMutableTreeNode> nodeStack = new LinkedList<DefaultMutableTreeNode>();
-		nodeStack.push(rootNode);
+		// removed Deque because of Android 1.6
+		//		Deque<DefaultMutableTreeNode> nodeStack = new LinkedList<DefaultMutableTreeNode>();
+		LinkedList<DefaultMutableTreeNode> nodeStack = new LinkedList<DefaultMutableTreeNode>();
+		nodeStack.addFirst(rootNode);
 		
 		DefaultMutableTreeNode attributeNode = null;
 		
 		while (true) {
-			DefaultMutableTreeNode currentNode = nodeStack.peek();
+			DefaultMutableTreeNode currentNode = nodeStack.getFirst();
 			
 			LWXMLEvent event = in.readEvent();
 			if (event == LWXMLEvent.END_DOCUMENT) break;
@@ -130,7 +131,7 @@ public class XMLViewer extends JFrame {
 						+ in.readValue() + ">");
 				currentNode.add(node);
 				attributeNode = null;
-				nodeStack.push(node);
+				nodeStack.addFirst(node);
 				break;
 			case ATTRIBUTE_NAME:
 				if (attributeNode == null) {
@@ -144,7 +145,7 @@ public class XMLViewer extends JFrame {
 			case END_EMPTY_ELEMENT:
 			case END_ELEMENT:
 				attributeNode = null;
-				nodeStack.pop();
+				nodeStack.removeFirst();
 				break;
 			case CHARACTERS:
 				String characters = in.readValue();
