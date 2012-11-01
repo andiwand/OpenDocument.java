@@ -40,6 +40,7 @@ public class OpenDocumentCryptoUtil {
 			PLAIN_SIZE_COMPERATOR);
 	
 	// TODO: optimize with buffer?
+	// TODO: stop until 1024 bytes read
 	public static int getDeflatedSize(InputStream in) throws IOException {
 		CountingInputStream cin = new CountingInputStream(in);
 		InflaterInputStream iin = new InflaterInputStream(cin, new Inflater(
