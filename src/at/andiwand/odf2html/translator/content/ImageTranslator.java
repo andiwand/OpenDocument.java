@@ -6,13 +6,13 @@ import java.io.Writer;
 import at.andiwand.commons.lwxml.LWXMLIllegalEventException;
 import at.andiwand.commons.lwxml.LWXMLUtil;
 import at.andiwand.commons.lwxml.reader.LWXMLPushbackReader;
-import at.andiwand.commons.lwxml.translator.LWXMLTranslatorException;
 import at.andiwand.commons.lwxml.translator.simple.SimpleElementReplacement;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
 import at.andiwand.odf2html.odf.OpenDocumentFile;
 
 
 // TODO: implement charts
+// TODO: skip empty images
 public abstract class ImageTranslator extends SimpleElementReplacement {
 	
 	private static final String NEW_ELEMENT_NAME = "img";
@@ -32,9 +32,8 @@ public abstract class ImageTranslator extends SimpleElementReplacement {
 	public void translateAttributeList(LWXMLPushbackReader in, LWXMLWriter out)
 			throws IOException {
 		String name = LWXMLUtil.parseSingleAttributes(in, PATH_ATTRIBUTE_NAME);
-		if (name == null) throw new LWXMLTranslatorException();
-		// TODO: remove and implement path resolver
-		name = name.replaceAll("\\./", "");
+		// TODO: log
+		if (name == null) return;
 		
 		out.writeAttribute("style", "width: 100%; heigth: 100%");
 		
@@ -48,6 +47,7 @@ public abstract class ImageTranslator extends SimpleElementReplacement {
 			if (documentFile.isFile(name)) writeSource(name, out);
 			else out.write(name);
 		}
+		
 	}
 	
 	@Override
