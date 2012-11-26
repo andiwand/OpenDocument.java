@@ -113,21 +113,10 @@ public class OpenDocumentCryptoUtil {
 			throw new UnsupportedEncryptionException(
 					"unsupported key derivation: " + keyDerivation);
 		
-		String startKeyGeneration = encryptionParameter.getStartKeyGeneration()
-				.toLowerCase();
-		// TODO: password charset
-		byte[] passwordBytes = password.getBytes();
-		
-		byte[] salt = encryptionParameter.getSalt();
-		int iterationCount = encryptionParameter.getIterationCount();
-		int keySize = encryptionParameter.getKeySize();
 		String algorithm = encryptionParameter.getAlgorithm().toLowerCase();
-		
-		byte[] initialisationVector = encryptionParameter
-				.getInitialisationVector();
+		String transformation;
 		
 		// TODO: improve
-		String transformation;
 		if (algorithm.contains("blowfish")) {
 			algorithm = "Blowfish";
 			transformation = "Blowfish/CFB/NoPadding";
@@ -139,11 +128,15 @@ public class OpenDocumentCryptoUtil {
 					"cannot identify crypto algorithm: " + algorithm);
 		}
 		
+		int keySize = encryptionParameter.getKeySize();
+		String startKeyGeneration = encryptionParameter.getStartKeyGeneration();
+		
 		// odf 1.0
 		if (keySize == -1) keySize = 16;
 		if (startKeyGeneration == null) {
 			startKeyGeneration = "SHA-1";
 		} else {
+			startKeyGeneration = startKeyGeneration.toLowerCase();
 			if (startKeyGeneration.contains("sha256")) {
 				startKeyGeneration = "SHA-256";
 			} else if (startKeyGeneration.contains("sha1")) {
@@ -155,18 +148,26 @@ public class OpenDocumentCryptoUtil {
 		}
 		
 		try {
+			// TODO: password charset
+			byte[] passwordBytes = password.getBytes();
+			
 			MessageDigest digest = MessageDigest
 					.getInstance(startKeyGeneration);
-			byte[] md = digest.digest(passwordBytes);
+			byte[] startKey = digest.digest(passwordBytes);
+			
+			byte[] salt = encryptionParameter.getSalt();
+			int iterationCount = encryptionParameter.getIterationCount();
 			
 			MacBasedPRF macBasedPRF = new MacBasedPRF("HmacSHA1");
 			PBKDF2Parameters pbkdf2Parameters = new PBKDF2Parameters(salt,
 					iterationCount);
 			PBKDF2Engine pbkdf2Engine = new PBKDF2Engine(pbkdf2Parameters,
 					macBasedPRF);
-			byte[] dk = pbkdf2Engine.deriveKey(md, keySize);
+			byte[] dk = pbkdf2Engine.deriveKey(startKey, keySize);
 			Key key = new SecretKeySpec(dk, algorithm);
 			
+			byte[] initialisationVector = encryptionParameter
+					.getInitialisationVector();
 			IvParameterSpec iv = new IvParameterSpec(initialisationVector);
 			
 			Cipher cipher = Cipher.getInstance(transformation);
