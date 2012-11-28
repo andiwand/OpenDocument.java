@@ -73,23 +73,9 @@ public class OpenDocumentCryptoUtil {
 			EncryptionParameter encryptionParameter, InputStream in,
 			int deflatedSize) throws IOException {
 		try {
-			String checksumAlgorithm = encryptionParameter.getChecksumType()
-					.toLowerCase();
+			String checksumAlgorithm = encryptionParameter
+					.getChecksumAlgorithm();
 			byte[] checksum = encryptionParameter.getChecksum();
-			
-			if (!checksumAlgorithm.contains("1k"))
-				throw new UnsupportedEncryptionException(
-						"unsupported checksum: "
-								+ encryptionParameter.getChecksumType());
-			if (checksumAlgorithm.contains("sha256")) {
-				checksumAlgorithm = "SHA-256";
-			} else if (checksumAlgorithm.contains("sha1")) {
-				checksumAlgorithm = "SHA-1";
-			} else {
-				throw new UnsupportedEncryptionException(
-						"cannot identify checksum algorithm: "
-								+ checksumAlgorithm);
-			}
 			
 			MessageDigest digest = MessageDigest.getInstance(checksumAlgorithm);
 			DigestInputStream din = new DigestInputStream(in, digest);
@@ -100,7 +86,7 @@ public class OpenDocumentCryptoUtil {
 		} catch (NoSuchAlgorithmException e) {
 			throw new UnsupportedEncryptionException(
 					"unsupported message digest: "
-							+ encryptionParameter.getChecksumType(), e);
+							+ encryptionParameter.getChecksumAlgorithm(), e);
 		}
 		
 		return true;
@@ -108,44 +94,11 @@ public class OpenDocumentCryptoUtil {
 	
 	public static InputStream getPlainInputStream(InputStream in,
 			EncryptionParameter encryptionParameter, String password) {
-		String keyDerivation = encryptionParameter.getKeyDerivation();
-		if (!keyDerivation.equalsIgnoreCase("PBKDF2"))
-			throw new UnsupportedEncryptionException(
-					"unsupported key derivation: " + keyDerivation);
+		String algorithm = encryptionParameter.getAlgorithm();
+		String transformation = encryptionParameter.getTransformation();
 		
-		String algorithm = encryptionParameter.getAlgorithm().toLowerCase();
-		String transformation;
-		
-		// TODO: improve
-		if (algorithm.contains("blowfish")) {
-			algorithm = "Blowfish";
-			transformation = "Blowfish/CFB/NoPadding";
-		} else if (algorithm.contains("aes")) {
-			algorithm = "AES";
-			transformation = "AES/CBC/NoPadding";
-		} else {
-			throw new UnsupportedEncryptionException(
-					"cannot identify crypto algorithm: " + algorithm);
-		}
-		
-		int keySize = encryptionParameter.getKeySize();
+		int keySize = encryptionParameter.getKeyDerivationKeySize();
 		String startKeyGeneration = encryptionParameter.getStartKeyGeneration();
-		
-		// odf 1.0
-		if (keySize == -1) keySize = 16;
-		if (startKeyGeneration == null) {
-			startKeyGeneration = "SHA-1";
-		} else {
-			startKeyGeneration = startKeyGeneration.toLowerCase();
-			if (startKeyGeneration.contains("sha256")) {
-				startKeyGeneration = "SHA-256";
-			} else if (startKeyGeneration.contains("sha1")) {
-				startKeyGeneration = "SHA-1";
-			} else {
-				throw new UnsupportedEncryptionException(
-						"cannot identify mac algorithm: " + startKeyGeneration);
-			}
-		}
 		
 		try {
 			// TODO: password charset
@@ -155,8 +108,9 @@ public class OpenDocumentCryptoUtil {
 					.getInstance(startKeyGeneration);
 			byte[] startKey = digest.digest(passwordBytes);
 			
-			byte[] salt = encryptionParameter.getSalt();
-			int iterationCount = encryptionParameter.getIterationCount();
+			byte[] salt = encryptionParameter.getKeyDerivationSalt();
+			int iterationCount = encryptionParameter
+					.getKeyDerivationIterationCount();
 			
 			MacBasedPRF macBasedPRF = new MacBasedPRF("HmacSHA1");
 			PBKDF2Parameters pbkdf2Parameters = new PBKDF2Parameters(salt,

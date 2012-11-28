@@ -10,6 +10,7 @@ import at.andiwand.commons.lwxml.reader.LWXMLReader;
 import at.andiwand.commons.lwxml.reader.LWXMLStreamReader;
 
 
+// TODO: improve parsing
 public class EncryptionParameter {
 	
 	private static final String FILE_ENTRY_ELEMENT = "manifest:file-entry";
@@ -27,47 +28,61 @@ public class EncryptionParameter {
 	private static final String ALGORITHM_ATTRIBUTE = "manifest:algorithm-name";
 	private static final String INITIALISATION_VECTOR_ATTRIBUTE = "manifest:initialisation-vector";
 	
-	private static final String KEY_DERIVATION_ATTRIBUTE = "manifest:key-derivation-name";
-	private static final String KEY_SIZE_ATTRIBUTE = "manifest:key-size";
-	private static final String ITERATION_COUNT_ATTRIBUTE = "manifest:iteration-count";
-	private static final String SALT_ATTRIBUTE = "manifest:salt";
+	private static final String KEY_DERIVATION_FUNCTION_ATTRIBUTE = "manifest:key-derivation-name";
+	private static final String KEY_DERIVATION_KEY_SIZE_ATTRIBUTE = "manifest:key-size";
+	private static final String KEY_DERIVATION_ITERATION_COUNT_ATTRIBUTE = "manifest:iteration-count";
+	private static final String KEY_DERIVATION_SALT_ATTRIBUTE = "manifest:salt";
 	
-	private static final String START_KEY_GENERATOR_ATTRIBUTE = "manifest:start-key-generation-name";
+	private static final String START_KEY_GENERATION_ATTRIBUTE = "manifest:start-key-generation-name";
 	private static final String START_KEY_SIZE_ATTRIBUTE = "manifest:key-size";
 	
-	// TODO: improve with path/query (0.0001% necessary)
+	private static final String KEY_DERIVATION_FUNCTION = "PBKDF2";
+	
+	private static final int DEFAULT_KEY_DERIVATION_KEY_SIZE = 16;
+	private static final String DEFAULT_START_KEY_GENERATION = "SHA-1";
+	
+	private static String getDigestAlgorithm(String string) {
+		string = string.toLowerCase();
+		
+		if (string.contains("sha")) {
+			return string.replace("sha", "sha-");
+		} else {
+			throw new IllegalArgumentException();
+		}
+	}
+	
 	public static Map<String, EncryptionParameter> parseEncryptionParameters(
 			OpenDocumentFile documentFile) throws IOException {
 		Map<String, EncryptionParameter> result = new HashMap<String, EncryptionParameter>();
-		LWXMLReader reader = new LWXMLStreamReader(documentFile.getManifest());
+		LWXMLReader in = new LWXMLStreamReader(documentFile.getManifest());
 		
 		String element = null;
 		String file = null;
 		EncryptionParameter encryptionParameter = new EncryptionParameter();
 		
 		while (true) {
-			LWXMLEvent event = reader.readEvent();
+			LWXMLEvent event = in.readEvent();
 			if (event == LWXMLEvent.END_DOCUMENT) break;
 			
 			switch (event) {
 			case START_ELEMENT:
-				element = reader.readValue();
+				element = in.readValue();
 				break;
 			case END_ELEMENT:
-				if (!reader.readValue().equals(FILE_ENTRY_ELEMENT)) continue;
+				if (!in.readValue().equals(FILE_ENTRY_ELEMENT)) continue;
 				if (!encryptionParameter.isEmpty())
 					result.put(file, encryptionParameter);
 				encryptionParameter = new EncryptionParameter();
 				break;
 			case ATTRIBUTE_NAME:
-				String attributeName = reader.readValue();
-				String attributeValue = reader.readFollowingValue();
+				String attributeName = in.readValue();
+				String attributeValue = in.readFollowingValue();
 				if (element.equals(FILE_ENTRY_ELEMENT)
 						&& attributeName.equals(FULL_PATH_ATTRIBUTE)) {
 					file = attributeValue;
 				} else {
-					setEncryptionParameter(encryptionParameter, element,
-							attributeName, attributeValue);
+					encryptionParameter.parseParameter(element, attributeName,
+							attributeValue);
 				}
 				break;
 			default:
@@ -75,78 +90,152 @@ public class EncryptionParameter {
 			}
 		}
 		
-		reader.close();
+		in.close();
 		return result;
 	}
 	
-	private static void setEncryptionParameter(
-			EncryptionParameter encryptionParameter, String node,
-			String attributeName, String attributeValue) {
-		if (node.equals(FILE_ENTRY_ELEMENT)) {
+	private void parseParameter(String element, String attributeName,
+			String attributeValue) {
+		if (element.equals(FILE_ENTRY_ELEMENT)) {
 			if (attributeName.equals(PLAIN_SIZE_ATTRIBUTE)) {
-				encryptionParameter.setPlainSize(Integer
-						.parseInt(attributeValue));
+				parsePlainSize(attributeValue);
 			}
-		} else if (node.equals(ENCRYPTION_DATA_ELEMENT)) {
+		} else if (element.equals(ENCRYPTION_DATA_ELEMENT)) {
 			if (attributeName.equals(CHECKSUM_TYPE_ATTRIBUTE)) {
-				encryptionParameter.setChecksumType(attributeValue);
+				parseChecksumType(attributeValue);
 			} else if (attributeName.equals(CHECKSUM_ATTRIBUTE)) {
-				encryptionParameter.setChecksum(Base64
-						.decodeChars(attributeValue));
+				parseChecksum(attributeValue);
 			}
-		} else if (node.equals(ALGORITHM_ELEMENT)) {
+		} else if (element.equals(ALGORITHM_ELEMENT)) {
 			if (attributeName.equals(ALGORITHM_ATTRIBUTE)) {
-				encryptionParameter.setAlgorithm(attributeValue);
+				parseAlgorithm(attributeValue);
 			} else if (attributeName.equals(INITIALISATION_VECTOR_ATTRIBUTE)) {
-				encryptionParameter.setInitialisationVector(Base64
-						.decodeChars(attributeValue));
+				parseInitialisationVector(attributeValue);
 			}
-		} else if (node.equals(KEY_DERIVATION_ELEMENT)) {
-			if (attributeName.equals(KEY_DERIVATION_ATTRIBUTE)) {
-				encryptionParameter.setKeyDerivation(attributeValue);
-			} else if (attributeName.equals(KEY_SIZE_ATTRIBUTE)) {
-				encryptionParameter
-						.setKeySize(Integer.parseInt(attributeValue));
-			} else if (attributeName.equals(ITERATION_COUNT_ATTRIBUTE)) {
-				encryptionParameter.setIterationCount(Integer
-						.parseInt(attributeValue));
-			} else if (attributeName.equals(SALT_ATTRIBUTE)) {
-				encryptionParameter.setSalt(Base64.decodeChars(attributeValue));
+		} else if (element.equals(KEY_DERIVATION_ELEMENT)) {
+			if (attributeName.equals(KEY_DERIVATION_FUNCTION_ATTRIBUTE)) {
+				parseKeyDerivationFunction(attributeValue);
+			} else if (attributeName.equals(KEY_DERIVATION_KEY_SIZE_ATTRIBUTE)) {
+				parseKeyDerivationKeySize(attributeValue);
+			} else if (attributeName
+					.equals(KEY_DERIVATION_ITERATION_COUNT_ATTRIBUTE)) {
+				parseKeyDerivationIterationCount(attributeValue);
+			} else if (attributeName.equals(KEY_DERIVATION_SALT_ATTRIBUTE)) {
+				parseKeyDerivationSalt(attributeValue);
 			}
-		} else if (node.equals(START_KEY_GENERATION_ELEMENT)) {
-			if (attributeName.equals(START_KEY_GENERATOR_ATTRIBUTE)) {
-				encryptionParameter.setStartKeyGeneration(attributeValue);
+		} else if (element.equals(START_KEY_GENERATION_ELEMENT)) {
+			if (attributeName.equals(START_KEY_GENERATION_ATTRIBUTE)) {
+				parseStartKeyGeneration(attributeValue);
 			} else if (attributeName.equals(START_KEY_SIZE_ATTRIBUTE)) {
-				encryptionParameter.setStartKeySize(Integer
-						.parseInt(attributeValue));
+				parseStartKeySize(attributeValue);
 			}
 		}
 	}
 	
+	private void parsePlainSize(String string) {
+		int plainSize = Integer.parseInt(string);
+		setPlainSize(plainSize);
+	}
+	
+	private void parseChecksumType(String string) {
+		String[] parts = string.split("/");
+		if (parts.length != 2) throw new IllegalArgumentException();
+		parseChecksumAlgorithm(parts[0]);
+		parseChecksumUsedSize(parts[1]);
+	}
+	
+	private void parseChecksumAlgorithm(String string) {
+		String checksumAlgorithm = getDigestAlgorithm(string);
+		setChecksumAlgorithm(checksumAlgorithm);
+	}
+	
+	private void parseChecksumUsedSize(String string) {
+		string = string.toLowerCase();
+		if (!string.equals("1k")) throw new IllegalArgumentException();
+		
+		setChecksumUsedSize(1000);
+	}
+	
+	private void parseChecksum(String string) {
+		byte[] checksum = Base64.decodeChars(string);
+		setChecksum(checksum);
+	}
+	
+	private void parseAlgorithm(String string) {
+		string = string.toLowerCase();
+		String algorithm;
+		String transformation;
+		
+		// TODO: improve
+		if (string.contains("blowfish")) {
+			algorithm = "Blowfish";
+			transformation = "Blowfish/CFB/NoPadding";
+		} else if (string.contains("aes")) {
+			algorithm = "AES";
+			transformation = "AES/CBC/NoPadding";
+		} else {
+			throw new UnsupportedEncryptionException(
+					"cannot identify crypto algorithm: " + string);
+		}
+		
+		setAlgorithm(algorithm);
+		setTransformation(transformation);
+	}
+	
+	private void parseInitialisationVector(String string) {
+		byte[] initialisationVector = Base64.decodeChars(string);
+		setInitialisationVector(initialisationVector);
+	}
+	
+	private void parseKeyDerivationFunction(String string) {
+		if (!string.equalsIgnoreCase(KEY_DERIVATION_FUNCTION))
+			throw new IllegalArgumentException();
+		setKeyDerivationFunction(KEY_DERIVATION_FUNCTION);
+	}
+	
+	private void parseKeyDerivationKeySize(String string) {
+		int keySize = Integer.parseInt(string);
+		setKeyDerivationKeySize(keySize);
+	}
+	
+	private void parseKeyDerivationIterationCount(String string) {
+		int iterationCount = Integer.parseInt(string);
+		setKeyDerivationIterationCount(iterationCount);
+	}
+	
+	private void parseKeyDerivationSalt(String string) {
+		byte[] salt = Base64.decodeChars(string);
+		setKeyDerivationSalt(salt);
+	}
+	
+	private void parseStartKeyGeneration(String string) {
+		String generation = getDigestAlgorithm(string);
+		setStartKeyGeneration(generation);
+	}
+	
+	private void parseStartKeySize(String string) {
+		int keySize = Integer.parseInt(string);
+		setStartKeySize(keySize);
+	}
+	
 	private int plainSize = -1;
-	private String checksumType;
+	private String checksumAlgorithm;
+	private int checksumUsedSize;
 	private byte[] checksum;
 	private String algorithm;
+	private String transformation;
 	private byte[] initialisationVector;
-	private String keyDerivation;
-	private int keySize = -1;
-	private int iterationCount = -1;
-	private byte[] salt;
-	private String startKeyGeneration;
-	private int startKeySize = -1;
+	private String keyDerivationFunction;
+	private int keyDerivationKeySize = DEFAULT_KEY_DERIVATION_KEY_SIZE;
+	private int keyDerivationIterationCount = -1;
+	private byte[] keyDerivationSalt;
+	private String startKeyGeneration = DEFAULT_START_KEY_GENERATION;
+	private int startKeySize;
 	
+	// TODO: improve
 	public boolean isEmpty() {
-		if (plainSize != -1) return false;
-		if (checksumType != null) return false;
-		if (checksum != null) return false;
 		if (algorithm != null) return false;
-		if (initialisationVector != null) return false;
-		if (keyDerivation != null) return false;
-		if (keySize != -1) return false;
-		if (iterationCount != -1) return false;
-		if (salt != null) return false;
-		if (startKeyGeneration != null) return false;
-		if (startKeySize != -1) return false;
+		if (transformation != null) return false;
 		
 		return true;
 	}
@@ -159,12 +248,20 @@ public class EncryptionParameter {
 		this.plainSize = plainSize;
 	}
 	
-	public String getChecksumType() {
-		return checksumType;
+	public String getChecksumAlgorithm() {
+		return checksumAlgorithm;
 	}
 	
-	public void setChecksumType(String checksumType) {
-		this.checksumType = checksumType;
+	public void setChecksumAlgorithm(String checksumAlgorithm) {
+		this.checksumAlgorithm = checksumAlgorithm;
+	}
+	
+	public int getChecksumUsedSize() {
+		return checksumUsedSize;
+	}
+	
+	public void setChecksumUsedSize(int checksumUsedSize) {
+		this.checksumUsedSize = checksumUsedSize;
 	}
 	
 	public byte[] getChecksum() {
@@ -183,6 +280,14 @@ public class EncryptionParameter {
 		this.algorithm = algorithm;
 	}
 	
+	public String getTransformation() {
+		return transformation;
+	}
+	
+	public void setTransformation(String transformation) {
+		this.transformation = transformation;
+	}
+	
 	public byte[] getInitialisationVector() {
 		return initialisationVector;
 	}
@@ -191,36 +296,36 @@ public class EncryptionParameter {
 		this.initialisationVector = initialisationVector;
 	}
 	
-	public String getKeyDerivation() {
-		return keyDerivation;
+	public String getKeyDerivationFunction() {
+		return keyDerivationFunction;
 	}
 	
-	public void setKeyDerivation(String keyDerivation) {
-		this.keyDerivation = keyDerivation;
+	public void setKeyDerivationFunction(String keyDerivationFunction) {
+		this.keyDerivationFunction = keyDerivationFunction;
 	}
 	
-	public int getKeySize() {
-		return keySize;
+	public int getKeyDerivationKeySize() {
+		return keyDerivationKeySize;
 	}
 	
-	public void setKeySize(int keySize) {
-		this.keySize = keySize;
+	public void setKeyDerivationKeySize(int keyDerivationKeySize) {
+		this.keyDerivationKeySize = keyDerivationKeySize;
 	}
 	
-	public int getIterationCount() {
-		return iterationCount;
+	public int getKeyDerivationIterationCount() {
+		return keyDerivationIterationCount;
 	}
 	
-	public void setIterationCount(int iterationCount) {
-		this.iterationCount = iterationCount;
+	public void setKeyDerivationIterationCount(int keyDerivationIterationCount) {
+		this.keyDerivationIterationCount = keyDerivationIterationCount;
 	}
 	
-	public byte[] getSalt() {
-		return salt;
+	public byte[] getKeyDerivationSalt() {
+		return keyDerivationSalt;
 	}
 	
-	public void setSalt(byte[] salt) {
-		this.salt = salt;
+	public void setKeyDerivationSalt(byte[] keyDerivationSalt) {
+		this.keyDerivationSalt = keyDerivationSalt;
 	}
 	
 	public String getStartKeyGeneration() {
