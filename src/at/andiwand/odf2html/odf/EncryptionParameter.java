@@ -38,6 +38,7 @@ public class EncryptionParameter {
 	
 	private static final String KEY_DERIVATION_FUNCTION = "PBKDF2";
 	
+	private static final int DEFAULT_CHECKSUM_USED_SIZE = 1024;
 	private static final int DEFAULT_KEY_DERIVATION_KEY_SIZE = 16;
 	private static final String DEFAULT_START_KEY_GENERATION = "SHA-1";
 	
@@ -153,7 +154,7 @@ public class EncryptionParameter {
 		string = string.toLowerCase();
 		if (!string.equals("1k")) throw new IllegalArgumentException();
 		
-		setChecksumUsedSize(1000);
+		setChecksumUsedSize(DEFAULT_CHECKSUM_USED_SIZE);
 	}
 	
 	private void parseChecksum(String string) {

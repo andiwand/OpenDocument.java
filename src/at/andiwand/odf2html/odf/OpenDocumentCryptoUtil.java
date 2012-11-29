@@ -9,8 +9,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Map;
-import java.util.zip.Inflater;
-import java.util.zip.InflaterInputStream;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -18,7 +16,6 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import at.andiwand.commons.io.ByteStreamUtil;
-import at.andiwand.commons.io.CountingInputStream;
 import at.andiwand.commons.util.collection.CollectionUtil;
 import at.andiwand.commons.util.comparator.MapEntryValueComparator;
 import de.rtner.security.auth.spi.MacBasedPRF;
@@ -39,15 +36,15 @@ public class OpenDocumentCryptoUtil {
 	private static final MapEntryValueComparator<EncryptionParameter> ENTRY_PLAIN_SIZE_COMPERATOR = new MapEntryValueComparator<EncryptionParameter>(
 			PLAIN_SIZE_COMPERATOR);
 	
-	// TODO: optimize with buffer?
-	// TODO: stop until 1024 bytes read
-	public static int getDeflatedSize(InputStream in) throws IOException {
-		CountingInputStream cin = new CountingInputStream(in);
-		InflaterInputStream iin = new InflaterInputStream(cin, new Inflater(
-				true), 1);
-		ByteStreamUtil.flushBytewise(iin);
-		return cin.count();
-	}
+	// TO-DO: optimize with buffer?
+	// TO-DO: stop until 1024 bytes read
+	//	public static int getDeflatedSize(InputStream in) throws IOException {
+	//		CountingInputStream cin = new CountingInputStream(in);
+	//		InflaterInputStream iin = new InflaterInputStream(cin, new Inflater(
+	//				true), 1);
+	//		ByteStreamUtil.flushBytewise(iin);
+	//		return cin.count();
+	//	}
 	
 	public static boolean validatePassword(String password,
 			OpenDocumentFile documentFile) throws IOException {
@@ -63,15 +60,14 @@ public class OpenDocumentCryptoUtil {
 		EncryptionParameter encryptionParameter = smallest.getValue();
 		InputStream in = getPlainInputStream(documentFile
 				.getRawFileStream(path), encryptionParameter, password);
-		int deflatedSize = getDeflatedSize(in);
 		in = getPlainInputStream(documentFile.getRawFileStream(path),
 				encryptionParameter, password);
-		return validatePassword(password, encryptionParameter, in, deflatedSize);
+		return validatePassword(password, encryptionParameter, in);
 	}
 	
 	public static boolean validatePassword(String password,
-			EncryptionParameter encryptionParameter, InputStream in,
-			int deflatedSize) throws IOException {
+			EncryptionParameter encryptionParameter, InputStream in)
+			throws IOException {
 		try {
 			String checksumAlgorithm = encryptionParameter
 					.getChecksumAlgorithm();
@@ -79,7 +75,8 @@ public class OpenDocumentCryptoUtil {
 			
 			MessageDigest digest = MessageDigest.getInstance(checksumAlgorithm);
 			DigestInputStream din = new DigestInputStream(in, digest);
-			ByteStreamUtil.skipBytewise(din, Math.min(deflatedSize, 1024));
+			// TODO: buffered?
+			ByteStreamUtil.flushBytewise(din);
 			byte[] calculatedChecksum = digest.digest();
 			
 			if (!Arrays.equals(checksum, calculatedChecksum)) return false;
