@@ -10,7 +10,7 @@ import java.util.zip.ZipInputStream;
 public class ZipInputStreamTest {
 	
 	public static void main(String[] args) throws Throwable {
-		File file = TestFile.getFile("encrypted.odt");
+		File file = TestFileUtil.getFile("encrypted.odt");
 		InputStream in = new FileInputStream(file);
 		ZipInputStream zin = new ZipInputStream(in);
 		

@@ -10,7 +10,7 @@ import at.andiwand.commons.util.EnumerationUtil;
 public class ZipFileTest {
 	
 	public static void main(String[] args) throws Throwable {
-		File file = TestFile.getFile("encrypted.odt");
+		File file = TestFileUtil.getFile("encrypted.odt");
 		ZipFile zipFile = new ZipFile(file);
 		
 		for (ZipEntry entry : EnumerationUtil.iterable(zipFile.entries())) {

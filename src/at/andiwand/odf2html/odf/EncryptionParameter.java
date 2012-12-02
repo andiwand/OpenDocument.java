@@ -42,11 +42,14 @@ public class EncryptionParameter {
 	private static final int DEFAULT_KEY_DERIVATION_KEY_SIZE = 16;
 	private static final String DEFAULT_START_KEY_GENERATION = "SHA-1";
 	
+	// TODO: improve
 	private static String getDigestAlgorithm(String string) {
 		string = string.toLowerCase();
 		
-		if (string.contains("sha")) {
-			return string.replace("sha", "sha-");
+		if (string.contains("sha1")) {
+			return "SHA-1";
+		} else if (string.contains("sha256")) {
+			return "SHA-256";
 		} else {
 			throw new IllegalArgumentException();
 		}
@@ -139,10 +142,8 @@ public class EncryptionParameter {
 	}
 	
 	private void parseChecksumType(String string) {
-		String[] parts = string.split("/");
-		if (parts.length != 2) throw new IllegalArgumentException();
-		parseChecksumAlgorithm(parts[0]);
-		parseChecksumUsedSize(parts[1]);
+		parseChecksumAlgorithm(string);
+		parseChecksumUsedSize(string);
 	}
 	
 	private void parseChecksumAlgorithm(String string) {
@@ -152,7 +153,7 @@ public class EncryptionParameter {
 	
 	private void parseChecksumUsedSize(String string) {
 		string = string.toLowerCase();
-		if (!string.equals("1k")) throw new IllegalArgumentException();
+		if (!string.contains("1k")) throw new IllegalArgumentException();
 		
 		setChecksumUsedSize(DEFAULT_CHECKSUM_USED_SIZE);
 	}
