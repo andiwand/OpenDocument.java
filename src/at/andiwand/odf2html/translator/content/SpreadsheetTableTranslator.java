@@ -271,31 +271,30 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 			
 			switch (event) {
 			case START_ELEMENT:
-			case END_ELEMENT:
-				String elementName = in.readValue();
+				String startElementName = in.readValue();
 				
-				if (elementName.equals(CELL_ELEMENT_NAME)) {
-					if (event != LWXMLEvent.START_ELEMENT)
-						throw new LWXMLIllegalEventException(event);
-					
-					in.unreadEvent(elementName);
+				if (startElementName.equals(CELL_ELEMENT_NAME)) {
+					in.unreadEvent(startElementName);
 					i += translateCell(in, out, currentTableSize.getColumns()
 							- i);
-				} else if (elementName.equals(COVERED_CELL_ELEMENT_NAME)) {
+				} else if (startElementName.equals(COVERED_CELL_ELEMENT_NAME)) {
 					// TODO: fix this really
 					// LWXMLUtil.flushEmptyElement(in);
 					LWXMLUtil.flushBranch(in);
-				} else if (elementName.equals(ROW_ELEMENT_NAME)) {
-					if (event != LWXMLEvent.END_ELEMENT)
-						throw new LWXMLIllegalEventException(event);
-					
-					in.unreadEvent(elementName);
-					return;
-				} else {
-					throw new LWXMLIllegalElementException(elementName);
 				}
 				
 				break;
+			case END_ELEMENT:
+			case END_EMPTY_ELEMENT:
+				String endElementName = in.readValue();
+				
+				if ((endElementName == null)
+						|| (ROW_ELEMENT_NAME.equals(endElementName))) {
+					in.unreadEvent(endElementName);
+					return;
+				} else {
+					throw new LWXMLIllegalElementException(endElementName);
+				}
 			default:
 				// TODO: log
 				break;
