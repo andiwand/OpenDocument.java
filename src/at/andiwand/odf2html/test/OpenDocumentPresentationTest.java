@@ -12,7 +12,7 @@ import at.andiwand.odf2html.odf.OpenDocumentPresentation;
 public class OpenDocumentPresentationTest {
 	
 	public static void main(String[] args) throws Exception {
-		JFileChooser fileChooser = new JFileChooser();
+		JFileChooser fileChooser = new TestFileChooser();
 		int option = fileChooser.showOpenDialog(null);
 		
 		if (option == JFileChooser.CANCEL_OPTION) return;
