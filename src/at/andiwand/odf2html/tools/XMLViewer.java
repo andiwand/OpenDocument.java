@@ -27,6 +27,7 @@ import at.andiwand.commons.lwxml.LWXMLEvent;
 import at.andiwand.commons.lwxml.reader.LWXMLReader;
 import at.andiwand.commons.lwxml.reader.LWXMLStreamReader;
 import at.andiwand.commons.swing.JFrameUtil;
+import at.andiwand.odf2html.test.TestFileChooser;
 
 
 public class XMLViewer extends JFrame {
@@ -85,6 +86,10 @@ public class XMLViewer extends JFrame {
 	public XMLViewer(Reader in, String rootTitle) throws IOException {
 		this();
 		open(in, rootTitle);
+	}
+	
+	public void setFileChooser(JFileChooser fileChooser) {
+		this.fileChooser = fileChooser;
 	}
 	
 	public void open(File file) throws IOException {
@@ -172,6 +177,7 @@ public class XMLViewer extends JFrame {
 	
 	public static void main(String[] args) {
 		XMLViewer viewer = new XMLViewer();
+		viewer.setFileChooser(new TestFileChooser());
 		viewer.setSize(400, 400);
 		JFrameUtil.centerFrame(viewer);
 		viewer.setDefaultCloseOperation(EXIT_ON_CLOSE);
