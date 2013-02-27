@@ -6,13 +6,13 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 
-public class TestFile {
+public class TestFileUtil {
 	
 	private static final String PACKAGE = "files";
 	
 	public static File getDirectory() {
 		try {
-			URL url = TestFile.class.getResource(PACKAGE);
+			URL url = TestFileUtil.class.getResource(PACKAGE);
 			return new File(url.toURI());
 		} catch (URISyntaxException e) {
 			return null;
@@ -24,9 +24,9 @@ public class TestFile {
 	}
 	
 	public static InputStream getInputStream(String name) {
-		return TestFile.class.getResourceAsStream(PACKAGE + "/" + name);
+		return TestFileUtil.class.getResourceAsStream(PACKAGE + "/" + name);
 	}
 	
-	private TestFile() {}
+	private TestFileUtil() {}
 	
 }

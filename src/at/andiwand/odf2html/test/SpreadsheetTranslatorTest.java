@@ -5,18 +5,17 @@ import java.io.FileWriter;
 
 import javax.swing.JFileChooser;
 
-import at.andiwand.commons.io.CharArrayWriter;
 import at.andiwand.commons.lwxml.writer.LWXMLStreamWriter;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
 import at.andiwand.odf2html.odf.LocatedOpenDocumentFile;
 import at.andiwand.odf2html.odf.OpenDocument;
 import at.andiwand.odf2html.odf.OpenDocumentFile;
-import at.andiwand.odf2html.translator.document.TextTranslator;
+import at.andiwand.odf2html.translator.document.SpreadsheetTranslator;
 import at.andiwand.odf2html.util.DefaultFileCache;
 import at.andiwand.odf2html.util.FileCache;
 
 
-public class TextDocumentTranslatorTest {
+public class SpreadsheetTranslatorTest {
 	
 	public static void main(String[] args) throws Throwable {
 		JFileChooser fileChooser = new TestFileChooser();
@@ -29,21 +28,25 @@ public class TextDocumentTranslatorTest {
 		documentFile.setPassword("test");
 		OpenDocument document = documentFile.getAsOpenDocument();
 		
-		CharArrayWriter writer = new CharArrayWriter();
-		LWXMLWriter out = new LWXMLStreamWriter(writer);
-		
-		FileCache fileCache = new DefaultFileCache("/tmp/odr/");
-		TextTranslator translator = new TextTranslator(fileCache);
-		translator.translate(document, out);
-		
-		out.close();
+		System.out.println(document.getAsOpenDocumentSpreadsheet()
+				.getTableMap());
 		
 		File htmlFile = new File(file.getPath() + ".html");
 		FileWriter fileWriter = new FileWriter(htmlFile);
-		writer.writeTo(fileWriter);
+		LWXMLWriter out = new LWXMLStreamWriter(fileWriter);
+		
+		FileCache fileCache = new DefaultFileCache("/tmp/odr/");
+		SpreadsheetTranslator translator = new SpreadsheetTranslator(fileCache);
+		
+		long start = System.nanoTime();
+		translator.translate(document, out);
+		long end = System.nanoTime();
+		System.out.println((end - start) / 1000000000d);
+		
+		out.close();
 		fileWriter.close();
 		
-		Runtime.getRuntime().exec(new String[] {"firefox", htmlFile.getPath()});
+		Runtime.getRuntime().exec(new String[] {"google-chrome", htmlFile.getPath()});
 		
 		// CharArrayReader reader = new CharArrayReader(writer.toCharArray());
 		//

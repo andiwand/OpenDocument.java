@@ -5,17 +5,18 @@ import java.io.FileWriter;
 
 import javax.swing.JFileChooser;
 
+import at.andiwand.commons.io.CharArrayWriter;
 import at.andiwand.commons.lwxml.writer.LWXMLStreamWriter;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
 import at.andiwand.odf2html.odf.LocatedOpenDocumentFile;
 import at.andiwand.odf2html.odf.OpenDocument;
 import at.andiwand.odf2html.odf.OpenDocumentFile;
-import at.andiwand.odf2html.translator.document.SpreadsheetTranslator;
+import at.andiwand.odf2html.translator.document.PresentationTranslator;
 import at.andiwand.odf2html.util.DefaultFileCache;
 import at.andiwand.odf2html.util.FileCache;
 
 
-public class SpreadsheetDocumentTranslatorTest {
+public class PresenationTranslatorTest {
 	
 	public static void main(String[] args) throws Throwable {
 		JFileChooser fileChooser = new TestFileChooser();
@@ -25,25 +26,22 @@ public class SpreadsheetDocumentTranslatorTest {
 		
 		File file = fileChooser.getSelectedFile();
 		OpenDocumentFile documentFile = new LocatedOpenDocumentFile(file);
-		documentFile.setPassword("test");
+		documentFile.setPassword("testpassword");
 		OpenDocument document = documentFile.getAsOpenDocument();
 		
-		System.out.println(document.getAsOpenDocumentSpreadsheet()
-				.getTableMap());
+		CharArrayWriter writer = new CharArrayWriter();
+		LWXMLWriter out = new LWXMLStreamWriter(writer);
+		
+		FileCache fileCache = new DefaultFileCache("/tmp/odr/");
+		PresentationTranslator translator = new PresentationTranslator(
+				fileCache);
+		translator.translate(document, out);
+		
+		out.close();
 		
 		File htmlFile = new File(file.getPath() + ".html");
 		FileWriter fileWriter = new FileWriter(htmlFile);
-		LWXMLWriter out = new LWXMLStreamWriter(fileWriter);
-		
-		FileCache fileCache = new DefaultFileCache("/tmp/odr/");
-		SpreadsheetTranslator translator = new SpreadsheetTranslator(fileCache);
-		
-		long start = System.nanoTime();
-		translator.translate(document, out);
-		long end = System.nanoTime();
-		System.out.println((end - start) / 1000000000d);
-		
-		out.close();
+		writer.writeTo(fileWriter);
 		fileWriter.close();
 		
 		Runtime.getRuntime().exec(new String[] {"firefox", htmlFile.getPath()});

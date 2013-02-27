@@ -9,8 +9,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Map;
-import java.util.zip.Inflater;
-import java.util.zip.InflaterInputStream;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -18,7 +16,6 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import at.andiwand.commons.io.ByteStreamUtil;
-import at.andiwand.commons.io.CountingInputStream;
 import at.andiwand.commons.util.collection.CollectionUtil;
 import at.andiwand.commons.util.comparator.MapEntryValueComparator;
 import de.rtner.security.auth.spi.MacBasedPRF;
@@ -39,15 +36,15 @@ public class OpenDocumentCryptoUtil {
 	private static final MapEntryValueComparator<EncryptionParameter> ENTRY_PLAIN_SIZE_COMPERATOR = new MapEntryValueComparator<EncryptionParameter>(
 			PLAIN_SIZE_COMPERATOR);
 	
-	// TODO: optimize with buffer?
-	// TODO: stop until 1024 bytes read
-	public static int getDeflatedSize(InputStream in) throws IOException {
-		CountingInputStream cin = new CountingInputStream(in);
-		InflaterInputStream iin = new InflaterInputStream(cin, new Inflater(
-				true), 1);
-		ByteStreamUtil.flushBytewise(iin);
-		return cin.count();
-	}
+	// TO-DO: optimize with buffer?
+	// TO-DO: stop until 1024 bytes read
+	//	public static int getDeflatedSize(InputStream in) throws IOException {
+	//		CountingInputStream cin = new CountingInputStream(in);
+	//		InflaterInputStream iin = new InflaterInputStream(cin, new Inflater(
+	//				true), 1);
+	//		ByteStreamUtil.flushBytewise(iin);
+	//		return cin.count();
+	//	}
 	
 	public static boolean validatePassword(String password,
 			OpenDocumentFile documentFile) throws IOException {
@@ -63,44 +60,30 @@ public class OpenDocumentCryptoUtil {
 		EncryptionParameter encryptionParameter = smallest.getValue();
 		InputStream in = getPlainInputStream(documentFile
 				.getRawFileStream(path), encryptionParameter, password);
-		int deflatedSize = getDeflatedSize(in);
 		in = getPlainInputStream(documentFile.getRawFileStream(path),
 				encryptionParameter, password);
-		return validatePassword(password, encryptionParameter, in, deflatedSize);
+		return validatePassword(password, encryptionParameter, in);
 	}
 	
 	public static boolean validatePassword(String password,
-			EncryptionParameter encryptionParameter, InputStream in,
-			int deflatedSize) throws IOException {
+			EncryptionParameter encryptionParameter, InputStream in)
+			throws IOException {
 		try {
-			String checksumAlgorithm = encryptionParameter.getChecksumType()
-					.toLowerCase();
+			String checksumAlgorithm = encryptionParameter
+					.getChecksumAlgorithm();
 			byte[] checksum = encryptionParameter.getChecksum();
-			
-			if (!checksumAlgorithm.contains("1k"))
-				throw new UnsupportedEncryptionException(
-						"unsupported checksum: "
-								+ encryptionParameter.getChecksumType());
-			if (checksumAlgorithm.contains("sha256")) {
-				checksumAlgorithm = "SHA-256";
-			} else if (checksumAlgorithm.contains("sha1")) {
-				checksumAlgorithm = "SHA-1";
-			} else {
-				throw new UnsupportedEncryptionException(
-						"cannot identify checksum algorithm: "
-								+ checksumAlgorithm);
-			}
 			
 			MessageDigest digest = MessageDigest.getInstance(checksumAlgorithm);
 			DigestInputStream din = new DigestInputStream(in, digest);
-			ByteStreamUtil.skipBytewise(din, Math.min(deflatedSize, 1024));
+			// TODO: buffered?
+			ByteStreamUtil.flushBytewise(din);
 			byte[] calculatedChecksum = digest.digest();
 			
 			if (!Arrays.equals(checksum, calculatedChecksum)) return false;
 		} catch (NoSuchAlgorithmException e) {
 			throw new UnsupportedEncryptionException(
 					"unsupported message digest: "
-							+ encryptionParameter.getChecksumType(), e);
+							+ encryptionParameter.getChecksumAlgorithm(), e);
 		}
 		
 		return true;
@@ -108,44 +91,11 @@ public class OpenDocumentCryptoUtil {
 	
 	public static InputStream getPlainInputStream(InputStream in,
 			EncryptionParameter encryptionParameter, String password) {
-		String keyDerivation = encryptionParameter.getKeyDerivation();
-		if (!keyDerivation.equalsIgnoreCase("PBKDF2"))
-			throw new UnsupportedEncryptionException(
-					"unsupported key derivation: " + keyDerivation);
+		String algorithm = encryptionParameter.getAlgorithm();
+		String transformation = encryptionParameter.getTransformation();
 		
-		String algorithm = encryptionParameter.getAlgorithm().toLowerCase();
-		String transformation;
-		
-		// TODO: improve
-		if (algorithm.contains("blowfish")) {
-			algorithm = "Blowfish";
-			transformation = "Blowfish/CFB/NoPadding";
-		} else if (algorithm.contains("aes")) {
-			algorithm = "AES";
-			transformation = "AES/CBC/NoPadding";
-		} else {
-			throw new UnsupportedEncryptionException(
-					"cannot identify crypto algorithm: " + algorithm);
-		}
-		
-		int keySize = encryptionParameter.getKeySize();
+		int keySize = encryptionParameter.getKeyDerivationKeySize();
 		String startKeyGeneration = encryptionParameter.getStartKeyGeneration();
-		
-		// odf 1.0
-		if (keySize == -1) keySize = 16;
-		if (startKeyGeneration == null) {
-			startKeyGeneration = "SHA-1";
-		} else {
-			startKeyGeneration = startKeyGeneration.toLowerCase();
-			if (startKeyGeneration.contains("sha256")) {
-				startKeyGeneration = "SHA-256";
-			} else if (startKeyGeneration.contains("sha1")) {
-				startKeyGeneration = "SHA-1";
-			} else {
-				throw new UnsupportedEncryptionException(
-						"cannot identify mac algorithm: " + startKeyGeneration);
-			}
-		}
 		
 		try {
 			// TODO: password charset
@@ -155,8 +105,9 @@ public class OpenDocumentCryptoUtil {
 					.getInstance(startKeyGeneration);
 			byte[] startKey = digest.digest(passwordBytes);
 			
-			byte[] salt = encryptionParameter.getSalt();
-			int iterationCount = encryptionParameter.getIterationCount();
+			byte[] salt = encryptionParameter.getKeyDerivationSalt();
+			int iterationCount = encryptionParameter
+					.getKeyDerivationIterationCount();
 			
 			MacBasedPRF macBasedPRF = new MacBasedPRF("HmacSHA1");
 			PBKDF2Parameters pbkdf2Parameters = new PBKDF2Parameters(salt,
