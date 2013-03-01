@@ -18,6 +18,7 @@ import at.andiwand.commons.lwxml.translator.simple.SimpleAttributeTranslator;
 import at.andiwand.commons.lwxml.translator.simple.SimpleElementReplacement;
 import at.andiwand.commons.lwxml.writer.LWXMLEventListWriter;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
+import at.andiwand.commons.util.collection.OrderedPair;
 import at.andiwand.commons.util.iterator.CycleIterator;
 import at.andiwand.odf2html.odf.TableSize;
 import at.andiwand.odf2html.translator.style.DocumentStyle;
@@ -235,28 +236,38 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 		LWXMLUtil.flushUntilEndElement(in, TABLE_ELEMENT_NAME);
 	}
 	
-	// TODO: improve repeated
+	// TODO: renew repeated (HOTFIX)
 	private int translateRow(LWXMLPushbackReader in, LWXMLWriter out)
 			throws IOException {
-		LWXMLWriter tmpOut = new LWXMLEventListWriter();
+		LWXMLEventListWriter tmpHead = new LWXMLEventListWriter();
 		
-		rowTranslation.translate(in, tmpOut);
+		rowTranslation.translate(in, tmpHead);
 		int repeated = rowTranslation.getCurrentRepeated();
 		
-		tmpOut.flush();
+		tmpHead.flush();
 		
 		if (repeated == 1) {
-			((LWXMLEventListWriter) tmpOut).writeTo(out);
-			tmpOut = out;
-		}
-		
-		translateCells(in, tmpOut);
-		rowTranslation.translate(in, tmpOut);
-		
-		if (repeated > 1) {
+			tmpHead.writeTo(out);
+			translateCells(in, out);
+			rowTranslation.translate(in, out);
+		} else {
+			LinkedList<OrderedPair<Integer, LWXMLEventListWriter>> tmpContent = new LinkedList<OrderedPair<Integer, LWXMLEventListWriter>>();
+			LWXMLEventListWriter tmpBottom = new LWXMLEventListWriter();
+			
+			cacheCells(in, tmpContent);
+			rowTranslation.translate(in, tmpBottom);
+			
 			// TODO: hotfix limit repeated?
 			for (int i = 0; i < repeated; i++) {
-				((LWXMLEventListWriter) tmpOut).writeTo(out);
+				tmpHead.writeTo(out);
+				
+				for (OrderedPair<Integer, LWXMLEventListWriter> contentRepeated : tmpContent) {
+					for (int j = 0; j < contentRepeated.getElement1(); j++) {
+						contentRepeated.getElement2().writeTo(out);
+					}
+				}
+				
+				tmpBottom.writeTo(out);
 			}
 		}
 		
@@ -276,6 +287,50 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 				if (startElementName.equals(CELL_ELEMENT_NAME)) {
 					in.unreadEvent(startElementName);
 					i += translateCell(in, out, currentTableSize.getColumns()
+							- i);
+				} else if (startElementName.equals(COVERED_CELL_ELEMENT_NAME)) {
+					// TODO: fix this really
+					// LWXMLUtil.flushEmptyElement(in);
+					LWXMLUtil.flushBranch(in);
+				}
+				
+				break;
+			case END_ELEMENT:
+			case END_EMPTY_ELEMENT:
+				String endElementName = in.readValue();
+				
+				if ((endElementName == null)
+						|| (ROW_ELEMENT_NAME.equals(endElementName))) {
+					in.unreadEvent(endElementName);
+					return;
+				} else {
+					throw new LWXMLIllegalElementException(endElementName);
+				}
+			default:
+				// TODO: log
+				break;
+			}
+		}
+		
+		LWXMLUtil.flushUntilEndElement(in, ROW_ELEMENT_NAME);
+		in.unreadEvent(ROW_ELEMENT_NAME);
+	}
+	
+	// TODO: renew repeated (HOTFIX)
+	private void cacheCells(LWXMLPushbackReader in,
+			LinkedList<OrderedPair<Integer, LWXMLEventListWriter>> tmpContent)
+			throws IOException {
+		for (int i = 0; i < currentTableSize.getColumns();) {
+			LWXMLEvent event = in.readEvent();
+			
+			switch (event) {
+			case START_ELEMENT:
+				String startElementName = in.readValue();
+				
+				if (startElementName.equals(CELL_ELEMENT_NAME)) {
+					in.unreadEvent(startElementName);
+					i += cacheCell(in, tmpContent, currentTableSize
+							.getColumns()
 							- i);
 				} else if (startElementName.equals(COVERED_CELL_ELEMENT_NAME)) {
 					// TODO: fix this really
@@ -328,6 +383,42 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 				((LWXMLEventListWriter) tmpOut).writeTo(out);
 			}
 		}
+		
+		return repeated;
+	}
+	
+	private LWXMLEventListWriter getWriter(
+			LinkedList<OrderedPair<Integer, LWXMLEventListWriter>> tmpContent,
+			int repeatCell) {
+		OrderedPair<Integer, LWXMLEventListWriter> last = (tmpContent.size() == 0) ? null
+				: tmpContent.getLast();
+		
+		if ((last == null) || (last.getElement1() > 1)) {
+			last = new OrderedPair<Integer, LWXMLEventListWriter>(repeatCell,
+					new LWXMLEventListWriter());
+			tmpContent.add(last);
+		}
+		
+		return last.getElement2();
+	}
+	
+	// TODO: renew repeated (HOTFIX)
+	private int cacheCell(LWXMLPushbackReader in,
+			LinkedList<OrderedPair<Integer, LWXMLEventListWriter>> tmpContent,
+			int maxRepeated) throws IOException {
+		LWXMLEventListWriter tmpHead = new LWXMLEventListWriter();
+		
+		translateCellStart(in, tmpHead);
+		int repeated = Math.min(maxRepeated, cellTranslator
+				.getCurrentRepeated());
+		
+		tmpHead.flush();
+		
+		LWXMLWriter out = getWriter(tmpContent, repeated);
+		
+		tmpHead.writeTo(out);
+		translateCellContent(in, out);
+		cellTranslator.translate(in, out);
 		
 		return repeated;
 	}
