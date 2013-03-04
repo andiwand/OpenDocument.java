@@ -362,7 +362,7 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 	
 	private int translateCell(LWXMLPushbackReader in, LWXMLWriter out,
 			int maxRepeated) throws IOException {
-		LWXMLWriter tmpOut = new LWXMLEventListWriter();
+		LWXMLEventListWriter tmpOut = new LWXMLEventListWriter();
 		
 		translateCellStart(in, tmpOut);
 		int repeated = Math.min(maxRepeated, cellTranslator
@@ -371,16 +371,15 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 		tmpOut.flush();
 		
 		if (repeated == 1) {
-			((LWXMLEventListWriter) tmpOut).writeTo(out);
-			tmpOut = out;
-		}
-		
-		translateCellContent(in, tmpOut);
-		cellTranslator.translate(in, tmpOut);
-		
-		if (repeated > 1) {
+			tmpOut.writeTo(out);
+			translateCellContent(in, out);
+			cellTranslator.translate(in, out);
+		} else {
+			translateCellContent(in, tmpOut);
+			cellTranslator.translate(in, tmpOut);
+			
 			for (int i = 0; i < repeated; i++) {
-				((LWXMLEventListWriter) tmpOut).writeTo(out);
+				tmpOut.writeTo(out);
 			}
 		}
 		
