@@ -242,9 +242,9 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 		LWXMLEventListWriter tmpHead = new LWXMLEventListWriter();
 		
 		rowTranslation.translate(in, tmpHead);
-		int repeated = rowTranslation.getCurrentRepeated();
-		
 		tmpHead.flush();
+		
+		int repeated = rowTranslation.getCurrentRepeated();
 		
 		if (repeated == 1) {
 			tmpHead.writeTo(out);
