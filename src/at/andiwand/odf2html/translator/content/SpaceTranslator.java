@@ -8,7 +8,7 @@ import at.andiwand.commons.lwxml.reader.LWXMLPushbackReader;
 import at.andiwand.commons.lwxml.translator.simple.SimpleElementTranslator;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
 import at.andiwand.commons.util.NumberUtil;
-import at.andiwand.commons.util.StringUtil;
+import at.andiwand.commons.util.string.StringUtil;
 
 
 public class SpaceTranslator extends SimpleElementTranslator {

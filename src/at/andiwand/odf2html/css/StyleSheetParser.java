@@ -9,7 +9,7 @@ import java.io.Reader;
 
 import at.andiwand.commons.io.CharStreamUtil;
 import at.andiwand.commons.io.UntilCharacterReader;
-import at.andiwand.commons.util.StringUtil;
+import at.andiwand.commons.util.string.StringUtil;
 
 
 public class StyleSheetParser {
