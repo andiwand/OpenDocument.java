@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="make-jar" name="odf2html">
+	<property name="target" value="1.6" />
+	<property name="source" value="1.6" />
+	<property name="jar" value="odf2html.jar" />
+	
+	<path id="odf2html.classpath">
+		<pathelement location="bin" />
+		<pathelement location="lib/commons.jar" />
+	</path>
+	
+	<target name="init">
+		<mkdir dir="bin" />
+		<copy includeemptydirs="false" todir="bin">
+			<fileset dir="src">
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+	</target>
+	
+	<target name="clean">
+		<delete dir="bin" />
+	</target>
+	
+	<target name="make" depends="init">
+		<javac srcdir="src" destdir="bin" source="${source}" target="${target}" includeantruntime="true">
+			<classpath refid="odf2html.classpath" />
+		</javac>
+	</target>
+	
+	<target name="make-jar" depends="make">
+		<delete file="${jar}" />
+		<jar destfile="${jar}">
+			<fileset dir="bin">
+				<include name="**/*.class" />
+				<exclude name="**/test/**" />
+			</fileset>
+		</jar>
+	</target>
+</project>
