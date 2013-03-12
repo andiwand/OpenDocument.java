@@ -11,6 +11,7 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+        <javaElement handleIdentifier="=commons/src&lt;at.andiwand.commons.swing.graph"/>
         <javaElement handleIdentifier="=commons/src&lt;at.andiwand.commons.math.matrix"/>
         <javaElement handleIdentifier="=commons/src&lt;at.andiwand.commons.swing"/>
         <javaElement handleIdentifier="=commons/src&lt;at.andiwand.commons.xml.namespace"/>
@@ -36,6 +37,7 @@
         <javaElement handleIdentifier="=commons/src&lt;at.andiwand.commons.lwxml.translator.simple"/>
         <javaElement handleIdentifier="=commons/src&lt;at.andiwand.commons.lwxml.translator"/>
         <javaElement handleIdentifier="=commons/src&lt;at.andiwand.commons.cli"/>
+        <javaElement handleIdentifier="=commons/src&lt;at.andiwand.commons.util.array"/>
         <javaElement handleIdentifier="=commons/src&lt;at.andiwand.commons.network.mac"/>
         <javaElement handleIdentifier="=commons/src&lt;at.andiwand.commons.math.vector"/>
         <javaElement handleIdentifier="=commons/src&lt;at.andiwand.commons.util.collection"/>

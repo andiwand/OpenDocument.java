@@ -16,7 +16,7 @@ import at.andiwand.commons.lwxml.reader.LWXMLPushbackReader;
 import at.andiwand.commons.lwxml.reader.LWXMLReader;
 import at.andiwand.commons.lwxml.translator.simple.SimpleAttributeTranslator;
 import at.andiwand.commons.lwxml.translator.simple.SimpleElementReplacement;
-import at.andiwand.commons.lwxml.writer.LWXMLEventListWriter;
+import at.andiwand.commons.lwxml.writer.LWXMLEventQueueWriter;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
 import at.andiwand.commons.util.collection.OrderedPair;
 import at.andiwand.commons.util.iterator.CycleIterator;
@@ -52,7 +52,11 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 	private final List<String> currentColumnDefaultStyles = new LinkedList<String>();
 	private Iterator<String> currentColumnDefaultStylesIterator;
 	
-	private final LWXMLEventListWriter untilShapesTmpOut = new LWXMLEventListWriter();
+	private final LWXMLEventQueueWriter untilShapesTmpOut = new LWXMLEventQueueWriter();
+	
+	private final LWXMLEventQueueWriter tmpRowHead = new LWXMLEventQueueWriter();
+	private final LWXMLEventQueueWriter tmpCellOut = new LWXMLEventQueueWriter();
+	private final LWXMLEventQueueWriter tmpCellHead = new LWXMLEventQueueWriter();
 	
 	public SpreadsheetTableTranslator(DocumentStyle style,
 			ContentTranslator contentTranslator, Map<String, TableSize> tableMap) {
@@ -239,29 +243,27 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 	// TODO: renew repeated (HOTFIX)
 	private int translateRow(LWXMLPushbackReader in, LWXMLWriter out)
 			throws IOException {
-		LWXMLEventListWriter tmpHead = new LWXMLEventListWriter();
-		
-		rowTranslation.translate(in, tmpHead);
-		tmpHead.flush();
+		rowTranslation.translate(in, tmpRowHead);
+		tmpRowHead.flush();
 		
 		int repeated = rowTranslation.getCurrentRepeated();
 		
 		if (repeated == 1) {
-			tmpHead.writeTo(out);
+			tmpRowHead.writeTo(out);
 			translateCells(in, out);
 			rowTranslation.translate(in, out);
 		} else {
-			LinkedList<OrderedPair<Integer, LWXMLEventListWriter>> tmpContent = new LinkedList<OrderedPair<Integer, LWXMLEventListWriter>>();
-			LWXMLEventListWriter tmpBottom = new LWXMLEventListWriter();
+			LinkedList<OrderedPair<Integer, LWXMLEventQueueWriter>> tmpContent = new LinkedList<OrderedPair<Integer, LWXMLEventQueueWriter>>();
+			LWXMLEventQueueWriter tmpBottom = new LWXMLEventQueueWriter();
 			
 			cacheCells(in, tmpContent);
 			rowTranslation.translate(in, tmpBottom);
 			
 			// TODO: hotfix limit repeated?
 			for (int i = 0; i < repeated; i++) {
-				tmpHead.writeTo(out);
+				tmpRowHead.writeTo(out);
 				
-				for (OrderedPair<Integer, LWXMLEventListWriter> contentRepeated : tmpContent) {
+				for (OrderedPair<Integer, LWXMLEventQueueWriter> contentRepeated : tmpContent) {
 					for (int j = 0; j < contentRepeated.getElement1(); j++) {
 						contentRepeated.getElement2().writeTo(out);
 					}
@@ -271,6 +273,7 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 			}
 		}
 		
+		tmpRowHead.reset();
 		return repeated;
 	}
 	
@@ -318,7 +321,7 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 	
 	// TODO: renew repeated (HOTFIX)
 	private void cacheCells(LWXMLPushbackReader in,
-			LinkedList<OrderedPair<Integer, LWXMLEventListWriter>> tmpContent)
+			LinkedList<OrderedPair<Integer, LWXMLEventQueueWriter>> tmpContent)
 			throws IOException {
 		for (int i = 0; i < currentTableSize.getColumns();) {
 			LWXMLEvent event = in.readEvent();
@@ -362,39 +365,38 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 	
 	private int translateCell(LWXMLPushbackReader in, LWXMLWriter out,
 			int maxRepeated) throws IOException {
-		LWXMLEventListWriter tmpOut = new LWXMLEventListWriter();
-		
-		translateCellStart(in, tmpOut);
+		translateCellStart(in, tmpCellOut);
 		int repeated = Math.min(maxRepeated, cellTranslator
 				.getCurrentRepeated());
 		
-		tmpOut.flush();
+		tmpCellOut.flush();
 		
 		if (repeated == 1) {
-			tmpOut.writeTo(out);
+			tmpCellOut.writeTo(out);
 			translateCellContent(in, out);
 			cellTranslator.translate(in, out);
 		} else {
-			translateCellContent(in, tmpOut);
-			cellTranslator.translate(in, tmpOut);
+			translateCellContent(in, tmpCellOut);
+			cellTranslator.translate(in, tmpCellOut);
 			
 			for (int i = 0; i < repeated; i++) {
-				tmpOut.writeTo(out);
+				tmpCellOut.writeTo(out);
 			}
 		}
 		
+		tmpCellOut.reset();
 		return repeated;
 	}
 	
-	private LWXMLEventListWriter getWriter(
-			LinkedList<OrderedPair<Integer, LWXMLEventListWriter>> tmpContent,
+	private LWXMLEventQueueWriter getWriter(
+			LinkedList<OrderedPair<Integer, LWXMLEventQueueWriter>> tmpContent,
 			int repeatCell) {
-		OrderedPair<Integer, LWXMLEventListWriter> last = (tmpContent.size() == 0) ? null
+		OrderedPair<Integer, LWXMLEventQueueWriter> last = (tmpContent.size() == 0) ? null
 				: tmpContent.getLast();
 		
 		if ((last == null) || (last.getElement1() > 1)) {
-			last = new OrderedPair<Integer, LWXMLEventListWriter>(repeatCell,
-					new LWXMLEventListWriter());
+			last = new OrderedPair<Integer, LWXMLEventQueueWriter>(repeatCell,
+					new LWXMLEventQueueWriter());
 			tmpContent.add(last);
 		}
 		
@@ -403,22 +405,21 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 	
 	// TODO: renew repeated (HOTFIX)
 	private int cacheCell(LWXMLPushbackReader in,
-			LinkedList<OrderedPair<Integer, LWXMLEventListWriter>> tmpContent,
+			LinkedList<OrderedPair<Integer, LWXMLEventQueueWriter>> tmpContent,
 			int maxRepeated) throws IOException {
-		LWXMLEventListWriter tmpHead = new LWXMLEventListWriter();
-		
-		translateCellStart(in, tmpHead);
+		translateCellStart(in, tmpCellHead);
 		int repeated = Math.min(maxRepeated, cellTranslator
 				.getCurrentRepeated());
 		
-		tmpHead.flush();
+		tmpCellHead.flush();
 		
 		LWXMLWriter out = getWriter(tmpContent, repeated);
 		
-		tmpHead.writeTo(out);
+		tmpCellHead.writeTo(out);
 		translateCellContent(in, out);
 		cellTranslator.translate(in, out);
 		
+		tmpCellHead.reset();
 		return repeated;
 	}
 	
