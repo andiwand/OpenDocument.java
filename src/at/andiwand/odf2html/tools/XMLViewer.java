@@ -10,6 +10,8 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.LinkedList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -21,12 +23,16 @@ import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
 
 import at.andiwand.commons.lwxml.LWXMLConstants;
 import at.andiwand.commons.lwxml.LWXMLEvent;
 import at.andiwand.commons.lwxml.reader.LWXMLReader;
 import at.andiwand.commons.lwxml.reader.LWXMLStreamReader;
 import at.andiwand.commons.swing.JFrameUtil;
+import at.andiwand.commons.swing.JTreeUtil;
+import at.andiwand.commons.util.object.ObjectMatcher;
 import at.andiwand.odf2html.test.TestFileChooser;
 
 
@@ -34,21 +40,55 @@ public class XMLViewer extends JFrame {
 	
 	private static final long serialVersionUID = 901256796884354336L;
 	
+	private static class NodeMatcher implements ObjectMatcher<TreeNode> {
+		private final Pattern pattern;
+		
+		public NodeMatcher(Pattern pattern) {
+			this.pattern = pattern;
+		}
+		
+		public boolean matches(TreeNode o) {
+			if (!(o instanceof DefaultMutableTreeNode)) return false;
+			DefaultMutableTreeNode node = (DefaultMutableTreeNode) o;
+			
+			String text = (String) node.getUserObject();
+			Matcher matcher = pattern.matcher(text);
+			return matcher.find();
+		}
+	}
+	
 	private JFileChooser fileChooser = new JFileChooser();
 	
 	private DefaultTreeModel treeModel = new DefaultTreeModel(null);
+	private JTree tree = new JTree(treeModel);
+	
+	private Pattern lastPattern;
+	private TreePath lastMatch;
 	
 	public XMLViewer() {
 		super("XML Viewer");
 		
-		JTree tree = new JTree(treeModel);
 		add(new JScrollPane(tree));
 		
 		JMenuBar menuBar = new JMenuBar();
+		
 		JMenu file = new JMenu("File");
-		JMenuItem open = new JMenuItem("Open");
+		JMenuItem open = new JMenuItem("Open...");
 		file.add(open);
 		menuBar.add(file);
+		
+		JMenu treeMenu = new JMenu("Tree");
+		JMenuItem expandAll = new JMenuItem("Expand all");
+		treeMenu.add(expandAll);
+		JMenuItem collapseAll = new JMenuItem("Collapse all");
+		treeMenu.add(collapseAll);
+		treeMenu.addSeparator();
+		JMenuItem find = new JMenuItem("Find...");
+		treeMenu.add(find);
+		JMenuItem findNext = new JMenuItem("Find next");
+		treeMenu.add(findNext);
+		menuBar.add(treeMenu);
+		
 		setJMenuBar(menuBar);
 		
 		open.addActionListener(new ActionListener() {
@@ -64,6 +104,47 @@ public class XMLViewer extends JFrame {
 					JOptionPane.showMessageDialog(XMLViewer.this, e,
 							"Exception", JOptionPane.ERROR_MESSAGE);
 				}
+			}
+		});
+		
+		expandAll.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JTreeUtil.expandAll(tree);
+			}
+		});
+		
+		collapseAll.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JTreeUtil.collapseAll(tree);
+			}
+		});
+		
+		find.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String pattern = JOptionPane.showInputDialog(XMLViewer.this,
+						"Enter pattern to search with:", "Find...",
+						JOptionPane.QUESTION_MESSAGE);
+				if (pattern == null) return;
+				
+				lastPattern = Pattern
+						.compile(pattern, Pattern.CASE_INSENSITIVE);
+				lastMatch = JTreeUtil.findNode(tree, new NodeMatcher(
+						lastPattern), null);
+				System.out.println(lastMatch);
+				tree.setSelectionPath(lastMatch);
+				tree.scrollPathToVisible(lastMatch);
+			}
+		});
+		
+		findNext.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (lastPattern == null) return;
+				
+				lastMatch = JTreeUtil.findNode(tree, new NodeMatcher(
+						lastPattern), lastMatch);
+				System.out.println(lastMatch);
+				tree.setSelectionPath(lastMatch);
+				tree.scrollPathToVisible(lastMatch);
 			}
 		});
 	}
