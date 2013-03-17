@@ -1,5 +1,6 @@
 package at.andiwand.odf2html.translator.style;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,8 +45,12 @@ public abstract class DocumentStyleTranslator<T extends DocumentStyle> {
 	public void translate(OpenDocument document, T out) throws IOException {
 		LWXMLReader in = new LWXMLStreamReader(document.getStyles());
 		
-		LWXMLUtil.flushUntilStartElement(in, DOCUMENT_STYLE_ELEMENT_NAME);
-		translate(in, out);
+		try {
+			LWXMLUtil.flushUntilStartElement(in, DOCUMENT_STYLE_ELEMENT_NAME);
+			translate(in, out);
+		} catch (EOFException e) {
+			// TODO: log - no styles
+		}
 	}
 	
 	public void translate(LWXMLReader in, T out) throws IOException {
