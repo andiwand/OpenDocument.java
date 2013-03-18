@@ -18,7 +18,7 @@ import at.andiwand.odf2html.util.FileCache;
 public class SpreadsheetTranslatorTest {
 	
 	public static void main(String[] args) throws Throwable {
-		JFileChooser fileChooser = new TestFileChooser();
+		JFileChooser fileChooser = new JFileChooser();
 		int option = fileChooser.showOpenDialog(null);
 		
 		if (option == JFileChooser.CANCEL_OPTION) return;
@@ -46,7 +46,8 @@ public class SpreadsheetTranslatorTest {
 		out.close();
 		fileWriter.close();
 		
-		Runtime.getRuntime().exec(new String[] {"google-chrome", htmlFile.getPath()});
+		Runtime.getRuntime().exec(
+				new String[] {"google-chrome", htmlFile.getPath()});
 		
 		// CharArrayReader reader = new CharArrayReader(writer.toCharArray());
 		//

@@ -186,11 +186,19 @@ public class ODFViewer extends JFrame {
 			InputStream inputStream = documentFile.getFileStream(file);
 			XMLViewer viewer = new XMLViewer(inputStream, file);
 			inputStream.close();
-			viewer.setSize(400, 400);
+			viewer.setSize(600, 500);
 			JFrameUtil.centerFrame(viewer, this);
 			viewer.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 			viewer.setVisible(true);
 		}
+	}
+	
+	public static void main(String[] args) {
+		ODFViewer viewer = new ODFViewer();
+		viewer.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		viewer.setSize(300, 400);
+		JFrameUtil.centerFrame(viewer);
+		viewer.setVisible(true);
 	}
 	
 }

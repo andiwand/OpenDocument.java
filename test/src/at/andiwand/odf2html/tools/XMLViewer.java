@@ -28,8 +28,9 @@ import javax.swing.tree.TreePath;
 
 import at.andiwand.commons.lwxml.LWXMLConstants;
 import at.andiwand.commons.lwxml.LWXMLEvent;
-import at.andiwand.commons.lwxml.reader.LWXMLReader;
+import at.andiwand.commons.lwxml.reader.LWXMLCountingReader;
 import at.andiwand.commons.lwxml.reader.LWXMLStreamReader;
+import at.andiwand.commons.swing.JFrameUtil;
 import at.andiwand.commons.swing.JTreeUtil;
 import at.andiwand.commons.util.object.ObjectMatcher;
 
@@ -37,6 +38,9 @@ import at.andiwand.commons.util.object.ObjectMatcher;
 public class XMLViewer extends JFrame {
 	
 	private static final long serialVersionUID = 901256796884354336L;
+	
+	private static final String ELEMENT_COUNT_PREFIX = "Element count: ";
+	private static final String ATTRIBUTE_COUNT_PREFIX = "Attribute count: ";
 	
 	private static class NodeMatcher implements ObjectMatcher<TreeNode> {
 		private final Pattern pattern;
@@ -59,6 +63,10 @@ public class XMLViewer extends JFrame {
 	
 	private DefaultTreeModel treeModel = new DefaultTreeModel(null);
 	private JTree tree = new JTree(treeModel);
+	
+	private JMenuItem elementCount = new JMenuItem(ELEMENT_COUNT_PREFIX + "n/a");
+	private JMenuItem attributeCount = new JMenuItem(ATTRIBUTE_COUNT_PREFIX
+			+ "n/a");
 	
 	private Pattern lastPattern;
 	private TreePath lastMatch;
@@ -86,6 +94,13 @@ public class XMLViewer extends JFrame {
 		JMenuItem findNext = new JMenuItem("Find next");
 		treeMenu.add(findNext);
 		menuBar.add(treeMenu);
+		
+		JMenu statistic = new JMenu("Statistic");
+		elementCount.setEnabled(false);
+		statistic.add(elementCount);
+		attributeCount.setEnabled(false);
+		statistic.add(attributeCount);
+		menuBar.add(statistic);
 		
 		setJMenuBar(menuBar);
 		
@@ -188,7 +203,8 @@ public class XMLViewer extends JFrame {
 	}
 	
 	public void open(Reader reader, String rootTitle) throws IOException {
-		LWXMLReader in = new LWXMLStreamReader(reader);
+		LWXMLCountingReader in = new LWXMLCountingReader(new LWXMLStreamReader(
+				reader));
 		
 		DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode(rootTitle);
 		// removed Deque because of Android 1.6
@@ -252,6 +268,19 @@ public class XMLViewer extends JFrame {
 		treeModel.setRoot(rootNode);
 		
 		in.close();
+		
+		elementCount.setText(ELEMENT_COUNT_PREFIX
+				+ in.getCount(LWXMLEvent.START_ELEMENT));
+		attributeCount.setText(ATTRIBUTE_COUNT_PREFIX
+				+ in.getCount(LWXMLEvent.ATTRIBUTE_NAME));
+	}
+	
+	public static void main(String[] args) {
+		XMLViewer viewer = new XMLViewer();
+		viewer.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		viewer.setSize(600, 500);
+		JFrameUtil.centerFrame(viewer);
+		viewer.setVisible(true);
 	}
 	
 }
