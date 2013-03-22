@@ -49,7 +49,8 @@ public class SpreadsheetTableCellTranslator extends SimpleElementReplacement {
 			throws IOException {
 		super.translateAttributeList(in, out);
 		
-		if (getCurrentParsedAttribute(STYLE_ATTRIBUTE_NAME) == null)
+		if ((getCurrentParsedAttribute(STYLE_ATTRIBUTE_NAME) == null)
+				&& (currentDefaultStyleAttribute != null))
 			out.writeAttribute(currentDefaultStyleAttribute);
 		
 		currentRepeated = NumberUtil.parseInt(
