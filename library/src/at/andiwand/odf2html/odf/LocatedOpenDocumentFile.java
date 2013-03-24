@@ -1,5 +1,6 @@
 package at.andiwand.odf2html.odf;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,7 +13,7 @@ import java.util.zip.ZipFile;
 import at.andiwand.commons.util.EnumerationUtil;
 
 
-public class LocatedOpenDocumentFile extends OpenDocumentFile {
+public class LocatedOpenDocumentFile extends OpenDocumentFile implements Closeable {
 	
 	private File file;
 	private ZipFile zipFile;
@@ -65,5 +66,9 @@ public class LocatedOpenDocumentFile extends OpenDocumentFile {
 		
 		return zipFile.getInputStream(entry);
 	}
-	
+
+	@Override
+	public void close() throws IOException {
+		zipFile.close();
+	}
 }
