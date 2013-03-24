@@ -37,6 +37,11 @@ public class LocatedOpenDocumentFile extends OpenDocumentFile {
 	}
 	
 	@Override
+	public long getFileSize(String name) throws IOException {
+		return zipFile.getEntry(name).getSize();
+	}
+	
+	@Override
 	public boolean isFile(String name) throws IOException {
 		if (entryMap == null) getFileNames();
 		return entryMap.containsKey(name);

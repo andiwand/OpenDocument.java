@@ -79,24 +79,26 @@ public abstract class OpenDocumentFile implements Closeable {
 	protected abstract InputStream getRawFileStream(String name)
 			throws IOException;
 	
-	public InputStream getFileStream(String path) throws IOException {
-		InputStream in = getRawFileStream(path);
-		if (!isFileEncrypted(path)) return in;
+	public InputStream getFileStream(String name) throws IOException {
+		InputStream in = getRawFileStream(name);
+		if (!isFileEncrypted(name)) return in;
 		
 		if (password == null)
 			throw new NullPointerException("password cannot be null");
-		EncryptionParameter encryptionParameter = getEncryptionParameter(path);
+		EncryptionParameter encryptionParameter = getEncryptionParameter(name);
 		in = OpenDocumentCryptoUtil.getPlainInputStream(in,
 				encryptionParameter, password);
 		in = new InflaterInputStream(in, new Inflater(true));
 		return in;
 	}
 	
-	public String getFileMimetype(String path) throws IOException {
+	public String getFileMimetype(String name) throws IOException {
 		if (mimetypeMap == null) mimetypeMap = getFileMimetypeImpl();
 		
-		return mimetypeMap.get(path);
+		return mimetypeMap.get(name);
 	}
+	
+	public abstract long getFileSize(String name) throws IOException;
 	
 	public Map<String, String> getFileMimetypeImpl() throws IOException {
 		Map<String, String> result = new HashMap<String, String>();

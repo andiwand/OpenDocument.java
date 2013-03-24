@@ -1,5 +1,8 @@
 package at.andiwand.odf2html.tools;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -13,6 +16,7 @@ import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.AbstractButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -59,6 +63,27 @@ public class XMLViewer extends JFrame {
 		}
 	}
 	
+	private static final Clipboard clipboard = Toolkit.getDefaultToolkit()
+			.getSystemClipboard();
+	
+	private static final ActionListener copyText = new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+			Object source = e.getSource();
+			String text;
+			
+			if (source instanceof AbstractButton) {
+				AbstractButton button = (AbstractButton) source;
+				text = button.getText();
+			} else {
+				System.out.println("no text for class: " + source.getClass());
+				return;
+			}
+			
+			StringSelection selection = new StringSelection(text);
+			clipboard.setContents(selection, selection);
+		}
+	};
+	
 	private JFileChooser fileChooser = new JFileChooser();
 	
 	private DefaultTreeModel treeModel = new DefaultTreeModel(null);
@@ -96,9 +121,9 @@ public class XMLViewer extends JFrame {
 		menuBar.add(treeMenu);
 		
 		JMenu statistic = new JMenu("Statistic");
-		elementCount.setEnabled(false);
+		elementCount.addActionListener(copyText);
 		statistic.add(elementCount);
-		attributeCount.setEnabled(false);
+		attributeCount.addActionListener(copyText);
 		statistic.add(attributeCount);
 		menuBar.add(statistic);
 		
