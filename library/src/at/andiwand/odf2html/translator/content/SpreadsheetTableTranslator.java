@@ -87,6 +87,7 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 		if (currentColumnDefaultStylesIterator == null)
 			currentColumnDefaultStylesIterator = new CycleIterator<String>(
 					currentColumnDefaultStyles);
+		if (!currentColumnDefaultStylesIterator.hasNext()) return null;
 		String name = currentColumnDefaultStylesIterator.next();
 		return style.getStyleAttribute(name);
 	}
@@ -95,6 +96,7 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 		if (currentColumnDefaultStylesIterator == null)
 			currentColumnDefaultStylesIterator = new CycleIterator<String>(
 					currentColumnDefaultStyles);
+		if (!currentColumnDefaultStylesIterator.hasNext()) return;
 		for (int i = 1; i < span; i++) {
 			currentColumnDefaultStylesIterator.next();
 		}
@@ -135,8 +137,8 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 		untilShapesTmpOut.writeTo(out);
 		untilShapesTmpOut.reset();
 		
-		LWXMLUtil.flushUntilStartElement(in, COLUMN_ELEMENT_NAME);
-		in.unreadEvent(COLUMN_ELEMENT_NAME);
+		// LWXMLUtil.flushUntilStartElement(in, COLUMN_ELEMENT_NAME);
+		// in.unreadEvent(COLUMN_ELEMENT_NAME);
 		
 		translateColumns(in, out);
 		translateRows(in, out);

@@ -44,7 +44,6 @@ public class SpreadsheetTranslatorTest {
 		System.out.println((end - start) / 1000000000d);
 		
 		out.close();
-		fileWriter.close();
 		
 		Runtime.getRuntime().exec(
 				new String[] {"google-chrome", htmlFile.getPath()});
