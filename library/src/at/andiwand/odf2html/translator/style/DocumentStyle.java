@@ -36,7 +36,7 @@ public class DocumentStyle {
 
 		try {
 			return styleSheetParser.parse(in);
-		} finally {
+		} finally { 
 			in.close();
 		}
 	}
