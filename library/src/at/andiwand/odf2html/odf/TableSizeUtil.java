@@ -82,6 +82,7 @@ public class TableSizeUtil {
 			throws IOException {
 		LinkedHashMap<String, TableSize> result = new LinkedHashMap<String, TableSize>();
 		
+		@SuppressWarnings("resource")
 		LWXMLElementDelegationReader din = new LWXMLElementDelegationReader(in);
 		
 		while (true) {
@@ -106,6 +107,7 @@ public class TableSizeUtil {
 		
 		String name = LWXMLUtil.parseSingleAttributes(in, TABLE_NAME_ATTRIBUTE);
 		
+		@SuppressWarnings("resource")
 		LWXMLElementDelegationReader din = new LWXMLElementDelegationReader(in);
 		
 		while (true) {
@@ -135,6 +137,7 @@ public class TableSizeUtil {
 				ROWS_REPEATED_ATTRIBUTE_NAME), 1);
 		result.rows = repeated;
 		
+		@SuppressWarnings("resource")
 		LWXMLElementDelegationReader din = new LWXMLElementDelegationReader(in);
 		
 		while (true) {

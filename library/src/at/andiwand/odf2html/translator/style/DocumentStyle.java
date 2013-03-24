@@ -34,7 +34,8 @@ public class DocumentStyle {
 			throws IOException {
 		InputStream in = location.getResourceAsStream(name);
 		StyleSheetParser styleSheetParser = new StyleSheetParser();
-		return styleSheetParser.parse(in);
+		StyleSheet result = styleSheetParser.parse(in);
+		return result;
 	}
 	
 	public static String translateStyleName(String name) {

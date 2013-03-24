@@ -54,6 +54,7 @@ public abstract class DocumentStyleTranslator<T extends DocumentStyle> {
 	}
 	
 	public void translate(LWXMLReader in, T out) throws IOException {
+		@SuppressWarnings("resource")
 		LWXMLElementDelegationReader din = new LWXMLElementDelegationReader(in);
 		
 		while (true) {

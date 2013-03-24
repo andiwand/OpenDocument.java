@@ -1,5 +1,6 @@
 package at.andiwand.odf2html.css;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -19,7 +20,7 @@ public class StyleSheetParser {
 	}
 	
 	public StyleSheet parse(InputStream in) throws IOException {
-		return parse(new InputStreamReader(in));
+		return parse(new BufferedReader(new InputStreamReader(in)));
 	}
 	
 	public StyleSheet parse(Reader in) throws IOException {
