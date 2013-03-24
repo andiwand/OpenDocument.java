@@ -57,24 +57,28 @@ public class AutomaticTranslatorTest {
 	private void testFile(File file) throws IOException {
 		OpenDocumentFile documentFile = new LocatedOpenDocumentFile(file);
 		
-		String name = file.getName();
-		System.out.println(name);
-		String[] parts = name.split("\\$");
-		if (parts.length >= 2) {
-			String password = parts[1];
-			documentFile.setPassword(password);
-		}
-		
-		OpenDocument document = documentFile.getAsOpenDocument();
-		
-		if (document instanceof OpenDocumentText) {
-			textTranslator.translate(document, LWXMLNullWriter.NULL);
-		} else if (document instanceof OpenDocumentSpreadsheet) {
-			spreadsheetTranslator.translate(document, LWXMLNullWriter.NULL);
-		} else if (document instanceof OpenDocumentPresentation) {
-			// TODO: implement
-		} else {
-			throw new IllegalStateException();
+		try {
+			String name = file.getName();
+			System.out.println(name);
+			String[] parts = name.split("\\$");
+			if (parts.length >= 2) {
+				String password = parts[1];
+				documentFile.setPassword(password);
+			}
+			
+			OpenDocument document = documentFile.getAsOpenDocument();
+			
+			if (document instanceof OpenDocumentText) {
+				textTranslator.translate(document, LWXMLNullWriter.NULL);
+			} else if (document instanceof OpenDocumentSpreadsheet) {
+				spreadsheetTranslator.translate(document, LWXMLNullWriter.NULL);
+			} else if (document instanceof OpenDocumentPresentation) {
+				// TODO: implement
+			} else {
+				throw new IllegalStateException();
+			}
+		} finally {
+			documentFile.close();
 		}
 	}
 	

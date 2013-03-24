@@ -66,4 +66,8 @@ public class LocatedOpenDocumentFile extends OpenDocumentFile {
 		return zipFile.getInputStream(entry);
 	}
 	
+	@Override
+	public void close() throws IOException {
+		zipFile.close();
+	}
 }

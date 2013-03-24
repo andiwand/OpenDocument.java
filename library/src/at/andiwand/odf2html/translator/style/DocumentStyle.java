@@ -33,9 +33,13 @@ public class DocumentStyle {
 	protected static StyleSheet loadStyleSheet(String name, Class<?> location)
 			throws IOException {
 		InputStream in = location.getResourceAsStream(name);
-		StyleSheetParser styleSheetParser = new StyleSheetParser();
-		StyleSheet result = styleSheetParser.parse(in);
-		return result;
+		
+		try {
+			StyleSheetParser styleSheetParser = new StyleSheetParser();
+			return styleSheetParser.parse(in);
+		} finally {
+			in.close();
+		}
 	}
 	
 	public static String translateStyleName(String name) {

@@ -23,6 +23,8 @@ public class TemporaryOpenDocumentFileTest {
 		
 		InputStream inputStream = documentFile.getFileStream("meta.xml");
 		ByteStreamUtil.writeStreamBuffered(inputStream, System.out);
+		
+		documentFile.close();
 	}
 	
 }

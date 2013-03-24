@@ -50,6 +50,8 @@ public abstract class DocumentStyleTranslator<T extends DocumentStyle> {
 			translate(in, out);
 		} catch (EOFException e) {
 			// TODO: log - no styles
+		} finally {
+			in.close();
 		}
 	}
 	

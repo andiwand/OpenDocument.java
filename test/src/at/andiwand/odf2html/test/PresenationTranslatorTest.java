@@ -53,6 +53,8 @@ public class PresenationTranslatorTest {
 		// JFrameUtil.centerFrame(viewer);
 		// viewer.setDefaultCloseOperation(XMLViewer.EXIT_ON_CLOSE);
 		// viewer.setVisible(true);
+		
+		documentFile.close();
 	}
 	
 }

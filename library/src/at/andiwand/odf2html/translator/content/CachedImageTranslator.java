@@ -33,7 +33,13 @@ public class CachedImageTranslator extends ImageTranslator {
 			File file = fileCache.newFile(imageName);
 			InputStream fileIn = documentFile.getFileStream(name);
 			OutputStream fileOut = new FileOutputStream(file);
-			streamUtil.writeStream(fileIn, fileOut);
+			
+			try {
+				streamUtil.writeStream(fileIn, fileOut);
+			} finally {
+				fileOut.close();
+				fileIn.close();
+			}
 		}
 		
 		out.write(fileCache.getFileURI(imageName).toString());

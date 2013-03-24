@@ -1,5 +1,6 @@
 package at.andiwand.odf2html.odf;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -17,7 +18,7 @@ import at.andiwand.commons.lwxml.reader.LWXMLStreamReader;
 import at.andiwand.commons.util.array.ArrayUtil;
 
 
-public abstract class OpenDocumentFile {
+public abstract class OpenDocumentFile implements Closeable {
 	
 	private static final String MIMETYPE_PATH = "mimetype";
 	private static final String MANIFEST_PATH = "META-INF/manifest.xml";

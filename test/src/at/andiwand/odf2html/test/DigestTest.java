@@ -20,6 +20,8 @@ public class DigestTest {
 				file);
 		
 		System.out.println(documentFile.isPasswordValid("testpassword"));
+		
+		documentFile.close();
 	}
 	
 }

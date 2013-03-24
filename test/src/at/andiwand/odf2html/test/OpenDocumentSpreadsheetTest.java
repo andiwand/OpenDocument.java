@@ -28,6 +28,8 @@ public class OpenDocumentSpreadsheetTest {
 			documentFile.setPassword("passwordistest_1");
 		System.out.println(spreadsheet.getTableCount());
 		System.out.println(spreadsheet.getTableMap());
+		
+		documentFile.close();
 	}
 	
 }

@@ -57,6 +57,8 @@ public class DecryptionTest {
 		inputStream = new InflaterInputStream(inputStream, new Inflater(true));
 		
 		ByteStreamUtil.writeStreamBytewise(inputStream, System.out);
+		
+		documentFile.close();
 	}
 	
 }

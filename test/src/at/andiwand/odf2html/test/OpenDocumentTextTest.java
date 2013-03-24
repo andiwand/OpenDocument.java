@@ -26,6 +26,8 @@ public class OpenDocumentTextTest {
 		if (documentFile.isEncrypted()) documentFile.setPassword("password");
 		System.out.println(text.getPageCount());
 		System.out.println(text.useSoftPageBreaks());
+		
+		documentFile.close();
 	}
 	
 }

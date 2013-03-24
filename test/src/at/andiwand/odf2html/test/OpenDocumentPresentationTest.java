@@ -24,6 +24,8 @@ public class OpenDocumentPresentationTest {
 		
 		System.out.println(spreadsheet.getPageCount());
 		System.out.println(spreadsheet.getPageNames());
+		
+		documentFile.close();
 	}
 	
 }
