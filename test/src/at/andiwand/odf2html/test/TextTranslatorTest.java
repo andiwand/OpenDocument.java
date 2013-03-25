@@ -19,7 +19,7 @@ import at.andiwand.odf2html.util.FileCache;
 public class TextTranslatorTest {
 	
 	public static void main(String[] args) throws Throwable {
-		JFileChooser fileChooser = new TestFileChooser();
+		JFileChooser fileChooser = new JFileChooser();
 		int option = fileChooser.showOpenDialog(null);
 		
 		if (option == JFileChooser.CANCEL_OPTION) return;
