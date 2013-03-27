@@ -39,7 +39,7 @@ public class PresenationTranslatorTest {
 		
 		out.close();
 		
-		File htmlFile = new File(file.getPath() + ".html");
+		File htmlFile = File.createTempFile(file.getName(), "ods");
 		FileWriter fileWriter = new FileWriter(htmlFile);
 		writer.writeTo(fileWriter);
 		fileWriter.close();

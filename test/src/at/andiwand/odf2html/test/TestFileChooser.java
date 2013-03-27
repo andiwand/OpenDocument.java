@@ -8,7 +8,11 @@ public class TestFileChooser extends JFileChooser {
 	private static final long serialVersionUID = 1297640540776981863L;
 	
 	public TestFileChooser() {
-		setCurrentDirectory(TestFileUtil.getDirectory());
+		this("");
+	}
+	
+	public TestFileChooser(String child) {
+		setCurrentDirectory(TestFileUtil.getFile(child));
 	}
 	
 }

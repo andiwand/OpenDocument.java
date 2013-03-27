@@ -18,7 +18,7 @@ import at.andiwand.odf2html.util.FileCache;
 public class SpreadsheetTranslatorTest {
 	
 	public static void main(String[] args) throws Throwable {
-		JFileChooser fileChooser = new JFileChooser();
+		JFileChooser fileChooser = new TestFileChooser();
 		int option = fileChooser.showOpenDialog(null);
 		
 		if (option == JFileChooser.CANCEL_OPTION) return;
@@ -31,7 +31,7 @@ public class SpreadsheetTranslatorTest {
 		System.out.println(document.getAsOpenDocumentSpreadsheet()
 				.getTableMap());
 		
-		File htmlFile = new File(file.getPath() + ".html");
+		File htmlFile = File.createTempFile(file.getName(), "ods");
 		FileWriter fileWriter = new FileWriter(htmlFile);
 		LWXMLWriter out = new LWXMLStreamWriter(fileWriter);
 		

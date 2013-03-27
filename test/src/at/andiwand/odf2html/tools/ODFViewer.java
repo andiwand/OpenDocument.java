@@ -29,6 +29,7 @@ import javax.swing.tree.DefaultTreeModel;
 import at.andiwand.commons.swing.JFrameUtil;
 import at.andiwand.odf2html.odf.LocatedOpenDocumentFile;
 import at.andiwand.odf2html.odf.OpenDocumentFile;
+import at.andiwand.odf2html.test.TestFileChooser;
 
 
 public class ODFViewer extends JFrame {
@@ -195,6 +196,7 @@ public class ODFViewer extends JFrame {
 	
 	public static void main(String[] args) {
 		ODFViewer viewer = new ODFViewer();
+		viewer.setFileChooser(new TestFileChooser());
 		viewer.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		viewer.setSize(300, 400);
 		JFrameUtil.centerFrame(viewer);

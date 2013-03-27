@@ -19,7 +19,7 @@ import at.andiwand.odf2html.util.FileCache;
 public class TextTranslatorTest {
 	
 	public static void main(String[] args) throws Throwable {
-		JFileChooser fileChooser = new JFileChooser();
+		JFileChooser fileChooser = new TestFileChooser();
 		int option = fileChooser.showOpenDialog(null);
 		
 		if (option == JFileChooser.CANCEL_OPTION) return;
@@ -38,7 +38,7 @@ public class TextTranslatorTest {
 		
 		out.close();
 		
-		File htmlFile = new File(file.getPath() + ".html");
+		File htmlFile = File.createTempFile(file.getName(), "ods");
 		FileWriter fileWriter = new FileWriter(htmlFile);
 		writer.writeTo(fileWriter);
 		fileWriter.close();

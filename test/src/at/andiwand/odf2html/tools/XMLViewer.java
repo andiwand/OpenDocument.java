@@ -37,6 +37,7 @@ import at.andiwand.commons.lwxml.reader.LWXMLStreamReader;
 import at.andiwand.commons.swing.JFrameUtil;
 import at.andiwand.commons.swing.JTreeUtil;
 import at.andiwand.commons.util.object.ObjectMatcher;
+import at.andiwand.odf2html.test.TestFileChooser;
 
 
 public class XMLViewer extends JFrame {
@@ -302,6 +303,7 @@ public class XMLViewer extends JFrame {
 	
 	public static void main(String[] args) {
 		XMLViewer viewer = new XMLViewer();
+		viewer.setFileChooser(new TestFileChooser());
 		viewer.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		viewer.setSize(600, 500);
 		JFrameUtil.centerFrame(viewer);
