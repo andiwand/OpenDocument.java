@@ -10,42 +10,24 @@ import at.andiwand.odf2html.util.FileCache;
 public class PresentationContentTranslator extends DefaultContentTranslator {
 	
 	public PresentationContentTranslator(OpenDocumentFile documentFile,
-			PresentationStyle style, int tableIndex) throws IOException {
+			PresentationStyle style, int slideIndex) throws IOException {
 		this(documentFile, style, new InlineImageTranslator(documentFile),
-				tableIndex);
+				slideIndex);
 	}
 	
 	public PresentationContentTranslator(OpenDocumentFile documentFile,
-			PresentationStyle style, FileCache fileCache, int tableIndex)
+			PresentationStyle style, FileCache fileCache, int slideIndex)
 			throws IOException {
 		this(documentFile, style, new CachedImageTranslator(documentFile,
-				fileCache), tableIndex);
+				fileCache), slideIndex);
 	}
 	
 	public PresentationContentTranslator(OpenDocumentFile documentFile,
 			PresentationStyle style, ImageTranslator imageTranslator,
-			int tableIndex) throws IOException {
+			int slideIndex) throws IOException {
 		super(style, imageTranslator);
 		
-		addElementTranslator("draw:page", "div");
-		
-		addElementTranslator("draw:frame", new FrameTranslator());
-		
-		addElementTranslator("table:tracked-changes", new NothingTranslator());
-		
-		SpreadsheetParagraphTranslator paragraphTranslator = new SpreadsheetParagraphTranslator(
-				this);
-		addElementTranslator("text:p", paragraphTranslator);
-		addElementTranslator("text:h", paragraphTranslator);
-	}
-	
-	@Override
-	protected void translateStyleAttribute(
-			StyleAttributeTranslator styleAttributeTranslator) {
-		super.translateStyleAttribute(styleAttributeTranslator);
-		
-		addStaticAttributeTranslator("draw:text-style-name",
-				styleAttributeTranslator);
+		// TODO: implement
 	}
 	
 }

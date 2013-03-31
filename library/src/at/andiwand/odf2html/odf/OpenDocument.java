@@ -31,7 +31,7 @@ public abstract class OpenDocument {
 		this.documentFile = documentFile;
 	}
 	
-	public OpenDocumentFile getOpenDocumentFile() {
+	public OpenDocumentFile getDocumentFile() {
 		return documentFile;
 	}
 	
@@ -59,15 +59,15 @@ public abstract class OpenDocument {
 		return documentFile.getFileSize(CONTENT);
 	}
 	
-	public OpenDocumentText getAsOpenDocumentText() {
+	public OpenDocumentText getAsText() {
 		return (OpenDocumentText) this;
 	}
 	
-	public OpenDocumentSpreadsheet getAsOpenDocumentSpreadsheet() {
+	public OpenDocumentSpreadsheet getAsSpreadsheet() {
 		return (OpenDocumentSpreadsheet) this;
 	}
 	
-	public OpenDocumentPresentation getAsOpenDocumentPresentation() {
+	public OpenDocumentPresentation getAsPresentation() {
 		return (OpenDocumentPresentation) this;
 	}
 	

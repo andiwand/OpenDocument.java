@@ -9,6 +9,7 @@ import at.andiwand.commons.lwxml.LWXMLEvent;
 import at.andiwand.commons.lwxml.LWXMLUtil;
 import at.andiwand.commons.lwxml.reader.LWXMLElementDelegationReader;
 import at.andiwand.commons.lwxml.reader.LWXMLReader;
+import at.andiwand.commons.math.vector.Vector2i;
 import at.andiwand.commons.util.NumberUtil;
 import at.andiwand.commons.util.array.ArrayUtil;
 
@@ -16,54 +17,56 @@ import at.andiwand.commons.util.array.ArrayUtil;
 public class TableSizeUtil {
 	
 	private static class TableDimension {
+		private boolean empty = true;
+		
 		private int columns;
 		private int rows;
 		
 		private int collapsedColumns;
 		private int collapsedRows;
 		
-		public TableSize getTableSize() {
-			return new TableSize(columns, rows);
+		public Vector2i getTableSize() {
+			return new Vector2i(columns, rows);
 		}
 		
-		public void addRowDimension(TableRowDimension dimension) {
-			if (dimension.empty) {
-				if (dimension.columns > collapsedColumns)
-					collapsedColumns = dimension.columns;
-				collapsedRows += dimension.rows;
+		public void setEmpty(boolean empty) {
+			this.empty = empty;
+		}
+		
+		public void setColumns(int columns) {
+			this.columns = columns;
+		}
+		
+		public void setRows(int rows) {
+			this.rows = rows;
+		}
+		
+		public void addCell(TableDimension cell) {
+			if (cell.empty) {
+				collapsedColumns += cell.columns;
 			} else {
-				if (collapsedColumns > columns) columns = collapsedColumns;
-				if (dimension.columns > columns) columns = dimension.columns;
-				rows += collapsedRows + dimension.rows;
+				empty = false;
+				
+				columns += collapsedColumns + cell.columns;
+				
+				collapsedColumns = 0;
+			}
+		}
+		
+		public void addRow(TableDimension row) {
+			if (row.empty) {
+				collapsedColumns = Math.max(collapsedColumns, row.columns);
+				collapsedRows += row.rows;
+			} else {
+				empty = false;
+				
+				columns = Math.max(columns, row.columns);
+				rows += collapsedRows + row.rows;
 				
 				collapsedColumns = 0;
 				collapsedRows = 0;
 			}
 		}
-	}
-	
-	private static class TableRowDimension {
-		private boolean empty = true;
-		private int columns;
-		private int rows;
-		
-		private int collapsedColumns;
-		
-		public void addCellDimension(TableCellDimension dimension) {
-			empty &= dimension.empty;
-			
-			if (dimension.empty) {
-				collapsedColumns += dimension.columns;
-			} else {
-				columns += collapsedColumns + dimension.columns;
-				collapsedColumns = 0;
-			}
-		}
-	}
-	
-	private static class TableCellDimension {
-		private boolean empty = true;
-		private int columns;
 	}
 	
 	private static final String TABLE_ELEMENT_NAME = "table:table";
@@ -78,9 +81,9 @@ public class TableSizeUtil {
 	private static final Set<String> CELL_ATTRIBUTES = ArrayUtil.toHashSet(
 			COLUMNS_REPEATED_ATTRIBUTE_NAME, COLUMNS_SPANNED_ATTRIBUTE_NAME);
 	
-	public static LinkedHashMap<String, TableSize> parseTableMap(LWXMLReader in)
+	public static LinkedHashMap<String, Vector2i> parseTableMap(LWXMLReader in)
 			throws IOException {
-		LinkedHashMap<String, TableSize> result = new LinkedHashMap<String, TableSize>();
+		LinkedHashMap<String, Vector2i> result = new LinkedHashMap<String, Vector2i>();
 		
 		@SuppressWarnings("resource")
 		LWXMLElementDelegationReader din = new LWXMLElementDelegationReader(in);
@@ -102,7 +105,7 @@ public class TableSizeUtil {
 	}
 	
 	private static void parseTableDimension(LWXMLReader in,
-			Map<String, TableSize> tableMap) throws IOException {
+			Map<String, Vector2i> tableMap) throws IOException {
 		TableDimension result = new TableDimension();
 		
 		String name = LWXMLUtil.parseSingleAttributes(in, TABLE_NAME_ATTRIBUTE);
@@ -116,9 +119,8 @@ public class TableSizeUtil {
 			switch (event) {
 			case START_ELEMENT:
 				if (!din.readValue().equals(ROW_ELEMENT_NAME)) break;
-				TableRowDimension rowDimension = parseRow(din
-						.getElementReader());
-				result.addRowDimension(rowDimension);
+				TableDimension row = parseRow(din.getElementReader());
+				result.addRow(row);
 				break;
 			case END_DOCUMENT:
 				tableMap.put(name, result.getTableSize());
@@ -129,13 +131,12 @@ public class TableSizeUtil {
 		}
 	}
 	
-	private static TableRowDimension parseRow(LWXMLReader in)
-			throws IOException {
-		TableRowDimension result = new TableRowDimension();
+	private static TableDimension parseRow(LWXMLReader in) throws IOException {
+		TableDimension result = new TableDimension();
 		
 		int repeated = NumberUtil.parseInt(LWXMLUtil.parseSingleAttributes(in,
 				ROWS_REPEATED_ATTRIBUTE_NAME), 1);
-		result.rows = repeated;
+		result.setRows(repeated);
 		
 		@SuppressWarnings("resource")
 		LWXMLElementDelegationReader din = new LWXMLElementDelegationReader(in);
@@ -146,9 +147,8 @@ public class TableSizeUtil {
 			switch (event) {
 			case START_ELEMENT:
 				if (!din.readValue().equals(CELL_ELEMENT_NAME)) break;
-				TableCellDimension cellDimension = parseCell(din
-						.getElementReader());
-				result.addCellDimension(cellDimension);
+				TableDimension cell = parseCell(din.getElementReader());
+				result.addCell(cell);
 				break;
 			case END_DOCUMENT:
 				return result;
@@ -158,9 +158,8 @@ public class TableSizeUtil {
 		}
 	}
 	
-	private static TableCellDimension parseCell(LWXMLReader in)
-			throws IOException {
-		TableCellDimension result = new TableCellDimension();
+	private static TableDimension parseCell(LWXMLReader in) throws IOException {
+		TableDimension result = new TableDimension();
 		
 		Map<String, String> attributes = LWXMLUtil.parseAttributes(in,
 				CELL_ATTRIBUTES);
@@ -170,8 +169,8 @@ public class TableSizeUtil {
 				.get(COLUMNS_SPANNED_ATTRIBUTE_NAME), 1);
 		int columns = repeated * span;
 		
-		result.columns = columns;
-		result.empty = OpenDocumentUtil.isEmptyElement(in);
+		result.setColumns(columns);
+		result.setEmpty(OpenDocumentUtil.isEmptyElement(in));
 		
 		return result;
 	}

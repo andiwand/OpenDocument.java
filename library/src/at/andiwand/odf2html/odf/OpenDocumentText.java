@@ -3,7 +3,6 @@ package at.andiwand.odf2html.odf;
 import java.io.IOException;
 
 import at.andiwand.commons.lwxml.LWXMLUtil;
-import at.andiwand.commons.lwxml.reader.LWXMLReaderException;
 
 
 public class OpenDocumentText extends OpenDocument {
@@ -27,13 +26,8 @@ public class OpenDocumentText extends OpenDocument {
 	
 	public int getPageCount() throws IOException {
 		if (pageCount == -1) {
-			try {
-				pageCount = Integer.parseInt(LWXMLUtil.getAttributeValue(
-						getMeta(), META_DOCUMENT_STATISTICS_PATH,
-						PAGE_COUNT_ATTRIBUTE));
-			} catch (LWXMLReaderException e) {
-				throw new IllegalStateException("lwxml exception", e);
-			}
+			pageCount = Integer.parseInt(LWXMLUtil.getAttributeValue(getMeta(),
+					META_DOCUMENT_STATISTICS_PATH, PAGE_COUNT_ATTRIBUTE));
 		}
 		
 		return pageCount;
@@ -41,14 +35,10 @@ public class OpenDocumentText extends OpenDocument {
 	
 	public boolean useSoftPageBreaks() throws IOException {
 		if (softPageBreaks == null) {
-			try {
-				String tmp = LWXMLUtil.getFirstAttributeValue(getContent(),
-						SOFT_PAGE_BREAKS_ATTRIBUTE);
-				if (tmp == null) softPageBreaks = false;
-				else softPageBreaks = Boolean.parseBoolean(tmp);
-			} catch (LWXMLReaderException e) {
-				throw new IllegalStateException("lwxml exception", e);
-			}
+			String tmp = LWXMLUtil.getFirstAttributeValue(getContent(),
+					SOFT_PAGE_BREAKS_ATTRIBUTE);
+			if (tmp == null) softPageBreaks = false;
+			else softPageBreaks = Boolean.parseBoolean(tmp);
 		}
 		
 		return softPageBreaks;

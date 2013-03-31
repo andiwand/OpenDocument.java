@@ -2,6 +2,7 @@ package at.andiwand.odf2html.translator.content;
 
 import java.io.IOException;
 
+import at.andiwand.commons.math.vector.Vector2i;
 import at.andiwand.odf2html.odf.OpenDocumentFile;
 import at.andiwand.odf2html.translator.style.SpreadsheetStyle;
 import at.andiwand.odf2html.util.FileCache;
@@ -10,35 +11,40 @@ import at.andiwand.odf2html.util.FileCache;
 public class SpreadsheetContentTranslator extends DefaultContentTranslator {
 	
 	public SpreadsheetContentTranslator(OpenDocumentFile documentFile,
-			SpreadsheetStyle style, int tableIndex) throws IOException {
-		this(documentFile, style, new InlineImageTranslator(documentFile),
-				tableIndex);
+			SpreadsheetStyle style) throws IOException {
+		this(documentFile, style, (Vector2i) null);
 	}
 	
 	public SpreadsheetContentTranslator(OpenDocumentFile documentFile,
-			SpreadsheetStyle style, FileCache fileCache, int tableIndex)
+			SpreadsheetStyle style, Vector2i maxTableDimension)
 			throws IOException {
+		this(documentFile, style, new InlineImageTranslator(documentFile),
+				maxTableDimension);
+	}
+	
+	public SpreadsheetContentTranslator(OpenDocumentFile documentFile,
+			SpreadsheetStyle style, FileCache fileCache) throws IOException {
+		this(documentFile, style, fileCache, null);
+	}
+	
+	public SpreadsheetContentTranslator(OpenDocumentFile documentFile,
+			SpreadsheetStyle style, FileCache fileCache,
+			Vector2i maxTableDimension) throws IOException {
 		this(documentFile, style, new CachedImageTranslator(documentFile,
-				fileCache), tableIndex);
+				fileCache), maxTableDimension);
 	}
 	
 	public SpreadsheetContentTranslator(OpenDocumentFile documentFile,
 			SpreadsheetStyle style, ImageTranslator imageTranslator,
-			int tableIndex) throws IOException {
+			Vector2i maxTableDimension) throws IOException {
 		super(style, imageTranslator);
 		
 		addElementTranslator("draw:frame", new FrameTranslator());
 		
 		addElementTranslator("table:tracked-changes", new NothingTranslator());
-		SpreadsheetTableTranslator tableTranslator;
-		if (tableIndex == -1) {
-			tableTranslator = new SpreadsheetTableTranslator(style, this,
-					documentFile.getAsOpenDocumentSpreadsheet().getTableMap());
-		} else {
-			tableTranslator = new SpreadsheetSingleTableTranslator(style, this,
-					documentFile.getAsOpenDocumentSpreadsheet().getTableMap(),
-					tableIndex);
-		}
+		SpreadsheetTableTranslator tableTranslator = new SpreadsheetTableTranslator(
+				style, this, documentFile.getAsOpenDocumentSpreadsheet()
+						.getTableDimensionMap(), maxTableDimension);
 		addElementTranslator("table:table", tableTranslator);
 		
 		SpreadsheetParagraphTranslator paragraphTranslator = new SpreadsheetParagraphTranslator(

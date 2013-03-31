@@ -18,9 +18,9 @@ import at.andiwand.commons.lwxml.translator.simple.SimpleAttributeTranslator;
 import at.andiwand.commons.lwxml.translator.simple.SimpleElementReplacement;
 import at.andiwand.commons.lwxml.writer.LWXMLEventQueueWriter;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
+import at.andiwand.commons.math.vector.Vector2i;
 import at.andiwand.commons.util.collection.OrderedPair;
 import at.andiwand.commons.util.iterator.CycleIterator;
-import at.andiwand.odf2html.odf.TableSize;
 import at.andiwand.odf2html.translator.style.DocumentStyle;
 
 
@@ -44,9 +44,10 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 	
 	private final DocumentStyle style;
 	private final ContentTranslator contentTranslator;
-	private final Map<String, TableSize> tableMap;
+	private final Map<String, Vector2i> dimensionMap;
+	private final Vector2i maxDimension;
 	
-	private TableSize currentTableSize;
+	private Vector2i currentMaxDimension;
 	
 	// TODO: implement collapsed list
 	private final List<String> currentColumnDefaultStyles = new LinkedList<String>();
@@ -59,12 +60,20 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 	private final LWXMLEventQueueWriter tmpCellHead = new LWXMLEventQueueWriter();
 	
 	public SpreadsheetTableTranslator(DocumentStyle style,
-			ContentTranslator contentTranslator, Map<String, TableSize> tableMap) {
+			ContentTranslator contentTranslator,
+			Map<String, Vector2i> dimensionMap) {
+		this(style, contentTranslator, dimensionMap, null);
+	}
+	
+	public SpreadsheetTableTranslator(DocumentStyle style,
+			ContentTranslator contentTranslator,
+			Map<String, Vector2i> dimensionMap, Vector2i maxDimension) {
 		super(NEW_ELEMENT_NAME);
 		
 		this.style = style;
 		this.contentTranslator = contentTranslator;
-		this.tableMap = tableMap;
+		this.dimensionMap = dimensionMap;
+		this.maxDimension = maxDimension;
 		
 		addParseAttribute(TABLE_NAME_ATTRIBUTE_NAME);
 		
@@ -119,8 +128,10 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 			throws IOException {
 		super.translateAttributeList(in, untilShapesTmpOut);
 		
-		currentTableSize = tableMap
+		currentMaxDimension = dimensionMap
 				.get(getCurrentParsedAttribute(TABLE_NAME_ATTRIBUTE_NAME));
+		if (maxDimension != null)
+			currentMaxDimension = currentMaxDimension.min(maxDimension);
 	}
 	
 	@Override
@@ -212,7 +223,7 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 	
 	private void translateRows(LWXMLPushbackReader in, LWXMLWriter out)
 			throws IOException {
-		for (int i = 0; i < currentTableSize.getRows();) {
+		for (int i = 0; i < currentMaxDimension.getY();) {
 			LWXMLEvent event = in.readEvent();
 			
 			switch (event) {
@@ -282,7 +293,7 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 	// TODO: improve repeated
 	private void translateCells(LWXMLPushbackReader in, LWXMLWriter out)
 			throws IOException {
-		for (int i = 0; i < currentTableSize.getColumns();) {
+		for (int i = 0; i < currentMaxDimension.getX();) {
 			LWXMLEvent event = in.readEvent();
 			
 			switch (event) {
@@ -291,8 +302,7 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 				
 				if (startElementName.equals(CELL_ELEMENT_NAME)) {
 					in.unreadEvent(startElementName);
-					i += translateCell(in, out, currentTableSize.getColumns()
-							- i);
+					i += translateCell(in, out, currentMaxDimension.getX() - i);
 				} else if (startElementName.equals(COVERED_CELL_ELEMENT_NAME)) {
 					// TODO: fix this really
 					// LWXMLUtil.flushEmptyElement(in);
@@ -325,7 +335,7 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 	private void cacheCells(LWXMLPushbackReader in,
 			LinkedList<OrderedPair<Integer, LWXMLEventQueueWriter>> tmpContent)
 			throws IOException {
-		for (int i = 0; i < currentTableSize.getColumns();) {
+		for (int i = 0; i < currentMaxDimension.getX();) {
 			LWXMLEvent event = in.readEvent();
 			
 			switch (event) {
@@ -334,8 +344,7 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 				
 				if (startElementName.equals(CELL_ELEMENT_NAME)) {
 					in.unreadEvent(startElementName);
-					i += cacheCell(in, tmpContent, currentTableSize
-							.getColumns()
+					i += cacheCell(in, tmpContent, currentMaxDimension.getX()
 							- i);
 				} else if (startElementName.equals(COVERED_CELL_ELEMENT_NAME)) {
 					// TODO: fix this really

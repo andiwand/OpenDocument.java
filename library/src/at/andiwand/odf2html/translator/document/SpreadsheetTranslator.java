@@ -2,10 +2,9 @@ package at.andiwand.odf2html.translator.document;
 
 import java.io.IOException;
 
-import at.andiwand.commons.lwxml.LWXMLUtil;
 import at.andiwand.commons.lwxml.reader.LWXMLReader;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
-import at.andiwand.odf2html.css.StyleSheetWriter;
+import at.andiwand.commons.math.vector.Vector2i;
 import at.andiwand.odf2html.odf.OpenDocument;
 import at.andiwand.odf2html.translator.content.SpreadsheetContentTranslator;
 import at.andiwand.odf2html.translator.style.SpreadsheetStyle;
@@ -15,40 +14,31 @@ import at.andiwand.odf2html.util.FileCache;
 
 public class SpreadsheetTranslator extends DocumentTranslator<SpreadsheetStyle> {
 	
-	private static final String AUTOMATIC_STYLES_ELEMENT_NAME = "office:automatic-styles";
+	private Vector2i maxTableDimension;
 	
-	private int tableIndex;
-	
-	public SpreadsheetTranslator(FileCache fileCache) {
-		super(fileCache);
+	public SpreadsheetTranslator(FileCache cache) {
+		super(cache);
 	}
 	
-	public int getTableIndex() {
-		return tableIndex;
+	public Vector2i getMaxTableDimension() {
+		return maxTableDimension;
 	}
 	
-	public void setTableIndex(int tableIndex) {
-		this.tableIndex = tableIndex;
+	public void setMaxTableDimension(Vector2i maxTableDimension) {
+		this.maxTableDimension = maxTableDimension;
 	}
 	
-	public SpreadsheetStyle translateStyle(OpenDocument document,
-			LWXMLReader in, StyleSheetWriter out) throws IOException {
-		SpreadsheetStyle result = new SpreadsheetStyle(out);
-		SpreadsheetStyleTranslator styleTranslator = new SpreadsheetStyleTranslator();
-		
-		styleTranslator.translate(document, result);
-		
-		LWXMLUtil.flushUntilStartElement(in, AUTOMATIC_STYLES_ELEMENT_NAME);
-		styleTranslator.translate(in, result);
-		
-		result.close();
-		return result;
+	@Override
+	protected SpreadsheetStyleTranslator newStyleTranslator() {
+		return new SpreadsheetStyleTranslator();
 	}
 	
-	public void translateContent(OpenDocument document, SpreadsheetStyle style,
-			LWXMLReader in, LWXMLWriter out) throws IOException {
+	@Override
+	protected void translateContent(OpenDocument document,
+			SpreadsheetStyle style, LWXMLReader in, LWXMLWriter out)
+			throws IOException {
 		SpreadsheetContentTranslator contentTranslator = new SpreadsheetContentTranslator(
-				document.getOpenDocumentFile(), style, fileCache, tableIndex);
+				document.getDocumentFile(), style, cache, maxTableDimension);
 		contentTranslator.translate(in, out);
 	}
 	

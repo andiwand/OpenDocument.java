@@ -22,9 +22,9 @@ public class TemporaryOpenDocumentFile extends LocatedOpenDocumentFile {
 			FileCache fileCache) throws IOException {
 		// TODO: fix ugly
 		String name = "odf-" + (lastIdentity++) + ".odt";
-		File file = fileCache.newFile(name);
+		File file = fileCache.create(name);
 		
-		OutputStream outputStream = fileCache.getFileOutputStream(name);
+		OutputStream outputStream = fileCache.getOutputStream(name);
 		ByteStreamUtil.writeStreamBuffered(inputStream, outputStream);
 		outputStream.close();
 		

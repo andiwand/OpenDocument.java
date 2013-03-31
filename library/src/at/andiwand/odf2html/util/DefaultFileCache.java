@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
 
 import at.andiwand.odf2html.translator.File2URITranslator;
 
@@ -31,8 +33,12 @@ public class DefaultFileCache extends AbstractFileCache {
 		this.directory = directory;
 	}
 	
+	public File getDirectory() {
+		return directory;
+	}
+	
 	@Override
-	public boolean isFile(String name) {
+	public boolean exists(String name) {
 		return getFile(name).exists();
 	}
 	
@@ -42,28 +48,36 @@ public class DefaultFileCache extends AbstractFileCache {
 	}
 	
 	@Override
-	public InputStream getFileInputStream(String name)
+	public RandomAccessFile getRandomAccessFile(String name, String mode)
 			throws FileNotFoundException {
-		File file = getFile(name);
-		return new FileInputStream(file);
+		return new RandomAccessFile(getFile(name), mode);
 	}
 	
 	@Override
-	public OutputStream getFileOutputStream(String name)
-			throws FileNotFoundException {
-		File file = getFile(name);
-		return new FileOutputStream(file);
+	public InputStream getInputStream(String name) throws FileNotFoundException {
+		return new FileInputStream(getFile(name));
 	}
 	
 	@Override
-	public File newFile(String name) {
+	public OutputStream getOutputStream(String name)
+			throws FileNotFoundException {
+		return new FileOutputStream(getFile(name));
+	}
+	
+	@Override
+	public FileChannel getChannel(String name, String mode)
+			throws FileNotFoundException {
+		return getRandomAccessFile(name, mode).getChannel();
+	}
+	
+	@Override
+	public File create(String name) {
 		return getFile(name);
 	}
 	
 	@Override
-	public void deleteFile(String name) {
-		File file = getFile(name);
-		file.delete();
+	public void delete(String name) {
+		getFile(name).delete();
 	}
 	
 	@Override

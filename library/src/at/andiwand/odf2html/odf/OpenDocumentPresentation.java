@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 
 import at.andiwand.commons.lwxml.LWXMLUtil;
-import at.andiwand.commons.lwxml.reader.LWXMLReaderException;
 
 
 public class OpenDocumentPresentation extends OpenDocument {
@@ -35,13 +34,8 @@ public class OpenDocumentPresentation extends OpenDocument {
 	// TODO: improve with path/query (0.00000000001% necessary)
 	public List<String> getPageNames() throws IOException {
 		if (pageNames == null) {
-			try {
-				pageNames = Collections
-						.unmodifiableList(LWXMLUtil.getAllAttributeValue(
-								getContent(), PAGE_NAME_ATTRIBUTE));
-			} catch (LWXMLReaderException e) {
-				throw new IllegalStateException("lwxml exception", e);
-			}
+			pageNames = Collections.unmodifiableList(LWXMLUtil
+					.getAllAttributeValue(getContent(), PAGE_NAME_ATTRIBUTE));
 			
 			if (pageCount == -1) pageCount = pageNames.size();
 		}

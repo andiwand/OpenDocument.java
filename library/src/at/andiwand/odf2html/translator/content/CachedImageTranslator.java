@@ -29,8 +29,8 @@ public class CachedImageTranslator extends ImageTranslator {
 	public void writeSource(String name, Writer out) throws IOException {
 		String imageName = new File(name).getName();
 		
-		if (!fileCache.isFile(imageName)) {
-			File file = fileCache.newFile(imageName);
+		if (!fileCache.exists(imageName)) {
+			File file = fileCache.create(imageName);
 			InputStream fileIn = documentFile.getFileStream(name);
 			OutputStream fileOut = new FileOutputStream(file);
 			
@@ -42,7 +42,7 @@ public class CachedImageTranslator extends ImageTranslator {
 			}
 		}
 		
-		out.write(fileCache.getFileURI(imageName).toString());
+		out.write(fileCache.getURI(imageName).toString());
 	}
 	
 }

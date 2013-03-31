@@ -3,25 +3,28 @@ package at.andiwand.odf2html.translator.document;
 import java.io.IOException;
 
 import at.andiwand.commons.io.CountingInputStream;
-import at.andiwand.commons.lwxml.LWXMLException;
+import at.andiwand.commons.lwxml.LWXMLUtil;
 import at.andiwand.commons.lwxml.reader.LWXMLReader;
 import at.andiwand.commons.lwxml.reader.LWXMLStreamReader;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
 import at.andiwand.odf2html.css.StyleSheetWriter;
 import at.andiwand.odf2html.odf.OpenDocument;
 import at.andiwand.odf2html.translator.style.DocumentStyle;
+import at.andiwand.odf2html.translator.style.DocumentStyleTranslator;
 import at.andiwand.odf2html.util.FileCache;
 
 
 public abstract class DocumentTranslator<S extends DocumentStyle> {
 	
-	protected final FileCache fileCache;
+	private static final String AUTOMATIC_STYLES_ELEMENT_NAME = "office:automatic-styles";
+	
+	protected final FileCache cache;
 	
 	private long currentSize;
 	private CountingInputStream currentCounter;
 	
-	public DocumentTranslator(FileCache fileCache) {
-		this.fileCache = fileCache;
+	public DocumentTranslator(FileCache cache) {
+		this.cache = cache;
 	}
 	
 	public double getProgress() {
@@ -29,27 +32,29 @@ public abstract class DocumentTranslator<S extends DocumentStyle> {
 		return (double) currentCounter.count() / currentSize;
 	}
 	
-	public abstract S translateStyle(OpenDocument document, LWXMLReader in,
-			StyleSheetWriter out) throws IOException;
+	protected abstract DocumentStyleTranslator<S> newStyleTranslator();
 	
-	public abstract void translateContent(OpenDocument document, S style,
-			LWXMLReader in, LWXMLWriter out) throws IOException;
-	
-	public void translate(OpenDocument document, LWXMLWriter out)
-			throws LWXMLException, IOException {
-		currentSize = document.getContentSize();
-		currentCounter = new CountingInputStream(document.getContent());
+	protected S translateStyle(OpenDocument document, LWXMLReader in,
+			StyleSheetWriter out) throws IOException {
+		DocumentStyleTranslator<S> translator = newStyleTranslator();
+		S result = translator.newDocumentStyle(out);
 		
-		LWXMLReader in = new LWXMLStreamReader(currentCounter);
+		translator.translate(document, result);
+		
+		LWXMLUtil.flushUntilStartElement(in, AUTOMATIC_STYLES_ELEMENT_NAME);
+		translator.translate(in, result);
+		
+		result.close();
+		return result;
+	}
+	
+	protected S translateHead(OpenDocument document, LWXMLReader in,
+			LWXMLWriter out) throws IOException {
 		StyleSheetWriter styleOut = new StyleSheetWriter(out);
-		
-		// TODO: remove bad hack
-		// out.writeCharacters("<!DOCTYPE html>");
 		
 		out.writeStartElement("html");
 		out.writeStartElement("head");
 		
-		// TODO: dynamic
 		out.writeStartElement("base");
 		out.writeAttribute("target", "_blank");
 		out.writeEndElement("base");
@@ -70,14 +75,30 @@ public abstract class DocumentTranslator<S extends DocumentStyle> {
 		out.writeEndElement("style");
 		
 		out.writeEndElement("head");
+		
 		out.writeEmptyStartElement("body");
 		
-		translateContent(document, style, in, out);
-		
+		return style;
+	}
+	
+	protected abstract void translateContent(OpenDocument document, S style,
+			LWXMLReader in, LWXMLWriter out) throws IOException;
+	
+	protected void translateTail(LWXMLWriter out) throws IOException {
 		out.writeEndElement("body");
 		out.writeEndElement("html");
+	}
+	
+	public void translate(OpenDocument document, LWXMLWriter out)
+			throws IOException {
+		currentSize = document.getContentSize();
+		currentCounter = new CountingInputStream(document.getContent());
+		LWXMLReader in = new LWXMLStreamReader(currentCounter);
+		
+		S style = translateHead(document, in, out);
+		translateContent(document, style, in, out);
+		translateTail(out);
 		
 		currentCounter.close();
 	}
-	
 }

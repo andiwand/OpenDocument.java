@@ -18,7 +18,7 @@ public abstract class AbstractFileCache implements FileCache {
 		return uriTranslator;
 	}
 	
-	public URI getFileURI(String name) {
+	public URI getURI(String name) {
 		File file = getFile(name);
 		return uriTranslator.translate(file);
 	}
@@ -28,7 +28,7 @@ public abstract class AbstractFileCache implements FileCache {
 	}
 	
 	public void deleteFile(File file) {
-		deleteFile(file.getName());
+		delete(file.getName());
 	}
 	
 }
