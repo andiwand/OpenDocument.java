@@ -19,6 +19,8 @@ public class TestFileUtil {
 	private static final String RELATIVE_TEST_DIRECTORY = "../dep/OpenDocument.test/files";
 	private static final File TEST_DIRECTORY;
 	
+	private static final String PASSWORD_SEPARATOR_PATTERN = "\\$";
+	
 	static {
 		try {
 			PROGRAM_DIRECTORY = new File(PROGRAM_URL.toURI());
@@ -40,6 +42,11 @@ public class TestFileUtil {
 	public static InputStream getInputStream(String name)
 			throws FileNotFoundException {
 		return new FileInputStream(new File(TEST_DIRECTORY, name));
+	}
+	
+	public static String getPassword(String name) {
+		String[] split = name.split(PASSWORD_SEPARATOR_PATTERN);
+		return (split.length == 3) ? split[1] : null;
 	}
 	
 	private TestFileUtil() {}

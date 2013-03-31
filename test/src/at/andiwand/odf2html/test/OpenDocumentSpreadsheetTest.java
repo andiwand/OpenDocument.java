@@ -27,7 +27,7 @@ public class OpenDocumentSpreadsheetTest {
 		if (documentFile.isEncrypted())
 			documentFile.setPassword("passwordistest_1");
 		System.out.println(spreadsheet.getTableCount());
-		System.out.println(spreadsheet.getTableMap());
+		System.out.println(spreadsheet.getTableDimensionMap());
 		
 		documentFile.close();
 	}
