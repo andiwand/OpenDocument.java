@@ -169,7 +169,6 @@ public class XMLViewer extends JFrame {
 						.compile(pattern, Pattern.CASE_INSENSITIVE);
 				lastMatch = JTreeUtil.findNode(tree, new NodeMatcher(
 						lastPattern), null);
-				System.out.println(lastMatch);
 				tree.setSelectionPath(lastMatch);
 				tree.scrollPathToVisible(lastMatch);
 			}

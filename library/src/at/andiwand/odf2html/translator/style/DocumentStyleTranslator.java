@@ -2,14 +2,14 @@ package at.andiwand.odf2html.translator.style;
 
 import java.io.EOFException;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
+import at.andiwand.commons.io.StreamableStringMap;
 import at.andiwand.commons.lwxml.LWXMLEvent;
 import at.andiwand.commons.lwxml.LWXMLUtil;
 import at.andiwand.commons.lwxml.reader.LWXMLElementDelegationReader;
 import at.andiwand.commons.lwxml.reader.LWXMLReader;
 import at.andiwand.commons.lwxml.reader.LWXMLStreamReader;
+import at.andiwand.commons.util.collection.OrderedPair;
 import at.andiwand.odf2html.css.StyleSheetWriter;
 import at.andiwand.odf2html.odf.OpenDocument;
 
@@ -20,7 +20,7 @@ public abstract class DocumentStyleTranslator<T extends DocumentStyle> {
 	
 	private static final String DOCUMENT_STYLE_ELEMENT_NAME = "office:styles";
 	
-	private Map<String, StyleElementTranslator<? super T>> elementTranslatorMap = new HashMap<String, StyleElementTranslator<? super T>>();
+	private StreamableStringMap<StyleElementTranslator<? super T>> elementTranslatorMap = new StreamableStringMap<StyleElementTranslator<? super T>>();
 	
 	public DocumentStyleTranslator() {
 		addElementTranslator(GENERAL_STYLE_NAME,
@@ -56,7 +56,6 @@ public abstract class DocumentStyleTranslator<T extends DocumentStyle> {
 	}
 	
 	public void translate(LWXMLReader in, T out) throws IOException {
-		@SuppressWarnings("resource")
 		LWXMLElementDelegationReader din = new LWXMLElementDelegationReader(in);
 		
 		while (true) {
@@ -64,13 +63,15 @@ public abstract class DocumentStyleTranslator<T extends DocumentStyle> {
 			
 			switch (event) {
 			case START_ELEMENT:
-				String startElement = din.readValue();
-				StyleElementTranslator<? super T> elementTranslator = elementTranslatorMap
-						.get(startElement);
+				OrderedPair<String, StyleElementTranslator<? super T>> match = elementTranslatorMap
+						.match(din);
 				LWXMLReader ein = din.getElementReader();
-				if (elementTranslator == null) break;
 				
-				elementTranslator.translate(ein, out);
+				if (match != null) {
+					StyleElementTranslator<? super T> translator = match
+							.getElement2();
+					translator.translate(ein, out);
+				}
 				
 				break;
 			case END_EMPTY_ELEMENT:
@@ -82,5 +83,4 @@ public abstract class DocumentStyleTranslator<T extends DocumentStyle> {
 			}
 		}
 	}
-	
 }

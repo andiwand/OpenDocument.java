@@ -3,6 +3,7 @@ package at.andiwand.odf2html.translator.style;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -82,13 +83,11 @@ public class DocumentStyle {
 		return new LWXMLAttribute("class", reference);
 	}
 	
-	private void addStyleInheritance(String name, String... parents) {
+	private void addStyleInheritance(String name, Collection<String> parents) {
 		Set<String> parentSet = new LinkedHashSet<String>();
 		
 		for (String parent : parents) {
 			Set<String> parentsParentSet = styleInheritance.get(parent);
-			if (parentsParentSet == null) continue;
-			
 			parentSet.add(parent);
 			parentSet.addAll(parentsParentSet);
 		}
@@ -96,7 +95,8 @@ public class DocumentStyle {
 		styleInheritance.put(name, parentSet);
 	}
 	
-	public void writeClass(String name, String... parents) throws IOException {
+	public void writeClass(String name, Collection<String> parents)
+			throws IOException {
 		if (styleOut.isDefinitionStarted()) styleOut.writeEndDefinition();
 		styleOut.writeStartDefinition("." + translateStyleName(name));
 		addStyleInheritance(name, parents);

@@ -2,7 +2,7 @@ package at.andiwand.odf2html.css;
 
 import java.util.Map;
 
-import at.andiwand.commons.util.array.ArrayUtil;
+import at.andiwand.commons.util.collection.CollectionUtil;
 import at.andiwand.commons.util.collection.KeyGenerator;
 
 
@@ -24,7 +24,8 @@ public enum StyleAbsoluteUnit {
 	private static final Map<String, StyleAbsoluteUnit> BY_SYMBOL_MAP;
 	
 	static {
-		BY_SYMBOL_MAP = ArrayUtil.toHashMap(SYMBOL_KEY_GENERATOR, values());
+		BY_SYMBOL_MAP = CollectionUtil
+				.toHashMap(SYMBOL_KEY_GENERATOR, values());
 	}
 	
 	public static StyleAbsoluteUnit getBySymbol(String unit) {

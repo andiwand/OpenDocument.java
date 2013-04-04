@@ -14,18 +14,8 @@ import at.andiwand.odf2html.util.FileCache;
 public class PresentationTranslator extends
 		DocumentTranslator<PresentationStyle> {
 	
-	private int slideIndex;
-	
 	public PresentationTranslator(FileCache cache) {
 		super(cache);
-	}
-	
-	public int getSlideIndex() {
-		return slideIndex;
-	}
-	
-	public void setSlideIndex(int slideIndex) {
-		this.slideIndex = slideIndex;
 	}
 	
 	@Override
@@ -38,7 +28,7 @@ public class PresentationTranslator extends
 			PresentationStyle style, LWXMLReader in, LWXMLWriter out)
 			throws IOException {
 		PresentationContentTranslator contentTranslator = new PresentationContentTranslator(
-				document.getDocumentFile(), style, cache, slideIndex);
+				document.getDocumentFile(), style, cache);
 		contentTranslator.translate(in, out);
 	}
 	
