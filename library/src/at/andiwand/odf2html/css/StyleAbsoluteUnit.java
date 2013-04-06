@@ -3,7 +3,7 @@ package at.andiwand.odf2html.css;
 import java.util.Map;
 
 import at.andiwand.commons.util.collection.CollectionUtil;
-import at.andiwand.commons.util.collection.KeyGenerator;
+import at.andiwand.commons.util.object.ObjectTransformer;
 
 
 public enum StyleAbsoluteUnit {
@@ -14,9 +14,9 @@ public enum StyleAbsoluteUnit {
 	PT("pt", 0.000352778),
 	PC("pc", 0.004233336);
 	
-	private static final KeyGenerator<String, StyleAbsoluteUnit> SYMBOL_KEY_GENERATOR = new KeyGenerator<String, StyleAbsoluteUnit>() {
+	private static final ObjectTransformer<StyleAbsoluteUnit, String> SYMBOL_KEY_GENERATOR = new ObjectTransformer<StyleAbsoluteUnit, String>() {
 		@Override
-		public String generateKey(StyleAbsoluteUnit value) {
+		public String transform(StyleAbsoluteUnit value) {
 			return value.symbol;
 		}
 	};
