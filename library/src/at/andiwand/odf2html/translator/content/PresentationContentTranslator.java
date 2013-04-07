@@ -38,6 +38,8 @@ public class PresentationContentTranslator extends DefaultContentTranslator {
 				styleAttributeTranslator);
 		addStaticAttributeTranslator("presentation:style-name",
 				styleAttributeTranslator);
+		addStaticAttributeTranslator("draw:master-page-name",
+				styleAttributeTranslator);
 	}
 	
 }

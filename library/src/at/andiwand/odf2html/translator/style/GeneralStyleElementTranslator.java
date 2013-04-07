@@ -22,6 +22,8 @@ public class GeneralStyleElementTranslator extends
 		addPropertyTranslator("style:column-width", "width");
 		addPropertyTranslator("style:row-height", "height");
 		addDirectionPropertyTranslator("fo:border");
+		addPropertyTranslator("fo:page-width", "width");
+		addPropertyTranslator("fo:page-height", "height");
 		
 		addPropertyTranslator("style:text-underline-style",
 				new UnderlinePropertyTranslator());

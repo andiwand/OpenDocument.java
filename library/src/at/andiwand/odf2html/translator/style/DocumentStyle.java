@@ -89,7 +89,7 @@ public class DocumentStyle {
 		for (String parent : parents) {
 			Set<String> parentsParentSet = styleInheritance.get(parent);
 			parentSet.add(parent);
-			parentSet.addAll(parentsParentSet);
+			if (parentsParentSet != null) parentSet.addAll(parentsParentSet);
 		}
 		
 		styleInheritance.put(name, parentSet);

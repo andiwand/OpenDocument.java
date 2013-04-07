@@ -3,8 +3,8 @@ package at.andiwand.odf2html.odf;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
+import at.andiwand.commons.io.StreamableStringSet;
 import at.andiwand.commons.lwxml.LWXMLEvent;
 import at.andiwand.commons.lwxml.LWXMLUtil;
 import at.andiwand.commons.lwxml.reader.LWXMLElementDelegationReader;
@@ -78,8 +78,10 @@ public class TableSizeUtil {
 	private static final String CELL_ELEMENT_NAME = "table:table-cell";
 	private static final String COLUMNS_REPEATED_ATTRIBUTE_NAME = "table:number-columns-repeated";
 	private static final String COLUMNS_SPANNED_ATTRIBUTE_NAME = "table:number-columns-spanned";
-	private static final Set<String> CELL_ATTRIBUTES = ArrayUtil.toHashSet(
-			COLUMNS_REPEATED_ATTRIBUTE_NAME, COLUMNS_SPANNED_ATTRIBUTE_NAME);
+	private static final StreamableStringSet CELL_ATTRIBUTES = ArrayUtil
+			.toCollection(new StreamableStringSet(2),
+					COLUMNS_REPEATED_ATTRIBUTE_NAME,
+					COLUMNS_SPANNED_ATTRIBUTE_NAME);
 	
 	public static LinkedHashMap<String, Vector2i> parseTableMap(LWXMLReader in)
 			throws IOException {

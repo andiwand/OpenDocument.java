@@ -10,6 +10,7 @@ import at.andiwand.commons.io.StreamableStringMap;
 import at.andiwand.commons.lwxml.LWXMLEvent;
 import at.andiwand.commons.lwxml.LWXMLUtil;
 import at.andiwand.commons.lwxml.reader.LWXMLReader;
+import at.andiwand.commons.util.array.ArrayUtil;
 import at.andiwand.commons.util.collection.CollectionUtil;
 import at.andiwand.commons.util.collection.OrderedPair;
 import at.andiwand.odf2html.css.StyleProperty;
@@ -25,11 +26,18 @@ public class DefaultStyleElementTranslator extends
 	private static final String FAMILY_ATTRIBUTE_NAME = "style:family";
 	private static final String PARENT_ATTRIBUTE_NAME = "style:parent-style-name";
 	
-	private final Set<String> parentAttributes = new LinkedHashSet<String>();
+	private static final Set<String> DEFAULT_PARENT_ATTRIBUTES = ArrayUtil
+			.toCollection(new LinkedHashSet<String>(2), FAMILY_ATTRIBUTE_NAME,
+					PARENT_ATTRIBUTE_NAME);
+	
+	private final Set<String> parentAttributes;
 	
 	public DefaultStyleElementTranslator() {
-		addParentAttribute(FAMILY_ATTRIBUTE_NAME);
-		addParentAttribute(PARENT_ATTRIBUTE_NAME);
+		this(DEFAULT_PARENT_ATTRIBUTES);
+	}
+	
+	public DefaultStyleElementTranslator(Set<String> parentAttributes) {
+		this.parentAttributes = new LinkedHashSet<String>(parentAttributes);
 	}
 	
 	private static String getToAttributeNameByColon(String attribute) {
