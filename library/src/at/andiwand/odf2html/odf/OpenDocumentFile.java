@@ -148,7 +148,7 @@ public abstract class OpenDocumentFile implements Closeable {
 	private String getMimetypeImpl() throws IOException {
 		if (isFile(MIMETYPE_PATH)) {
 			InputStream in = getRawFileStream(MIMETYPE_PATH);
-			return CharStreamUtil.readAsString(new InputStreamReader(in));
+			return CharStreamUtil.readString(new InputStreamReader(in));
 		} else {
 			return getFileMimetype("/");
 		}
