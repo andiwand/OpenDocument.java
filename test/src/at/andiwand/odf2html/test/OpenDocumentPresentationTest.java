@@ -20,7 +20,7 @@ public class OpenDocumentPresentationTest {
 		File file = fileChooser.getSelectedFile();
 		OpenDocumentFile documentFile = new LocatedOpenDocumentFile(file);
 		OpenDocumentPresentation spreadsheet = documentFile
-				.getAsOpenDocumentPresentation();
+				.getAsPresentation();
 		
 		System.out.println(spreadsheet.getPageCount());
 		System.out.println(spreadsheet.getPageNames());

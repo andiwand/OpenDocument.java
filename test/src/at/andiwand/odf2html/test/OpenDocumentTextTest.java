@@ -19,7 +19,7 @@ public class OpenDocumentTextTest {
 		
 		File file = fileChooser.getSelectedFile();
 		OpenDocumentFile documentFile = new LocatedOpenDocumentFile(file);
-		OpenDocumentText text = documentFile.getAsOpenDocumentText();
+		OpenDocumentText text = documentFile.getAsText();
 		
 		System.out.println(documentFile.isEncrypted());
 		System.out.println(documentFile.isPasswordValid("password"));

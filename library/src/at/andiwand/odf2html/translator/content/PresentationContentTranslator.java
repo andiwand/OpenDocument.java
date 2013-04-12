@@ -25,7 +25,7 @@ public class PresentationContentTranslator extends DefaultContentTranslator {
 			throws IOException {
 		super(style, imageTranslator);
 		
-		addElementTranslator("draw:page", "div");
+		addElementTranslator("draw:page", new PresentationPageTranslator(style));
 		addElementTranslator("draw:frame", new FrameTranslator());
 	}
 	
@@ -34,9 +34,9 @@ public class PresentationContentTranslator extends DefaultContentTranslator {
 			StyleAttributeTranslator styleAttributeTranslator) {
 		super.translateStyleAttribute(styleAttributeTranslator);
 		
-		addStaticAttributeTranslator("draw:style-name",
-				styleAttributeTranslator);
 		addStaticAttributeTranslator("presentation:style-name",
+				styleAttributeTranslator);
+		addStaticAttributeTranslator("draw:style-name",
 				styleAttributeTranslator);
 		addStaticAttributeTranslator("draw:master-page-name",
 				styleAttributeTranslator);

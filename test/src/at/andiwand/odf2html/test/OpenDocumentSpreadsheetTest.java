@@ -20,7 +20,7 @@ public class OpenDocumentSpreadsheetTest {
 		File file = fileChooser.getSelectedFile();
 		OpenDocumentFile documentFile = new LocatedOpenDocumentFile(file);
 		OpenDocumentSpreadsheet spreadsheet = documentFile
-				.getAsOpenDocumentSpreadsheet();
+				.getAsSpreadsheet();
 		
 		System.out.println(documentFile.isEncrypted());
 		System.out.println(documentFile.isPasswordValid("passwordistest_1"));

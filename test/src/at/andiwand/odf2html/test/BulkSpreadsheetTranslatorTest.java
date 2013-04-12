@@ -26,7 +26,7 @@ public class BulkSpreadsheetTranslatorTest {
 		File file = fileChooser.getSelectedFile();
 		OpenDocumentFile documentFile = new LocatedOpenDocumentFile(file);
 		documentFile.setPassword(TestFileUtil.getPassword(file.getName()));
-		OpenDocument document = documentFile.getAsOpenDocument();
+		OpenDocument document = documentFile.getAsDocument();
 		
 		DefaultFileCache cache = new DefaultFileCache("/tmp/odr/");
 		

@@ -66,7 +66,7 @@ public class AutomaticTranslatorTest {
 				documentFile.setPassword(password);
 			}
 			
-			OpenDocument document = documentFile.getAsOpenDocument();
+			OpenDocument document = documentFile.getAsDocument();
 			
 			if (document instanceof OpenDocumentText) {
 				textTranslator.translate(document, LWXMLNullWriter.NULL);

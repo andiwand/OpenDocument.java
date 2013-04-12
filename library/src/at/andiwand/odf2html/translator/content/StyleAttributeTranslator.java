@@ -13,6 +13,10 @@ public class StyleAttributeTranslator implements SimpleAttributeTranslator {
 		this.style = style;
 	}
 	
+	public DocumentStyle getStyle() {
+		return style;
+	}
+	
 	@Override
 	public LWXMLAttribute translate(String name, String value) {
 		return style.getStyleAttribute(value);

@@ -43,7 +43,7 @@ public class SpreadsheetContentTranslator extends DefaultContentTranslator {
 		
 		addElementTranslator("table:tracked-changes", new NothingTranslator());
 		SpreadsheetTableTranslator tableTranslator = new SpreadsheetTableTranslator(
-				style, this, documentFile.getAsOpenDocumentSpreadsheet()
+				style, this, documentFile.getAsSpreadsheet()
 						.getTableDimensionMap(), maxTableDimension);
 		addElementTranslator("table:table", tableTranslator);
 		
