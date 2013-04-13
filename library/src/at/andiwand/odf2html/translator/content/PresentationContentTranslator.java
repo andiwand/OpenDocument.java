@@ -2,6 +2,7 @@ package at.andiwand.odf2html.translator.content;
 
 import java.io.IOException;
 
+import at.andiwand.commons.lwxml.translator.simple.SimpleElementReplacement;
 import at.andiwand.odf2html.odf.OpenDocumentFile;
 import at.andiwand.odf2html.translator.style.PresentationStyle;
 import at.andiwand.odf2html.util.FileCache;
@@ -25,8 +26,24 @@ public class PresentationContentTranslator extends DefaultContentTranslator {
 			throws IOException {
 		super(style, imageTranslator);
 		
+		addElementTranslator("text:list", "ul");
+		addElementTranslator("text:list-item", "li");
+		
+		addElementTranslator("table:table", new SimpleElementReplacement(
+				"table") {
+			{
+				addNewAttribute("border", "0");
+				addNewAttribute("cellspacing", "0");
+				addNewAttribute("cellpadding", "0");
+			}
+		});
+		addElementTranslator("table:table-column", "col");
+		addElementTranslator("table:table-row", "tr");
+		addElementTranslator("table:table-cell", "td");
+		
 		addElementTranslator("draw:page", new PresentationPageTranslator(style));
 		addElementTranslator("draw:frame", new FrameTranslator());
+		addElementTranslator("presentation:notes", new NothingTranslator());
 	}
 	
 	@Override

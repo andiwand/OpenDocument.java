@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import at.andiwand.commons.io.CountingInputStream;
 import at.andiwand.commons.lwxml.LWXMLUtil;
+import at.andiwand.commons.lwxml.reader.LWXMLElementReader;
 import at.andiwand.commons.lwxml.reader.LWXMLReader;
 import at.andiwand.commons.lwxml.reader.LWXMLStreamReader;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
@@ -42,7 +43,7 @@ public abstract class DocumentTranslator<S extends DocumentStyle> {
 		translator.translate(document, result);
 		
 		LWXMLUtil.flushUntilStartElement(in, AUTOMATIC_STYLES_ELEMENT_NAME);
-		translator.translate(in, result);
+		translator.translate(new LWXMLElementReader(in), result);
 		
 		result.close();
 		return result;

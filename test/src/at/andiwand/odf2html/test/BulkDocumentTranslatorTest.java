@@ -11,12 +11,19 @@ import at.andiwand.commons.math.vector.Vector2i;
 import at.andiwand.odf2html.odf.LocatedOpenDocumentFile;
 import at.andiwand.odf2html.odf.OpenDocument;
 import at.andiwand.odf2html.odf.OpenDocumentFile;
+import at.andiwand.odf2html.odf.OpenDocumentPresentation;
+import at.andiwand.odf2html.odf.OpenDocumentSpreadsheet;
+import at.andiwand.odf2html.translator.document.BulkDocumentTranslator;
+import at.andiwand.odf2html.translator.document.BulkPresentationTranslator;
 import at.andiwand.odf2html.translator.document.BulkSpreadsheetTranslator;
+import at.andiwand.odf2html.translator.document.PresentationTranslator;
+import at.andiwand.odf2html.translator.document.SpreadsheetTranslator;
 import at.andiwand.odf2html.util.DefaultFileCache;
 
 
-public class BulkSpreadsheetTranslatorTest {
+public class BulkDocumentTranslatorTest {
 	
+	@SuppressWarnings("resource")
 	public static void main(String[] args) throws Throwable {
 		JFileChooser fileChooser = new TestFileChooser();
 		int option = fileChooser.showOpenDialog(null);
@@ -30,12 +37,25 @@ public class BulkSpreadsheetTranslatorTest {
 		
 		DefaultFileCache cache = new DefaultFileCache("/tmp/odr/");
 		
-		BulkSpreadsheetTranslator translator = new BulkSpreadsheetTranslator(
-				cache);
-		translator.setMaxTableDimension(new Vector2i(100));
+		BulkDocumentTranslator<?> translator;
 		
-		LWXMLMultiWriter out = translator.provideOutput(document
-				.getAsSpreadsheet(), "ods", ".html");
+		if (document instanceof OpenDocumentSpreadsheet) {
+			SpreadsheetTranslator spreadsheetTranslator = new SpreadsheetTranslator(
+					cache);
+			spreadsheetTranslator.setMaxTableDimension(new Vector2i(100));
+			
+			translator = new BulkSpreadsheetTranslator(spreadsheetTranslator);
+		} else if (document instanceof OpenDocumentPresentation) {
+			PresentationTranslator presentationTranslator = new PresentationTranslator(
+					cache);
+			
+			translator = new BulkPresentationTranslator(presentationTranslator);
+		} else {
+			throw new IllegalArgumentException();
+		}
+		
+		LWXMLMultiWriter out = translator.provideOutput(document, "odf",
+				".html");
 		
 		long start = System.nanoTime();
 		translator.translate(document, out);
@@ -46,7 +66,7 @@ public class BulkSpreadsheetTranslatorTest {
 		
 		Iterator<LWXMLWriter> iterator = out.iterator();
 		for (int i = 0; iterator.hasNext(); i++, iterator.next()) {
-			File tableFile = new File(cache.getDirectory(), "ods" + i + ".html");
+			File tableFile = new File(cache.getDirectory(), "odf" + i + ".html");
 			Runtime.getRuntime()
 					.exec(new String[] {"google-chrome",
 							tableFile.getCanonicalPath()});

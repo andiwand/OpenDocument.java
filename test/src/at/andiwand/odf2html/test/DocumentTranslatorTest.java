@@ -48,9 +48,6 @@ public class DocumentTranslatorTest {
 			
 			translator = textTranslator;
 		} else if (document instanceof OpenDocumentSpreadsheet) {
-			System.out.println(document.getAsSpreadsheet()
-					.getTableDimensionMap());
-			
 			SpreadsheetTranslator spreadsheetTranslator = new SpreadsheetTranslator(
 					cache);
 			spreadsheetTranslator.setMaxTableDimension(new Vector2i(100));

@@ -55,6 +55,7 @@ public abstract class DocumentStyleTranslator<T extends DocumentStyle> {
 		}
 	}
 	
+	// TODO: improve sub element handling
 	public void translate(LWXMLReader in, T out) throws IOException {
 		LWXMLElementDelegationReader din = new LWXMLElementDelegationReader(in);
 		
@@ -65,21 +66,18 @@ public abstract class DocumentStyleTranslator<T extends DocumentStyle> {
 			case START_ELEMENT:
 				OrderedPair<String, StyleElementTranslator<? super T>> match = elementTranslatorMap
 						.match(din);
-				LWXMLReader ein = din.getElementReader();
 				
 				if (match != null) {
+					LWXMLReader ein = din.getElementReader();
+					
 					StyleElementTranslator<? super T> translator = match
 							.getElement2();
 					translator.translate(ein, out);
 				}
-				
-				break;
-			case END_EMPTY_ELEMENT:
-			case END_ELEMENT:
-			case END_DOCUMENT:
-				return;
 			default:
 				break;
+			case END_DOCUMENT:
+				return;
 			}
 		}
 	}

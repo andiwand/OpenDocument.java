@@ -8,7 +8,7 @@ import at.andiwand.commons.util.array.ArrayUtil;
 
 public class MasterStyleElementTranslator extends DefaultStyleElementTranslator {
 	
-	private static final String PAGE_LAYOUT_NAME = "page-layout-name";
+	private static final String PAGE_LAYOUT_NAME = "style:page-layout-name";
 	
 	private static final Set<String> DEFAULT_PARENT_ATTRIBUTES = ArrayUtil
 			.toCollection(new LinkedHashSet<String>(1), PAGE_LAYOUT_NAME);
