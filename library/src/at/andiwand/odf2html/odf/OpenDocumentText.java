@@ -26,7 +26,7 @@ public class OpenDocumentText extends OpenDocument {
 	
 	public int getPageCount() throws IOException {
 		if (pageCount == -1) {
-			pageCount = Integer.parseInt(LWXMLUtil.getAttributeValue(getMeta(),
+			pageCount = Integer.parseInt(LWXMLUtil.parseAttributeValue(getMeta(),
 					META_DOCUMENT_STATISTICS_PATH, PAGE_COUNT_ATTRIBUTE));
 		}
 		
@@ -35,7 +35,7 @@ public class OpenDocumentText extends OpenDocument {
 	
 	public boolean useSoftPageBreaks() throws IOException {
 		if (softPageBreaks == null) {
-			String tmp = LWXMLUtil.getFirstAttributeValue(getContent(),
+			String tmp = LWXMLUtil.parseFirstAttributeValue(getContent(),
 					SOFT_PAGE_BREAKS_ATTRIBUTE);
 			if (tmp == null) softPageBreaks = false;
 			else softPageBreaks = Boolean.parseBoolean(tmp);

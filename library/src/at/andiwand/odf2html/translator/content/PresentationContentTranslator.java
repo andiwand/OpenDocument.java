@@ -42,7 +42,9 @@ public class PresentationContentTranslator extends DefaultContentTranslator {
 		addElementTranslator("table:table-cell", "td");
 		
 		addElementTranslator("draw:page", new PresentationPageTranslator(style));
-		addElementTranslator("draw:frame", new FrameTranslator());
+		FrameTranslator frameTranslator = new FrameTranslator();
+		addElementTranslator("draw:frame", frameTranslator);
+		addElementTranslator("draw:custom-shape", frameTranslator);
 		addElementTranslator("presentation:notes", new NothingTranslator());
 	}
 	

@@ -31,7 +31,7 @@ public abstract class ImageTranslator extends SimpleElementReplacement {
 	@Override
 	public void translateAttributeList(LWXMLPushbackReader in, LWXMLWriter out)
 			throws IOException {
-		String name = LWXMLUtil.parseSingleAttributes(in, PATH_ATTRIBUTE_NAME);
+		String name = LWXMLUtil.parseSingleAttribute(in, PATH_ATTRIBUTE_NAME);
 		// TODO: log
 		if (name == null) return;
 		

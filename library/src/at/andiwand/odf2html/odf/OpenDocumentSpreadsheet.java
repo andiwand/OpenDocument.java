@@ -32,7 +32,7 @@ public class OpenDocumentSpreadsheet extends OpenDocument {
 	public int getTableCount() throws IOException {
 		if (tableCount == -1) {
 			try {
-				tableCount = Integer.parseInt(LWXMLUtil.getAttributeValue(
+				tableCount = Integer.parseInt(LWXMLUtil.parseAttributeValue(
 						getMeta(), META_DOCUMENT_STATISTICS_PATH,
 						TABLE_COUNT_ATTRIBUTE));
 			} catch (EOFException e) {

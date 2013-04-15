@@ -36,7 +36,7 @@ import at.andiwand.commons.lwxml.reader.LWXMLCountingReader;
 import at.andiwand.commons.lwxml.reader.LWXMLStreamReader;
 import at.andiwand.commons.swing.JFrameUtil;
 import at.andiwand.commons.swing.JTreeUtil;
-import at.andiwand.commons.util.object.ObjectMatcher;
+import at.andiwand.commons.util.object.AbstractObjectMatcher;
 import at.andiwand.odf2html.test.TestFileChooser;
 
 
@@ -47,10 +47,12 @@ public class XMLViewer extends JFrame {
 	private static final String ELEMENT_COUNT_PREFIX = "Element count: ";
 	private static final String ATTRIBUTE_COUNT_PREFIX = "Attribute count: ";
 	
-	private static class NodeMatcher implements ObjectMatcher<TreeNode> {
+	private static class NodeMatcher extends AbstractObjectMatcher<TreeNode> {
 		private final Pattern pattern;
 		
 		public NodeMatcher(Pattern pattern) {
+			super(TreeNode.class);
+			
 			this.pattern = pattern;
 		}
 		

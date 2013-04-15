@@ -18,7 +18,7 @@ public class SpaceTranslator extends SimpleElementTranslator {
 	@Override
 	public void translateStartElement(LWXMLPushbackReader in, LWXMLWriter out)
 			throws IOException {
-		int count = NumberUtil.parseInt(LWXMLUtil.parseSingleAttributes(in,
+		int count = NumberUtil.parseInt(LWXMLUtil.parseSingleAttribute(in,
 				COUNT_ATTRIBUTE_NAME), 1);
 		out.writeCharacters(StringUtil.multiply(' ', count));
 	}
