@@ -2,6 +2,7 @@ package at.andiwand.odf2html.translator.content;
 
 import java.io.IOException;
 
+import at.andiwand.commons.lwxml.LWXMLUtil;
 import at.andiwand.commons.lwxml.reader.LWXMLPushbackReader;
 import at.andiwand.commons.lwxml.translator.simple.SimpleElementReplacement;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
@@ -57,6 +58,18 @@ public class FrameTranslator extends SimpleElementReplacement {
 		if (height != null) style += "height:" + height + ";";
 		
 		out.writeAttribute("style", style);
+	}
+	
+	@Override
+	public void translateChildren(LWXMLPushbackReader in, LWXMLWriter out)
+			throws IOException {
+		if (LWXMLUtil.isEmptyElement(in)) {
+			out.writeStartElement("br");
+			out.writeEndEmptyElement();
+			translateEndElement(in, out);
+		} else {
+			in.unreadEvent();
+		}
 	}
 	
 }

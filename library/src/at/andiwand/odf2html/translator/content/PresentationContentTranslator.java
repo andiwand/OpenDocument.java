@@ -46,6 +46,8 @@ public class PresentationContentTranslator extends DefaultContentTranslator {
 		addElementTranslator("draw:frame", frameTranslator);
 		addElementTranslator("draw:custom-shape", frameTranslator);
 		addElementTranslator("presentation:notes", new NothingTranslator());
+		
+		addElementTranslator("text:p", new ParagraphTranslator());
 	}
 	
 	@Override
