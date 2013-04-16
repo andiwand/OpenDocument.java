@@ -18,76 +18,79 @@ import at.andiwand.odf2html.translator.document.TextTranslator;
 import at.andiwand.odf2html.util.DefaultFileCache;
 import at.andiwand.odf2html.util.FileCache;
 
-
 public class AutomaticTranslatorTest {
-	
-	private final Set<File> testFileSet;
-	
-	private final FileCache fileCache = new DefaultFileCache("/tmp");
-	
-	private final TextTranslator textTranslator = new TextTranslator(fileCache);
-	private final SpreadsheetTranslator spreadsheetTranslator = new SpreadsheetTranslator(
+
+    private final Set<File> testFileSet;
+
+    private final FileCache fileCache = new DefaultFileCache("/tmp");
+
+    public AutomaticTranslatorTest(Set<File> testFileSet) {
+	this.testFileSet = new HashSet<File>(testFileSet);
+    }
+
+    public AutomaticTranslatorTest(File directory) {
+	testFileSet = new HashSet<File>();
+	addDirectory(directory);
+    }
+
+    public AutomaticTranslatorTest(String directory) {
+	this(new File(directory));
+    }
+
+    private void addDirectory(File directory) {
+	for (File child : directory.listFiles()) {
+	    // TODO: improve
+	    if (TestFileUtil.isFileIgnored(child.getName()))
+		continue;
+
+	    if (child.isDirectory())
+		addDirectory(child);
+	    else
+		testFileSet.add(child);
+	}
+    }
+
+    public void start() throws IOException {
+	for (File file : testFileSet) {
+	    testFile(file);
+	}
+    }
+
+    private void testFile(File file) throws IOException {
+	System.out.println(file);
+	OpenDocumentFile documentFile = new LocatedOpenDocumentFile(file);
+
+	try {
+	    String name = file.getName();
+	    documentFile.setPassword(TestFileUtil.getPassword(name));
+
+	    OpenDocument document = documentFile.getAsDocument();
+
+	    if (document instanceof OpenDocumentText) {
+		TextTranslator textTranslator = new TextTranslator(fileCache);
+		textTranslator.translate(document, LWXMLNullWriter.NULL);
+	    } else if (document instanceof OpenDocumentSpreadsheet) {
+		SpreadsheetTranslator spreadsheetTranslator = new SpreadsheetTranslator(
 			fileCache);
-	private final PresentationTranslator presentationTranslator = new PresentationTranslator(fileCache);
-	
-	public AutomaticTranslatorTest(Set<File> testFileSet) {
-		this.testFileSet = new HashSet<File>(testFileSet);
+		spreadsheetTranslator.translate(document, LWXMLNullWriter.NULL);
+	    } else if (document instanceof OpenDocumentPresentation) {
+		PresentationTranslator presentationTranslator = new PresentationTranslator(
+			fileCache);
+		presentationTranslator
+			.translate(document, LWXMLNullWriter.NULL);
+	    } else {
+		throw new IllegalStateException();
+	    }
+	} finally {
+	    documentFile.close();
 	}
-	
-	public AutomaticTranslatorTest(File directory) {
-		testFileSet = new HashSet<File>();
-		addDirectory(directory);
-	}
-	
-	public AutomaticTranslatorTest(String directory) {
-		this(new File(directory));
-	}
-	
-	private void addDirectory(File directory) {
-		for (File child : directory.listFiles()) {
-			if (child.isDirectory()) addDirectory(child);
-			else testFileSet.add(child);
-		}
-	}
-	
-	public void start() throws IOException {
-		for (File file : testFileSet) {
-			testFile(file);
-		}
-	}
-	
-	private void testFile(File file) throws IOException {
-		OpenDocumentFile documentFile = new LocatedOpenDocumentFile(file);
-		
-		try {
-			String name = file.getName();
-			System.out.println(name);
-			String[] parts = name.split("\\$");
-			if (parts.length >= 2) {
-				String password = parts[1];
-				documentFile.setPassword(password);
-			}
-			
-			OpenDocument document = documentFile.getAsDocument();
-			
-			if (document instanceof OpenDocumentText) {
-				textTranslator.translate(document, LWXMLNullWriter.NULL);
-			} else if (document instanceof OpenDocumentSpreadsheet) {
-				spreadsheetTranslator.translate(document, LWXMLNullWriter.NULL);
-			} else if (document instanceof OpenDocumentPresentation) {
-				presentationTranslator.translate(document, LWXMLNullWriter.NULL);
-			} else {
-				throw new IllegalStateException();
-			}
-		} finally {
-			documentFile.close();
-		}
-	}
-	
-	public static void main(String[] args) throws Throwable {
-		File directory = TestFileUtil.getDirectory();
-		AutomaticTranslatorTest test = new AutomaticTranslatorTest(directory);
-		test.start();
-	}
-	
+    }
+
+    public static void main(String[] args) throws Throwable {
+	// TODO: provide file set from TestFileUtil
+	File directory = TestFileUtil.getDirectory();
+	AutomaticTranslatorTest test = new AutomaticTranslatorTest(directory);
+	test.start();
+    }
+
 }

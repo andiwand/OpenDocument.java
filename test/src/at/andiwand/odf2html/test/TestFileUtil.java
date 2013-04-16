@@ -21,6 +21,8 @@ public class TestFileUtil {
 	
 	private static final String PASSWORD_SEPARATOR_PATTERN = "\\$";
 	
+	private static final String IGNORE_PREFIX = "#";
+	
 	static {
 		try {
 			PROGRAM_DIRECTORY = new File(PROGRAM_URL.toURI());
@@ -47,6 +49,10 @@ public class TestFileUtil {
 	public static String getPassword(String name) {
 		String[] split = name.split(PASSWORD_SEPARATOR_PATTERN);
 		return (split.length == 3) ? split[1] : null;
+	}
+	
+	public static boolean isFileIgnored(String name) {
+		return name.startsWith(IGNORE_PREFIX);
 	}
 	
 	private TestFileUtil() {}
