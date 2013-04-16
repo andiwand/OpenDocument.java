@@ -110,7 +110,7 @@ public class TableSizeUtil {
 			Map<String, Vector2i> tableMap) throws IOException {
 		TableDimension result = new TableDimension();
 		
-		String name = LWXMLUtil.parseSingleAttributes(in, TABLE_NAME_ATTRIBUTE);
+		String name = LWXMLUtil.parseSingleAttribute(in, TABLE_NAME_ATTRIBUTE);
 		
 		@SuppressWarnings("resource")
 		LWXMLElementDelegationReader din = new LWXMLElementDelegationReader(in);
@@ -136,7 +136,7 @@ public class TableSizeUtil {
 	private static TableDimension parseRow(LWXMLReader in) throws IOException {
 		TableDimension result = new TableDimension();
 		
-		int repeated = NumberUtil.parseInt(LWXMLUtil.parseSingleAttributes(in,
+		int repeated = NumberUtil.parseInt(LWXMLUtil.parseSingleAttribute(in,
 				ROWS_REPEATED_ATTRIBUTE_NAME), 1);
 		result.setRows(repeated);
 		

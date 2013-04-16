@@ -5,12 +5,18 @@ import java.util.Collections;
 import java.util.List;
 
 import at.andiwand.commons.lwxml.LWXMLUtil;
+import at.andiwand.commons.lwxml.path.LWXMLPath;
+import at.andiwand.commons.lwxml.reader.LWXMLFlatReader;
+import at.andiwand.commons.lwxml.reader.LWXMLReader;
+import at.andiwand.commons.lwxml.reader.LWXMLStreamReader;
 
 
 public class OpenDocumentPresentation extends OpenDocument {
 	
 	public static final String MIMETYPE = "application/vnd.oasis.opendocument.presentation";
 	
+	private static final LWXMLPath PAGE_PATH = new LWXMLPath(
+			"office:document-content/office:body/office:presentation");
 	private static final String PAGE_NAME_ATTRIBUTE = "draw:name";
 	
 	public static boolean checkMimetype(String mimetype) {
@@ -34,8 +40,11 @@ public class OpenDocumentPresentation extends OpenDocument {
 	// TODO: improve with path/query (0.00000000001% necessary)
 	public List<String> getPageNames() throws IOException {
 		if (pageNames == null) {
+			LWXMLReader in = new LWXMLStreamReader(getContent());
+			LWXMLUtil.flushUntilPath(in, PAGE_PATH);
+			LWXMLFlatReader fin = new LWXMLFlatReader(in);
 			pageNames = Collections.unmodifiableList(LWXMLUtil
-					.getAllAttributeValue(getContent(), PAGE_NAME_ATTRIBUTE));
+					.parseAllAttributeValues(fin, PAGE_NAME_ATTRIBUTE));
 			
 			if (pageCount == -1) pageCount = pageNames.size();
 		}

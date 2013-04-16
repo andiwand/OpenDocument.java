@@ -19,11 +19,11 @@ public class OpenDocumentPresentationTest {
 		
 		File file = fileChooser.getSelectedFile();
 		OpenDocumentFile documentFile = new LocatedOpenDocumentFile(file);
-		OpenDocumentPresentation spreadsheet = documentFile
+		OpenDocumentPresentation presentation = documentFile
 				.getAsPresentation();
 		
-		System.out.println(spreadsheet.getPageCount());
-		System.out.println(spreadsheet.getPageNames());
+		System.out.println(presentation.getPageCount());
+		System.out.println(presentation.getPageNames());
 		
 		documentFile.close();
 	}

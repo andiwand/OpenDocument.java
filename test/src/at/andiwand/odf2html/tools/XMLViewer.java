@@ -64,10 +64,10 @@ public class XMLViewer extends JFrame {
 		}
 	}
 	
-	private static final Clipboard clipboard = Toolkit.getDefaultToolkit()
+	private static final Clipboard CLIPBOARD = Toolkit.getDefaultToolkit()
 			.getSystemClipboard();
 	
-	private static final ActionListener copyText = new ActionListener() {
+	private static final ActionListener COPY_TEXT = new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
 			Object source = e.getSource();
 			String text;
@@ -81,7 +81,7 @@ public class XMLViewer extends JFrame {
 			}
 			
 			StringSelection selection = new StringSelection(text);
-			clipboard.setContents(selection, selection);
+			CLIPBOARD.setContents(selection, selection);
 		}
 	};
 	
@@ -122,9 +122,9 @@ public class XMLViewer extends JFrame {
 		menuBar.add(treeMenu);
 		
 		JMenu statistic = new JMenu("Statistic");
-		elementCount.addActionListener(copyText);
+		elementCount.addActionListener(COPY_TEXT);
 		statistic.add(elementCount);
-		attributeCount.addActionListener(copyText);
+		attributeCount.addActionListener(COPY_TEXT);
 		statistic.add(attributeCount);
 		menuBar.add(statistic);
 		
