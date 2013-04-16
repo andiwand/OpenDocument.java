@@ -12,6 +12,7 @@ import at.andiwand.odf2html.odf.OpenDocumentFile;
 import at.andiwand.odf2html.odf.OpenDocumentPresentation;
 import at.andiwand.odf2html.odf.OpenDocumentSpreadsheet;
 import at.andiwand.odf2html.odf.OpenDocumentText;
+import at.andiwand.odf2html.translator.document.PresentationTranslator;
 import at.andiwand.odf2html.translator.document.SpreadsheetTranslator;
 import at.andiwand.odf2html.translator.document.TextTranslator;
 import at.andiwand.odf2html.util.DefaultFileCache;
@@ -27,6 +28,7 @@ public class AutomaticTranslatorTest {
 	private final TextTranslator textTranslator = new TextTranslator(fileCache);
 	private final SpreadsheetTranslator spreadsheetTranslator = new SpreadsheetTranslator(
 			fileCache);
+	private final PresentationTranslator presentationTranslator = new PresentationTranslator(fileCache);
 	
 	public AutomaticTranslatorTest(Set<File> testFileSet) {
 		this.testFileSet = new HashSet<File>(testFileSet);
@@ -73,7 +75,7 @@ public class AutomaticTranslatorTest {
 			} else if (document instanceof OpenDocumentSpreadsheet) {
 				spreadsheetTranslator.translate(document, LWXMLNullWriter.NULL);
 			} else if (document instanceof OpenDocumentPresentation) {
-				// TODO: implement
+				presentationTranslator.translate(document, LWXMLNullWriter.NULL);
 			} else {
 				throw new IllegalStateException();
 			}
