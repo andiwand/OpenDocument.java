@@ -16,102 +16,108 @@ import at.andiwand.odf2html.css.StyleSheet;
 import at.andiwand.odf2html.css.StyleSheetParser;
 import at.andiwand.odf2html.css.StyleSheetWriter;
 
-
 public class DocumentStyle {
-	
-	private static final String DEFAULT_STYLE_SHEET_NAME = "default.css";
-	private static final StyleSheet DEFAULT_STYLE_SHEET;
-	
-	static {
-		try {
-			DEFAULT_STYLE_SHEET = loadStyleSheet(DEFAULT_STYLE_SHEET_NAME,
-					DocumentStyle.class);
-		} catch (IOException e) {
-			throw new IllegalStateException();
-		}
+
+    private static final String DEFAULT_STYLE_SHEET_NAME = "default.css";
+    private static final StyleSheet DEFAULT_STYLE_SHEET;
+
+    static {
+	try {
+	    DEFAULT_STYLE_SHEET = loadStyleSheet(DEFAULT_STYLE_SHEET_NAME,
+		    DocumentStyle.class);
+	} catch (IOException e) {
+	    throw new IllegalStateException();
 	}
-	
-	protected static StyleSheet loadStyleSheet(String name, Class<?> location)
-			throws IOException {
-		InputStream in = location.getResourceAsStream(name);
-		
-		try {
-			StyleSheetParser styleSheetParser = new StyleSheetParser();
-			return styleSheetParser.parse(in);
-		} finally {
-			in.close();
-		}
+    }
+
+    protected static StyleSheet loadStyleSheet(String name, Class<?> location)
+	    throws IOException {
+	InputStream in = location.getResourceAsStream(name);
+
+	try {
+	    StyleSheetParser styleSheetParser = new StyleSheetParser();
+	    return styleSheetParser.parse(in);
+	} finally {
+	    in.close();
 	}
-	
-	public static String translateStyleName(String name) {
-		return name.replaceAll("\\.", "_");
+    }
+
+    public static String translateStyleName(String name) {
+	return name.replaceAll("\\.", "_");
+    }
+
+    private Map<String, Set<String>> styleInheritance = new HashMap<String, Set<String>>();
+    private final StyleSheetWriter styleOut;
+
+    public DocumentStyle(StyleSheetWriter styleOut) throws IOException {
+	if (styleOut == null)
+	    throw new NullPointerException();
+	this.styleOut = styleOut;
+
+	styleOut.writeSheet(DEFAULT_STYLE_SHEET);
+    }
+
+    public List<String> getStyleParents(String name) {
+	Set<String> parents = styleInheritance.get(name);
+	if (parents == null)
+	    return null;
+	return new ArrayList<String>(parents);
+    }
+
+    public String getStyleReference(String name) {
+	Set<String> parents = styleInheritance.get(name);
+	if (parents == null)
+	    return null;
+
+	String result;
+
+	result = translateStyleName(name);
+	for (String parent : parents) {
+	    result = translateStyleName(parent) + " " + result;
 	}
-	
-	private Map<String, Set<String>> styleInheritance = new HashMap<String, Set<String>>();
-	private final StyleSheetWriter styleOut;
-	
-	public DocumentStyle(StyleSheetWriter styleOut) throws IOException {
-		if (styleOut == null) throw new NullPointerException();
-		this.styleOut = styleOut;
-		
-		styleOut.writeSheet(DEFAULT_STYLE_SHEET);
+
+	return result;
+    }
+
+    public LWXMLAttribute getStyleAttribute(String name) {
+	String reference = getStyleReference(name);
+	if (reference == null)
+	    reference = "null";
+	return new LWXMLAttribute("class", reference);
+    }
+
+    private void addStyleInheritance(String name, Collection<String> parents) {
+	Set<String> parentSet = new LinkedHashSet<String>();
+
+	for (String parent : parents) {
+	    Set<String> parentsParentSet = styleInheritance.get(parent);
+	    parentSet.add(parent);
+	    if (parentsParentSet != null)
+		parentSet.addAll(parentsParentSet);
 	}
-	
-	public List<String> getStyleParents(String name) {
-		Set<String> parents = styleInheritance.get(name);
-		if (parents == null) return null;
-		return new ArrayList<String>(parents);
-	}
-	
-	public String getStyleReference(String name) {
-		Set<String> parents = styleInheritance.get(name);
-		if (parents == null) return null;
-		
-		String result;
-		
-		result = translateStyleName(name);
-		for (String parent : parents) {
-			result = translateStyleName(parent) + " " + result;
-		}
-		
-		return result;
-	}
-	
-	public LWXMLAttribute getStyleAttribute(String name) {
-		String reference = getStyleReference(name);
-		if (reference == null) reference = "null";
-		return new LWXMLAttribute("class", reference);
-	}
-	
-	private void addStyleInheritance(String name, Collection<String> parents) {
-		Set<String> parentSet = new LinkedHashSet<String>();
-		
-		for (String parent : parents) {
-			Set<String> parentsParentSet = styleInheritance.get(parent);
-			parentSet.add(parent);
-			if (parentsParentSet != null) parentSet.addAll(parentsParentSet);
-		}
-		
-		styleInheritance.put(name, parentSet);
-	}
-	
-	public void writeClass(String name, Collection<String> parents)
-			throws IOException {
-		if (styleOut.isDefinitionStarted()) styleOut.writeEndDefinition();
-		styleOut.writeStartDefinition("." + translateStyleName(name));
-		addStyleInheritance(name, parents);
-	}
-	
-	public void writeProperty(StyleProperty property) throws IOException {
-		styleOut.writeProperty(property);
-	}
-	
-	public void writeProperty(String name, String value) throws IOException {
-		styleOut.writeProperty(name, value);
-	}
-	
-	public void close() throws IOException {
-		if (styleOut.isDefinitionStarted()) styleOut.writeEndDefinition();
-	}
-	
+
+	styleInheritance.put(name, parentSet);
+    }
+
+    public void writeClass(String name, Collection<String> parents)
+	    throws IOException {
+	if (styleOut.isDefinitionStarted())
+	    styleOut.writeEndDefinition();
+	styleOut.writeStartDefinition("." + translateStyleName(name));
+	addStyleInheritance(name, parents);
+    }
+
+    public void writeProperty(StyleProperty property) throws IOException {
+	styleOut.writeProperty(property);
+    }
+
+    public void writeProperty(String name, String value) throws IOException {
+	styleOut.writeProperty(name, value);
+    }
+
+    public void close() throws IOException {
+	if (styleOut.isDefinitionStarted())
+	    styleOut.writeEndDefinition();
+    }
+
 }

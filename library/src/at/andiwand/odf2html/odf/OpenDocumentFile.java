@@ -17,171 +17,180 @@ import at.andiwand.commons.lwxml.reader.LWXMLReader;
 import at.andiwand.commons.lwxml.reader.LWXMLStreamReader;
 import at.andiwand.commons.util.array.ArrayUtil;
 
-
 public abstract class OpenDocumentFile implements Closeable {
-	
-	private static final String MIMETYPE_PATH = "mimetype";
-	private static final String MANIFEST_PATH = "META-INF/manifest.xml";
-	
-	private static final Set<String> UNENCRYPTED_FILES = ArrayUtil
-			.toHashSet(new String[] {MIMETYPE_PATH, MANIFEST_PATH});
-	
-	private String mimetype;
-	private Map<String, String> mimetypeMap;
-	
-	private Map<String, EncryptionParameter> encryptionParameterMap;
-	private String password;
-	
-	public boolean isEncrypted() throws IOException {
-		if (encryptionParameterMap == null)
-			encryptionParameterMap = Collections
-					.unmodifiableMap(EncryptionParameter
-							.parseEncryptionParameters(this));
-		
-		return !encryptionParameterMap.isEmpty();
-	}
-	
-	public boolean isFileEncrypted(String path) throws IOException {
-		if (UNENCRYPTED_FILES.contains(path)) return false;
-		if (!isEncrypted()) return false;
-		
-		return encryptionParameterMap.containsKey(path);
-	}
-	
-	public void setPassword(String password) {
-		this.password = password;
-	}
-	
-	public boolean isPasswordValid(String password) throws IOException {
-		if (!isEncrypted()) return true;
-		
-		return OpenDocumentCryptoUtil.validatePassword(password, this);
-	}
-	
-	public EncryptionParameter getEncryptionParameter(String path)
-			throws IOException {
-		if (!isEncrypted()) return null;
-		
-		return encryptionParameterMap.get(path);
-	}
-	
-	public Map<String, EncryptionParameter> getEncryptionParameterMap()
-			throws IOException {
-		if (!isEncrypted()) return null;
-		
-		return encryptionParameterMap;
-	}
-	
-	public abstract boolean isFile(String name) throws IOException;
-	
-	public abstract Set<String> getFileNames() throws IOException;
-	
-	protected abstract InputStream getRawFileStream(String name)
-			throws IOException;
-	
-	public InputStream getFileStream(String name) throws IOException {
-		InputStream in = getRawFileStream(name);
-		if (!isFileEncrypted(name)) return in;
-		
-		if (password == null)
-			throw new NullPointerException("password cannot be null");
-		EncryptionParameter encryptionParameter = getEncryptionParameter(name);
-		in = OpenDocumentCryptoUtil.getPlainInputStream(in,
-				encryptionParameter, password);
-		in = new InflaterInputStream(in, new Inflater(true));
-		return in;
-	}
-	
-	public String getFileMimetype(String name) throws IOException {
-		if (mimetypeMap == null) mimetypeMap = getFileMimetypeImpl();
-		
-		return mimetypeMap.get(name);
-	}
-	
-	public abstract long getFileSize(String name) throws IOException;
-	
-	public Map<String, String> getFileMimetypeImpl() throws IOException {
-		Map<String, String> result = new HashMap<String, String>();
-		
-		LWXMLReader in = new LWXMLStreamReader(getManifest());
-		
-		String mimetype = null;
-		String path = null;
-		
-		while (true) {
-			LWXMLEvent event = in.readEvent();
-			if (event == LWXMLEvent.END_DOCUMENT) break;
-			
-			switch (event) {
-			case ATTRIBUTE_NAME:
-				String attributeName = in.readValue();
-				
-				if (attributeName.equals("manifest:media-type")) {
-					mimetype = in.readFollowingValue();
-				} else if (attributeName.equals("manifest:full-path")) {
-					path = in.readFollowingValue();
-				}
-				
-				break;
-			case END_ATTRIBUTE_LIST:
-				if (mimetype != null) result.put(path, mimetype);
-				
-				mimetype = null;
-				path = null;
-				break;
-			default:
-				break;
-			}
+
+    private static final String MIMETYPE_PATH = "mimetype";
+    private static final String MANIFEST_PATH = "META-INF/manifest.xml";
+
+    private static final Set<String> UNENCRYPTED_FILES = ArrayUtil
+	    .toHashSet(new String[] { MIMETYPE_PATH, MANIFEST_PATH });
+
+    private String mimetype;
+    private Map<String, String> mimetypeMap;
+
+    private Map<String, EncryptionParameter> encryptionParameterMap;
+    private String password;
+
+    public boolean isEncrypted() throws IOException {
+	if (encryptionParameterMap == null)
+	    encryptionParameterMap = Collections
+		    .unmodifiableMap(EncryptionParameter
+			    .parseEncryptionParameters(this));
+
+	return !encryptionParameterMap.isEmpty();
+    }
+
+    public boolean isFileEncrypted(String path) throws IOException {
+	if (UNENCRYPTED_FILES.contains(path))
+	    return false;
+	if (!isEncrypted())
+	    return false;
+
+	return encryptionParameterMap.containsKey(path);
+    }
+
+    public void setPassword(String password) {
+	this.password = password;
+    }
+
+    public boolean isPasswordValid(String password) throws IOException {
+	if (!isEncrypted())
+	    return true;
+
+	return OpenDocumentCryptoUtil.validatePassword(password, this);
+    }
+
+    public EncryptionParameter getEncryptionParameter(String path)
+	    throws IOException {
+	if (!isEncrypted())
+	    return null;
+
+	return encryptionParameterMap.get(path);
+    }
+
+    public Map<String, EncryptionParameter> getEncryptionParameterMap()
+	    throws IOException {
+	if (!isEncrypted())
+	    return null;
+
+	return encryptionParameterMap;
+    }
+
+    public abstract boolean isFile(String name) throws IOException;
+
+    public abstract Set<String> getFileNames() throws IOException;
+
+    protected abstract InputStream getRawFileStream(String name)
+	    throws IOException;
+
+    public InputStream getFileStream(String name) throws IOException {
+	InputStream in = getRawFileStream(name);
+	if (!isFileEncrypted(name))
+	    return in;
+
+	if (password == null)
+	    throw new NullPointerException("password cannot be null");
+	EncryptionParameter encryptionParameter = getEncryptionParameter(name);
+	in = OpenDocumentCryptoUtil.getPlainInputStream(in,
+		encryptionParameter, password);
+	in = new InflaterInputStream(in, new Inflater(true));
+	return in;
+    }
+
+    public String getFileMimetype(String name) throws IOException {
+	if (mimetypeMap == null)
+	    mimetypeMap = getFileMimetypeImpl();
+
+	return mimetypeMap.get(name);
+    }
+
+    public abstract long getFileSize(String name) throws IOException;
+
+    public Map<String, String> getFileMimetypeImpl() throws IOException {
+	Map<String, String> result = new HashMap<String, String>();
+
+	LWXMLReader in = new LWXMLStreamReader(getManifest());
+
+	String mimetype = null;
+	String path = null;
+
+	while (true) {
+	    LWXMLEvent event = in.readEvent();
+	    if (event == LWXMLEvent.END_DOCUMENT)
+		break;
+
+	    switch (event) {
+	    case ATTRIBUTE_NAME:
+		String attributeName = in.readValue();
+
+		if (attributeName.equals("manifest:media-type")) {
+		    mimetype = in.readFollowingValue();
+		} else if (attributeName.equals("manifest:full-path")) {
+		    path = in.readFollowingValue();
 		}
-		
-		in.close();
-		
-		return result;
+
+		break;
+	    case END_ATTRIBUTE_LIST:
+		if (mimetype != null)
+		    result.put(path, mimetype);
+
+		mimetype = null;
+		path = null;
+		break;
+	    default:
+		break;
+	    }
 	}
-	
-	public String getMimetype() throws IOException {
-		if (mimetype == null) mimetype = getMimetypeImpl();
-		
-		return mimetype;
+
+	in.close();
+
+	return result;
+    }
+
+    public String getMimetype() throws IOException {
+	if (mimetype == null)
+	    mimetype = getMimetypeImpl();
+
+	return mimetype;
+    }
+
+    private String getMimetypeImpl() throws IOException {
+	if (isFile(MIMETYPE_PATH)) {
+	    InputStream in = getRawFileStream(MIMETYPE_PATH);
+	    return CharStreamUtil.readString(new InputStreamReader(in));
+	} else {
+	    return getFileMimetype("/");
 	}
-	
-	private String getMimetypeImpl() throws IOException {
-		if (isFile(MIMETYPE_PATH)) {
-			InputStream in = getRawFileStream(MIMETYPE_PATH);
-			return CharStreamUtil.readString(new InputStreamReader(in));
-		} else {
-			return getFileMimetype("/");
-		}
+    }
+
+    public InputStream getManifest() throws IOException {
+	return getRawFileStream(MANIFEST_PATH);
+    }
+
+    public OpenDocument getAsDocument() throws IOException {
+	String mimetype = getMimetype();
+
+	if (OpenDocumentText.checkMimetype(mimetype)) {
+	    return getAsText();
+	} else if (OpenDocumentSpreadsheet.checkMimetype(mimetype)) {
+	    return getAsSpreadsheet();
+	} else if (OpenDocumentPresentation.checkMimetype(mimetype)) {
+	    return getAsPresentation();
 	}
-	
-	public InputStream getManifest() throws IOException {
-		return getRawFileStream(MANIFEST_PATH);
-	}
-	
-	public OpenDocument getAsDocument() throws IOException {
-		String mimetype = getMimetype();
-		
-		if (OpenDocumentText.checkMimetype(mimetype)) {
-			return getAsText();
-		} else if (OpenDocumentSpreadsheet.checkMimetype(mimetype)) {
-			return getAsSpreadsheet();
-		} else if (OpenDocumentPresentation.checkMimetype(mimetype)) {
-			return getAsPresentation();
-		}
-		
-		throw new IllegalMimeTypeException(mimetype);
-	}
-	
-	public OpenDocumentText getAsText() throws IOException {
-		return new OpenDocumentText(this);
-	}
-	
-	public OpenDocumentSpreadsheet getAsSpreadsheet() throws IOException {
-		return new OpenDocumentSpreadsheet(this);
-	}
-	
-	public OpenDocumentPresentation getAsPresentation() throws IOException {
-		return new OpenDocumentPresentation(this);
-	}
-	
+
+	throw new IllegalMimeTypeException(mimetype);
+    }
+
+    public OpenDocumentText getAsText() throws IOException {
+	return new OpenDocumentText(this);
+    }
+
+    public OpenDocumentSpreadsheet getAsSpreadsheet() throws IOException {
+	return new OpenDocumentSpreadsheet(this);
+    }
+
+    public OpenDocumentPresentation getAsPresentation() throws IOException {
+	return new OpenDocumentPresentation(this);
+    }
+
 }

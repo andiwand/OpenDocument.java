@@ -8,27 +8,26 @@ import java.io.OutputStream;
 import at.andiwand.commons.io.ByteStreamUtil;
 import at.andiwand.odf2html.util.FileCache;
 
-
 public class TemporaryOpenDocumentFile extends LocatedOpenDocumentFile {
-	
-	private static int lastIdentity;
-	
-	public TemporaryOpenDocumentFile(File file) throws IOException {
-		super(file);
-	}
-	
-	// TODO: improve
-	public TemporaryOpenDocumentFile(InputStream inputStream,
-			FileCache fileCache) throws IOException {
-		// TODO: fix ugly
-		String name = "odf-" + (lastIdentity++) + ".odt";
-		File file = fileCache.create(name);
-		
-		OutputStream outputStream = fileCache.getOutputStream(name);
-		ByteStreamUtil.writeStreamBuffered(inputStream, outputStream);
-		outputStream.close();
-		
-		init(file);
-	}
-	
+
+    private static int lastIdentity;
+
+    public TemporaryOpenDocumentFile(File file) throws IOException {
+	super(file);
+    }
+
+    // TODO: improve
+    public TemporaryOpenDocumentFile(InputStream inputStream,
+	    FileCache fileCache) throws IOException {
+	// TODO: fix ugly
+	String name = "odf-" + (lastIdentity++) + ".odt";
+	File file = fileCache.create(name);
+
+	OutputStream outputStream = fileCache.getOutputStream(name);
+	ByteStreamUtil.writeStreamBuffered(inputStream, outputStream);
+	outputStream.close();
+
+	init(file);
+    }
+
 }

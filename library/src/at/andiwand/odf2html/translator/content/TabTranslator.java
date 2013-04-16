@@ -8,29 +8,29 @@ import at.andiwand.commons.lwxml.reader.LWXMLPushbackReader;
 import at.andiwand.commons.lwxml.translator.simple.SimpleElementTranslator;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
 
-
 public class TabTranslator extends SimpleElementTranslator {
-	
-	@Override
-	public void translateStartElement(LWXMLPushbackReader in, LWXMLWriter out)
-			throws IOException {
-		out.writeCharacters("\t");
-	}
-	
-	@Override
-	public void translateAttributeList(LWXMLPushbackReader in, LWXMLWriter out)
-			throws IOException {
-		LWXMLUtil.flushEmptyElement(in);
-	}
-	
-	@Override
-	public void translateEndAttributeList(LWXMLPushbackReader in,
-			LWXMLWriter out) throws IOException {}
-	
-	@Override
-	public void translateEndElement(LWXMLPushbackReader in, LWXMLWriter out)
-			throws IOException {
-		throw new LWXMLIllegalEventException(in);
-	}
-	
+
+    @Override
+    public void translateStartElement(LWXMLPushbackReader in, LWXMLWriter out)
+	    throws IOException {
+	out.writeCharacters("\t");
+    }
+
+    @Override
+    public void translateAttributeList(LWXMLPushbackReader in, LWXMLWriter out)
+	    throws IOException {
+	LWXMLUtil.flushEmptyElement(in);
+    }
+
+    @Override
+    public void translateEndAttributeList(LWXMLPushbackReader in,
+	    LWXMLWriter out) throws IOException {
+    }
+
+    @Override
+    public void translateEndElement(LWXMLPushbackReader in, LWXMLWriter out)
+	    throws IOException {
+	throw new LWXMLIllegalEventException(in);
+    }
+
 }
