@@ -27,7 +27,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import at.andiwand.commons.lwxml.LWXMLConstants;
@@ -36,7 +35,6 @@ import at.andiwand.commons.lwxml.reader.LWXMLCountingReader;
 import at.andiwand.commons.lwxml.reader.LWXMLStreamReader;
 import at.andiwand.commons.swing.JFrameUtil;
 import at.andiwand.commons.swing.JTreeUtil;
-import at.andiwand.commons.util.object.ObjectMatcher;
 import at.andiwand.odf2html.test.TestFileChooser;
 
 
@@ -47,16 +45,18 @@ public class XMLViewer extends JFrame {
 	private static final String ELEMENT_COUNT_PREFIX = "Element count: ";
 	private static final String ATTRIBUTE_COUNT_PREFIX = "Attribute count: ";
 	
-	private static class NodeMatcher implements ObjectMatcher<TreeNode> {
+	private static class NodeMatcher {
 		private final Pattern pattern;
 		
 		public NodeMatcher(Pattern pattern) {
 			this.pattern = pattern;
 		}
 		
-		public boolean matches(TreeNode o) {
-			if (!(o instanceof DefaultMutableTreeNode)) return false;
-			DefaultMutableTreeNode node = (DefaultMutableTreeNode) o;
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == null) return false;
+			if (!(obj instanceof DefaultMutableTreeNode)) return false;
+			DefaultMutableTreeNode node = (DefaultMutableTreeNode) obj;
 			
 			String text = (String) node.getUserObject();
 			Matcher matcher = pattern.matcher(text);
@@ -168,7 +168,7 @@ public class XMLViewer extends JFrame {
 				lastPattern = Pattern
 						.compile(pattern, Pattern.CASE_INSENSITIVE);
 				lastMatch = JTreeUtil.findNode(tree, new NodeMatcher(
-						lastPattern), null);
+						lastPattern));
 				tree.setSelectionPath(lastMatch);
 				tree.scrollPathToVisible(lastMatch);
 			}
@@ -180,7 +180,6 @@ public class XMLViewer extends JFrame {
 				
 				lastMatch = JTreeUtil.findNode(tree, new NodeMatcher(
 						lastPattern), lastMatch);
-				System.out.println(lastMatch);
 				tree.setSelectionPath(lastMatch);
 				tree.scrollPathToVisible(lastMatch);
 			}
