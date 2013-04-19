@@ -65,6 +65,11 @@ public abstract class DocumentTranslator<S extends DocumentStyle> {
 	out.writeAttribute("content", "text/html; charset=UTF-8");
 	out.writeEndElement("meta");
 
+	out.writeStartElement("meta");
+	out.writeAttribute("name", "viewport");
+	out.writeAttribute("content", "width=device-width; initial-scale=1.0; user-scalable=yes");
+	out.writeEndElement("meta");
+
 	out.writeStartElement("title");
 	out.writeCharacters("odf2html");
 	out.writeEndElement("title");
