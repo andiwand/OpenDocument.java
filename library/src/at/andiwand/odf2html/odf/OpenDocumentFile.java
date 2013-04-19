@@ -91,7 +91,7 @@ public abstract class OpenDocumentFile implements Closeable {
 	if (password == null)
 	    throw new NullPointerException("password cannot be null");
 	EncryptionParameter encryptionParameter = getEncryptionParameter(name);
-	in = OpenDocumentCryptoUtil.getPlainInputStream(in,
+	in = OpenDocumentCryptoUtil.getDecryptedInputStream(in,
 		encryptionParameter, password);
 	in = new InflaterInputStream(in, new Inflater(true));
 	return in;
