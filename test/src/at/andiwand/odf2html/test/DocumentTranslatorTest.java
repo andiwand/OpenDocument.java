@@ -33,8 +33,8 @@ public class DocumentTranslatorTest {
 
 	File file = fileChooser.getSelectedFile();
 	OpenDocumentFile documentFile = new LocatedOpenDocumentFile(file);
-	System.out.println(documentFile.isPasswordValid(TestFileUtil
-		.getPassword(file.getName())));
+	documentFile.setPassword(TestFileUtil.getPassword(file.getName()));
+	System.out.println(documentFile.isPasswordValid());
 	documentFile.setPassword(TestFileUtil.getPassword(file.getName()));
 	OpenDocument document = documentFile.getAsDocument();
 
