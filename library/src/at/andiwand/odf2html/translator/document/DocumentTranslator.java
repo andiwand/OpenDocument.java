@@ -67,7 +67,8 @@ public abstract class DocumentTranslator<S extends DocumentStyle> {
 
 	out.writeStartElement("meta");
 	out.writeAttribute("name", "viewport");
-	out.writeAttribute("content", "width=device-width; initial-scale=1.0; user-scalable=yes");
+	out.writeAttribute("content",
+		"width=device-width; initial-scale=1.0; user-scalable=yes");
 	out.writeEndElement("meta");
 
 	out.writeStartElement("title");

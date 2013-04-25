@@ -89,18 +89,6 @@ public class XMLViewer extends JFrame {
 	}
     };
 
-    private JFileChooser fileChooser = new JFileChooser();
-
-    private DefaultTreeModel treeModel = new DefaultTreeModel(null);
-    private JTree tree = new JTree(treeModel);
-
-    private JMenuItem elementCount = new JMenuItem(ELEMENT_COUNT_PREFIX + "n/a");
-    private JMenuItem attributeCount = new JMenuItem(ATTRIBUTE_COUNT_PREFIX
-	    + "n/a");
-
-    private Pattern lastPattern;
-    private TreePath lastMatch;
-
     private final KeyListener copySelected = new KeyAdapter() {
 	@Override
 	public void keyTyped(KeyEvent e) {
@@ -116,6 +104,18 @@ public class XMLViewer extends JFrame {
 	    CLIPBOARD.setContents(selection, selection);
 	}
     };
+
+    private JFileChooser fileChooser = new JFileChooser();
+
+    private DefaultTreeModel treeModel = new DefaultTreeModel(null);
+    private JTree tree = new JTree(treeModel);
+
+    private JMenuItem elementCount = new JMenuItem(ELEMENT_COUNT_PREFIX + "n/a");
+    private JMenuItem attributeCount = new JMenuItem(ATTRIBUTE_COUNT_PREFIX
+	    + "n/a");
+
+    private Pattern lastPattern;
+    private TreePath lastMatch;
 
     public XMLViewer() {
 	super("XML Viewer");

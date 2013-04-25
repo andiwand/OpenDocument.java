@@ -6,7 +6,7 @@
 	
 	<path id="odf2html.classpath">
 		<pathelement location="bin" />
-		<pathelement location="lib/commons.jar" />
+		<pathelement location="dep/commons/library/commons.jar" />
 	</path>
 	
 	<target name="init">

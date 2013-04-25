@@ -1,5 +1,6 @@
 package at.andiwand.odf2html.odf;
 
+import java.io.EOFException;
 import java.io.IOException;
 
 import at.andiwand.commons.lwxml.LWXMLUtil;
@@ -25,9 +26,15 @@ public class OpenDocumentText extends OpenDocument {
 
     public int getPageCount() throws IOException {
 	if (pageCount == -1) {
-	    pageCount = Integer.parseInt(LWXMLUtil.parseAttributeValue(
-		    getMeta(), META_DOCUMENT_STATISTICS_PATH,
-		    PAGE_COUNT_ATTRIBUTE));
+	    try {
+		pageCount = Integer.parseInt(LWXMLUtil.parseAttributeValue(
+			getMeta(), META_DOCUMENT_STATISTICS_PATH,
+			PAGE_COUNT_ATTRIBUTE));
+	    } catch (ZipEntryNotFoundException e) {
+		pageCount = 0;
+	    } catch (EOFException e) {
+		pageCount = 0;
+	    }
 	}
 
 	return pageCount;

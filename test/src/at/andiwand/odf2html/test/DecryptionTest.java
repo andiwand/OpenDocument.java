@@ -23,7 +23,7 @@ import de.rtner.security.auth.spi.PBKDF2Parameters;
 public class DecryptionTest {
 
     public static void main(String[] args) throws Throwable {
-	JFileChooser fileChooser = new JFileChooser();
+	JFileChooser fileChooser = new TestFileChooser();
 	int option = fileChooser.showOpenDialog(null);
 
 	if (option == JFileChooser.CANCEL_OPTION)
@@ -33,7 +33,8 @@ public class DecryptionTest {
 	TemporaryOpenDocumentFile documentFile = new TemporaryOpenDocumentFile(
 		file);
 
-	InputStream inputStream = documentFile.getFileStream("meta.xml");
+	InputStream inputStream = documentFile
+		.getFileStream("Configurations2/accelerator/current.xml");
 
 	MessageDigest digest = MessageDigest.getInstance("SHA1");
 	byte[] md = digest.digest("password".getBytes());

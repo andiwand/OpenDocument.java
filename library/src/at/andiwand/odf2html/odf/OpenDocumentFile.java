@@ -53,7 +53,7 @@ public abstract class OpenDocumentFile implements Closeable {
 	this.password = password;
     }
 
-    public boolean isPasswordValid(String password) throws IOException {
+    public boolean isPasswordValid() throws IOException {
 	if (!isEncrypted())
 	    return true;
 
@@ -91,7 +91,7 @@ public abstract class OpenDocumentFile implements Closeable {
 	if (password == null)
 	    throw new NullPointerException("password cannot be null");
 	EncryptionParameter encryptionParameter = getEncryptionParameter(name);
-	in = OpenDocumentCryptoUtil.getPlainInputStream(in,
+	in = OpenDocumentCryptoUtil.getDecryptedInputStream(in,
 		encryptionParameter, password);
 	in = new InflaterInputStream(in, new Inflater(true));
 	return in;
@@ -106,7 +106,7 @@ public abstract class OpenDocumentFile implements Closeable {
 
     public abstract long getFileSize(String name) throws IOException;
 
-    public Map<String, String> getFileMimetypeImpl() throws IOException {
+    private Map<String, String> getFileMimetypeImpl() throws IOException {
 	Map<String, String> result = new HashMap<String, String>();
 
 	LWXMLReader in = new LWXMLStreamReader(getManifest());

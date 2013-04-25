@@ -19,7 +19,8 @@ public class DigestTest {
 	TemporaryOpenDocumentFile documentFile = new TemporaryOpenDocumentFile(
 		file);
 
-	System.out.println(documentFile.isPasswordValid("testpassword"));
+	documentFile.setPassword("testpassword");
+	System.out.println(documentFile.isPasswordValid());
 
 	documentFile.close();
     }

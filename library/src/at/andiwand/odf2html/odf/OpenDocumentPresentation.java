@@ -22,7 +22,6 @@ public class OpenDocumentPresentation extends OpenDocument {
 	return mimetype.startsWith(MIMETYPE);
     }
 
-    private int pageCount = -1;
     private List<String> pageNames;
 
     public OpenDocumentPresentation(OpenDocumentFile openDocumentFile)
@@ -31,10 +30,7 @@ public class OpenDocumentPresentation extends OpenDocument {
     }
 
     public int getPageCount() throws IOException {
-	if (pageCount == -1)
-	    getPageNames();
-
-	return pageCount;
+	return getPageNames().size();
     }
 
     // TODO: improve with path/query (0.00000000001% necessary)
@@ -45,9 +41,6 @@ public class OpenDocumentPresentation extends OpenDocument {
 	    LWXMLFlatReader fin = new LWXMLFlatReader(in);
 	    pageNames = Collections.unmodifiableList(LWXMLUtil
 		    .parseAllAttributeValues(fin, PAGE_NAME_ATTRIBUTE));
-
-	    if (pageCount == -1)
-		pageCount = pageNames.size();
 	}
 
 	return pageNames;

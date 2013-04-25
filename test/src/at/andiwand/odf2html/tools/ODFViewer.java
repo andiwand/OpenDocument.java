@@ -133,8 +133,7 @@ public class ODFViewer extends JFrame {
 		password = showPasswordDialog(this, "Password");
 		if (password == null)
 		    return;
-	    } while (!documentFile.isPasswordValid(password));
-	    documentFile.setPassword(password);
+	    } while (!documentFile.isPasswordValid());
 	}
 
 	List<String> fileList = new ArrayList<String>(
