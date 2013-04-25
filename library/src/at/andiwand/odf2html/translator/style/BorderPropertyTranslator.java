@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 import at.andiwand.odf2html.css.StyleAbsoluteUnit;
 import at.andiwand.odf2html.css.StyleProperty;
 
-public class BorderPropertyTranslator implements GeneralPropertyTranslator {
+public class BorderPropertyTranslator implements PropertyTranslator {
 
     private static final double DEFAULT_MM_LIMIT = 0.262;
 

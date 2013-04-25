@@ -30,15 +30,15 @@ public enum StyleAbsoluteUnit {
 
     public static double getConversionFactor(StyleAbsoluteUnit from,
 	    StyleAbsoluteUnit to) {
-	return from.meterConversionFactor / to.meterConversionFactor;
+	return from.getConversionFactor(to);
     }
 
     private final String symbol;
-    private final double meterConversionFactor;
+    private final double meterFactor;
 
-    private StyleAbsoluteUnit(String symbol, double meterConversionFactor) {
+    private StyleAbsoluteUnit(String symbol, double meterFactor) {
 	this.symbol = symbol;
-	this.meterConversionFactor = meterConversionFactor;
+	this.meterFactor = meterFactor;
     }
 
     @Override
@@ -50,12 +50,12 @@ public enum StyleAbsoluteUnit {
 	return symbol;
     }
 
-    public double getMeterConversionFactor() {
-	return meterConversionFactor;
+    public double getMeterFactor() {
+	return meterFactor;
     }
 
     public double getConversionFactor(StyleAbsoluteUnit to) {
-	return getConversionFactor(this, to);
+	return meterFactor / to.meterFactor;
     }
 
 }

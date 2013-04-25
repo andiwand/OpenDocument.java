@@ -2,7 +2,7 @@ package at.andiwand.odf2html.translator.style;
 
 import at.andiwand.odf2html.css.StyleProperty;
 
-public class LineThroughPropertyTranslator implements GeneralPropertyTranslator {
+public class LineThroughPropertyTranslator implements PropertyTranslator {
 
     private static final String STYLE_NAME = "text-decoration";
     private static final String STYLE_VALUE_NONE = "none";

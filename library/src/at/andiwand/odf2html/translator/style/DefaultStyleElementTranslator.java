@@ -45,7 +45,7 @@ public class DefaultStyleElementTranslator extends
 		.substring(colonIndex + 1);
     }
 
-    private final StreamableStringMap<GeneralPropertyTranslator> attributeTranslatorMap = new StreamableStringMap<GeneralPropertyTranslator>();
+    private final StreamableStringMap<PropertyTranslator> attributeTranslatorMap = new StreamableStringMap<PropertyTranslator>();
 
     public void addPropertyTranslator(String attribute) {
 	addPropertyTranslator(attribute, getToAttributeNameByColon(attribute));
@@ -57,7 +57,7 @@ public class DefaultStyleElementTranslator extends
     }
 
     public void addPropertyTranslator(String attribute,
-	    GeneralPropertyTranslator translator) {
+	    PropertyTranslator translator) {
 	if (attribute == null)
 	    throw new NullPointerException();
 	if (translator == null)
@@ -67,7 +67,7 @@ public class DefaultStyleElementTranslator extends
     }
 
     public void addDirectionPropertyTranslator(String attribute,
-	    GeneralPropertyTranslator translator) {
+	    PropertyTranslator translator) {
 	for (String directionPrefix : DIRECTION_SUFFIXES) {
 	    addPropertyTranslator(attribute + directionPrefix, translator);
 	}
@@ -136,12 +136,12 @@ public class DefaultStyleElementTranslator extends
 
 	    switch (event) {
 	    case ATTRIBUTE_NAME:
-		OrderedPair<String, GeneralPropertyTranslator> match = attributeTranslatorMap
+		OrderedPair<String, PropertyTranslator> match = attributeTranslatorMap
 			.match(in);
 
 		if (match != null) {
 		    String attributeName = match.getElement1();
-		    GeneralPropertyTranslator translator = match.getElement2();
+		    PropertyTranslator translator = match.getElement2();
 
 		    String attributeValue = in.readFollowingValue();
 		    StyleProperty property = translator.translate(

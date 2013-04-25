@@ -56,7 +56,6 @@ public abstract class DocumentStyleTranslator<T extends DocumentStyle> {
 	}
     }
 
-    // TODO: improve sub element handling
     public void translate(LWXMLReader in, T out) throws IOException {
 	LWXMLElementDelegationReader din = new LWXMLElementDelegationReader(in);
 

@@ -3,7 +3,7 @@ package at.andiwand.odf2html.translator.style;
 import at.andiwand.odf2html.css.StyleProperty;
 
 // workaround for 100% margin
-public class MarginPropertyTranslator implements GeneralPropertyTranslator {
+public class MarginPropertyTranslator implements PropertyTranslator {
 
     private static final String HUNDRED_PERCENT = "100%";
 
