@@ -1,4 +1,4 @@
-package at.andiwand.odf2html.translator.style;
+package at.andiwand.odf2html.translator.style.property;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 
 import at.andiwand.odf2html.css.StyleAbsoluteUnit;
 import at.andiwand.odf2html.css.StyleProperty;
+import at.andiwand.odf2html.translator.style.PropertyTranslator;
 
 public class BorderPropertyTranslator implements PropertyTranslator {
 

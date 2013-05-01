@@ -1,6 +1,5 @@
 package at.andiwand.odf2html.translator.content;
 
-import at.andiwand.commons.lwxml.translator.simple.SimpleElementReplacement;
 import at.andiwand.odf2html.odf.OpenDocumentFile;
 import at.andiwand.odf2html.translator.style.TextStyle;
 import at.andiwand.odf2html.util.FileCache;
@@ -25,14 +24,7 @@ public class TextContentTranslator extends DefaultContentTranslator {
 	addElementTranslator("text:list", "ul");
 	addElementTranslator("text:list-item", "li");
 
-	addElementTranslator("table:table", new SimpleElementReplacement(
-		"table") {
-	    {
-		addNewAttribute("border", "0");
-		addNewAttribute("cellspacing", "0");
-		addNewAttribute("cellpadding", "0");
-	    }
-	});
+	addElementTranslator("table:table", new SimpleTableTranslator());
 	addElementTranslator("table:table-column", "col");
 	addElementTranslator("table:table-row", "tr");
 	addElementTranslator("table:table-cell", "td");

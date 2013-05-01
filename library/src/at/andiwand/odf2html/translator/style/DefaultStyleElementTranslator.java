@@ -2,6 +2,7 @@ package at.andiwand.odf2html.translator.style;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.EnumMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -14,6 +15,8 @@ import at.andiwand.commons.util.array.ArrayUtil;
 import at.andiwand.commons.util.collection.CollectionUtil;
 import at.andiwand.commons.util.collection.OrderedPair;
 import at.andiwand.odf2html.css.StyleProperty;
+import at.andiwand.odf2html.translator.style.property.StaticGeneralPropertyTranslator;
+import at.andiwand.odf2html.translator.style.property.StylePropertyGroup;
 
 public class DefaultStyleElementTranslator extends
 	StyleElementTranslator<DocumentStyle> {
@@ -45,42 +48,61 @@ public class DefaultStyleElementTranslator extends
 		.substring(colonIndex + 1);
     }
 
-    private final StreamableStringMap<PropertyTranslator> attributeTranslatorMap = new StreamableStringMap<PropertyTranslator>();
+    private final EnumMap<StylePropertyGroup, StreamableStringMap<PropertyTranslator>> groupAttributeTranslatorMap = new EnumMap<StylePropertyGroup, StreamableStringMap<PropertyTranslator>>(
+	    StylePropertyGroup.class);
 
-    public void addPropertyTranslator(String attribute) {
-	addPropertyTranslator(attribute, getToAttributeNameByColon(attribute));
+    private StreamableStringMap<PropertyTranslator> getAttributeTranslators(
+	    StylePropertyGroup group) {
+	StreamableStringMap<PropertyTranslator> result = groupAttributeTranslatorMap
+		.get(group);
+
+	if (result == null) {
+	    result = new StreamableStringMap<PropertyTranslator>();
+	    groupAttributeTranslatorMap.put(group, result);
+	}
+
+	return result;
     }
 
-    public void addPropertyTranslator(String attribute, String property) {
-	addPropertyTranslator(attribute, new StaticGeneralPropertyTranslator(
-		property));
+    public void addPropertyTranslator(String attribute, StylePropertyGroup group) {
+	addPropertyTranslator(attribute, group,
+		getToAttributeNameByColon(attribute));
     }
 
     public void addPropertyTranslator(String attribute,
-	    PropertyTranslator translator) {
+	    StylePropertyGroup group, String property) {
+	addPropertyTranslator(attribute, group,
+		new StaticGeneralPropertyTranslator(property));
+    }
+
+    public void addPropertyTranslator(String attribute,
+	    StylePropertyGroup group, PropertyTranslator translator) {
 	if (attribute == null)
 	    throw new NullPointerException();
 	if (translator == null)
 	    throw new NullPointerException();
 
-	attributeTranslatorMap.put(attribute, translator);
+	getAttributeTranslators(group).put(attribute, translator);
     }
 
     public void addDirectionPropertyTranslator(String attribute,
-	    PropertyTranslator translator) {
+	    StylePropertyGroup group, PropertyTranslator translator) {
 	for (String directionPrefix : DIRECTION_SUFFIXES) {
-	    addPropertyTranslator(attribute + directionPrefix, translator);
+	    addPropertyTranslator(attribute + directionPrefix, group,
+		    translator);
 	}
     }
 
-    public void addDirectionPropertyTranslator(String attribute) {
-	addDirectionPropertyTranslator(attribute,
+    public void addDirectionPropertyTranslator(String attribute,
+	    StylePropertyGroup group) {
+	addDirectionPropertyTranslator(attribute, group,
 		getToAttributeNameByColon(attribute));
     }
 
-    public void addDirectionPropertyTranslator(String attribute, String property) {
+    public void addDirectionPropertyTranslator(String attribute,
+	    StylePropertyGroup group, String property) {
 	for (String directionPrefix : DIRECTION_SUFFIXES) {
-	    addPropertyTranslator(attribute + directionPrefix, property
+	    addPropertyTranslator(attribute + directionPrefix, group, property
 		    + directionPrefix);
 	}
     }
@@ -90,7 +112,7 @@ public class DefaultStyleElementTranslator extends
     }
 
     public void removePropertyTranslator(String attribute) {
-	attributeTranslatorMap.remove(attribute);
+	groupAttributeTranslatorMap.remove(attribute);
     }
 
     public void removeDirectionPropertyTranslator(String attribute) {
@@ -128,16 +150,29 @@ public class DefaultStyleElementTranslator extends
 	if (name == null)
 	    return;
 	Collection<String> parents = getParentStyles(attributes);
+	out.addStyleInheritance(name, parents);
 
-	out.writeClass(name, parents);
+	StylePropertyGroup group = null;
 
 	loop: while (true) {
 	    LWXMLEvent event = in.readEvent();
 
 	    switch (event) {
+	    case START_ELEMENT:
+		// TODO: optimize
+		String element = in.readValue();
+		group = StylePropertyGroup.getGroupByElement(element);
+		if (group != null)
+		    out.writeClass(name, group);
+		break;
+	    case END_ELEMENT:
+		group = null;
+		break;
 	    case ATTRIBUTE_NAME:
-		OrderedPair<String, PropertyTranslator> match = attributeTranslatorMap
-			.match(in);
+		if (group == null)
+		    break;
+		OrderedPair<String, PropertyTranslator> match = groupAttributeTranslatorMap
+			.get(group).match(in);
 
 		if (match != null) {
 		    String attributeName = match.getElement1();
