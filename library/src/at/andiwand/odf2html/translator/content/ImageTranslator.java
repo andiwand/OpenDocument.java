@@ -6,9 +6,9 @@ import java.io.Writer;
 import at.andiwand.commons.lwxml.LWXMLIllegalEventException;
 import at.andiwand.commons.lwxml.LWXMLUtil;
 import at.andiwand.commons.lwxml.reader.LWXMLPushbackReader;
-import at.andiwand.commons.lwxml.translator.simple.SimpleElementReplacement;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
 import at.andiwand.odf2html.odf.OpenDocumentFile;
+import at.andiwand.odf2html.translator.lwxml.SimpleElementReplacement;
 
 // TODO: implement charts
 // TODO: skip empty images

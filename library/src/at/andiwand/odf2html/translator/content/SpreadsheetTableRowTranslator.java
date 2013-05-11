@@ -3,9 +3,9 @@ package at.andiwand.odf2html.translator.content;
 import java.io.IOException;
 
 import at.andiwand.commons.lwxml.reader.LWXMLPushbackReader;
-import at.andiwand.commons.lwxml.translator.simple.SimpleElementReplacement;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
 import at.andiwand.commons.util.NumberUtil;
+import at.andiwand.odf2html.translator.lwxml.SimpleElementReplacement;
 
 public class SpreadsheetTableRowTranslator extends SimpleElementReplacement {
 

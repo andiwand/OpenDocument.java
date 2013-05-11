@@ -4,8 +4,8 @@ import java.io.IOException;
 
 import at.andiwand.commons.lwxml.LWXMLUtil;
 import at.andiwand.commons.lwxml.reader.LWXMLPushbackReader;
-import at.andiwand.commons.lwxml.translator.simple.SimpleElementReplacement;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
+import at.andiwand.odf2html.translator.lwxml.SimpleElementReplacement;
 
 public class FrameTranslator extends SimpleElementReplacement {
 

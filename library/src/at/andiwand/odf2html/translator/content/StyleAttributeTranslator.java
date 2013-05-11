@@ -1,7 +1,8 @@
 package at.andiwand.odf2html.translator.content;
 
 import at.andiwand.commons.lwxml.LWXMLAttribute;
-import at.andiwand.commons.lwxml.translator.simple.SimpleAttributeTranslator;
+import at.andiwand.odf2html.translator.lwxml.SimpleAttributeTranslator;
+import at.andiwand.odf2html.translator.lwxml.SimpleElementTranslator;
 import at.andiwand.odf2html.translator.style.DocumentStyle;
 
 public class StyleAttributeTranslator implements SimpleAttributeTranslator {
@@ -14,6 +15,11 @@ public class StyleAttributeTranslator implements SimpleAttributeTranslator {
 
     public DocumentStyle getStyle() {
 	return style;
+    }
+
+    @Override
+    public boolean accept(SimpleElementTranslator translator) {
+	return false;
     }
 
     @Override

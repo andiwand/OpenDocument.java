@@ -1,6 +1,6 @@
 package at.andiwand.odf2html.translator.content;
 
-import at.andiwand.commons.lwxml.translator.simple.SimpleElementReplacement;
+import at.andiwand.odf2html.translator.lwxml.SimpleElementReplacement;
 
 public class SimpleTableTranslator extends SimpleElementReplacement {
 
