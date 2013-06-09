@@ -23,6 +23,18 @@ public class PresentationTranslator extends
     }
 
     @Override
+    protected void translateMeta(OpenDocument document, LWXMLWriter out)
+	    throws IOException {
+	super.translateMeta(document, out);
+
+	out.writeStartElement("meta");
+	out.writeAttribute("name", "viewport");
+	out.writeAttribute("content",
+		"width=device-width; initial-scale=1.0; user-scalable=yes");
+	out.writeEndElement("meta");
+    }
+
+    @Override
     protected void translateContent(OpenDocument document,
 	    PresentationStyle style, LWXMLReader in, LWXMLWriter out)
 	    throws IOException {

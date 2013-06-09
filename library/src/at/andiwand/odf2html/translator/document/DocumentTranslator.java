@@ -53,23 +53,13 @@ public abstract class DocumentTranslator<S extends DocumentStyle> {
 	    LWXMLWriter out) throws IOException {
 	StyleSheetWriter styleOut = new StyleSheetWriter(out);
 
-	out.writeStartElement("html");
 	out.writeStartElement("head");
 
 	out.writeStartElement("base");
 	out.writeAttribute("target", "_blank");
 	out.writeEndElement("base");
 
-	out.writeStartElement("meta");
-	out.writeAttribute("http-equiv", "Content-Type");
-	out.writeAttribute("content", "text/html; charset=UTF-8");
-	out.writeEndElement("meta");
-
-	out.writeStartElement("meta");
-	out.writeAttribute("name", "viewport");
-	out.writeAttribute("content",
-		"width=device-width; initial-scale=1.0; user-scalable=yes");
-	out.writeEndElement("meta");
+	translateMeta(document, out);
 
 	out.writeStartElement("title");
 	out.writeCharacters("odf2html");
@@ -81,19 +71,23 @@ public abstract class DocumentTranslator<S extends DocumentStyle> {
 	S style = translateStyle(document, in, styleOut);
 	out.writeEndElement("style");
 
-	out.writeEndElement("head");
-
-	out.writeEmptyStartElement("body");
-
 	return style;
+    }
+
+    // TODO: outsource to file?
+    protected void translateMeta(OpenDocument document, LWXMLWriter out)
+	    throws IOException {
+	out.writeStartElement("meta");
+	out.writeAttribute("http-equiv", "Content-Type");
+	out.writeAttribute("content", "text/html; charset=UTF-8");
+	out.writeEndElement("meta");
     }
 
     protected abstract void translateContent(OpenDocument document, S style,
 	    LWXMLReader in, LWXMLWriter out) throws IOException;
 
     protected void translateTail(LWXMLWriter out) throws IOException {
-	out.writeEndElement("body");
-	out.writeEndElement("html");
+
     }
 
     public void translate(OpenDocument document, LWXMLWriter out)
@@ -102,9 +96,17 @@ public abstract class DocumentTranslator<S extends DocumentStyle> {
 	currentCounter = new CountingInputStream(document.getContent());
 	LWXMLReader in = new LWXMLStreamReader(currentCounter);
 
+	out.writeStartElement("html");
+
 	S style = translateHead(document, in, out);
+
+	out.writeEndElement("head");
+	out.writeEmptyStartElement("body");
+
 	translateContent(document, style, in, out);
-	translateTail(out);
+
+	out.writeEndElement("body");
+	out.writeEndElement("html");
 
 	currentCounter.close();
     }
