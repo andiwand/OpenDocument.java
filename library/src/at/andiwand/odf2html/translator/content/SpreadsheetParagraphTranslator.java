@@ -7,9 +7,9 @@ import at.andiwand.commons.lwxml.LWXMLUtil;
 import at.andiwand.commons.lwxml.reader.LWXMLBranchReader;
 import at.andiwand.commons.lwxml.reader.LWXMLPushbackReader;
 import at.andiwand.commons.lwxml.reader.LWXMLReader;
-import at.andiwand.commons.lwxml.translator.simple.SimpleElementReplacement;
 import at.andiwand.commons.lwxml.writer.LWXMLEventListWriter;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
+import at.andiwand.odf2html.translator.lwxml.SimpleElementReplacement;
 
 public class SpreadsheetParagraphTranslator extends SimpleElementReplacement {
 

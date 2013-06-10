@@ -14,13 +14,13 @@ import at.andiwand.commons.lwxml.LWXMLUtil;
 import at.andiwand.commons.lwxml.reader.LWXMLBranchReader;
 import at.andiwand.commons.lwxml.reader.LWXMLPushbackReader;
 import at.andiwand.commons.lwxml.reader.LWXMLReader;
-import at.andiwand.commons.lwxml.translator.simple.SimpleAttributeTranslator;
-import at.andiwand.commons.lwxml.translator.simple.SimpleElementReplacement;
 import at.andiwand.commons.lwxml.writer.LWXMLEventQueueWriter;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
 import at.andiwand.commons.math.vector.Vector2i;
 import at.andiwand.commons.util.collection.OrderedPair;
 import at.andiwand.commons.util.iterator.CycleIterator;
+import at.andiwand.odf2html.translator.lwxml.SimpleAttributeTranslator;
+import at.andiwand.odf2html.translator.lwxml.SimpleElementReplacement;
 import at.andiwand.odf2html.translator.style.DocumentStyle;
 
 // TODO: implement remove methods
@@ -82,13 +82,15 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
     }
 
     @Override
-    public void addAttributeTranslator(String attributeName,
+    public boolean addAttributeTranslator(String attributeName,
 	    SimpleAttributeTranslator translator) {
 	super.addAttributeTranslator(attributeName, translator);
 
 	columnTranslation.addAttributeTranslator(attributeName, translator);
 	rowTranslation.addAttributeTranslator(attributeName, translator);
 	cellTranslator.addAttributeTranslator(attributeName, translator);
+
+	return true;
     }
 
     private LWXMLAttribute getCurrentColumnDefaultStyleAttribute() {

@@ -5,10 +5,10 @@ import java.io.IOException;
 import at.andiwand.commons.lwxml.LWXMLIllegalEventException;
 import at.andiwand.commons.lwxml.LWXMLUtil;
 import at.andiwand.commons.lwxml.reader.LWXMLPushbackReader;
-import at.andiwand.commons.lwxml.translator.simple.SimpleElementTranslator;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
 import at.andiwand.commons.util.NumberUtil;
 import at.andiwand.commons.util.string.StringUtil;
+import at.andiwand.odf2html.translator.lwxml.SimpleElementTranslator;
 
 public class SpaceTranslator extends SimpleElementTranslator {
 

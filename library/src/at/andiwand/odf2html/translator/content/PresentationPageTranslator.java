@@ -3,10 +3,10 @@ package at.andiwand.odf2html.translator.content;
 import java.io.IOException;
 
 import at.andiwand.commons.lwxml.reader.LWXMLPushbackReader;
-import at.andiwand.commons.lwxml.translator.simple.SimpleAttributeTranslator;
-import at.andiwand.commons.lwxml.translator.simple.SimpleElementReplacement;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
 import at.andiwand.commons.util.string.StringUtil;
+import at.andiwand.odf2html.translator.lwxml.SimpleAttributeTranslator;
+import at.andiwand.odf2html.translator.lwxml.SimpleElementReplacement;
 import at.andiwand.odf2html.translator.style.DocumentStyle;
 
 // TODO: improve with complex attribute translator
@@ -30,8 +30,9 @@ public class PresentationPageTranslator extends SimpleElementReplacement {
     }
 
     @Override
-    public void addAttributeTranslator(String attributeName,
+    public boolean addAttributeTranslator(String attributeName,
 	    SimpleAttributeTranslator translator) {
+	return false;
     }
 
     @Override

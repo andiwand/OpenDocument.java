@@ -4,27 +4,22 @@ import java.io.IOException;
 
 import at.andiwand.commons.lwxml.LWXMLUtil;
 import at.andiwand.commons.lwxml.reader.LWXMLPushbackReader;
-import at.andiwand.commons.lwxml.writer.LWXMLEventListWriter;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
 import at.andiwand.odf2html.translator.lwxml.SimpleElementTranslator;
 
-public class ParagraphTranslator extends SimpleElementTranslator {
+public class TextBoxTranslator extends SimpleElementTranslator {
+
+    public TextBoxTranslator() {
+    }
 
     @Override
     public void translateStartElement(LWXMLPushbackReader in, LWXMLWriter out)
 	    throws IOException {
-	out.writeStartElement("div");
     }
 
     @Override
-    public void translateAttributeList(LWXMLPushbackReader in, LWXMLWriter out)
-	    throws IOException {
-	LWXMLEventListWriter tmpOut = new LWXMLEventListWriter();
-	super.translateAttributeList(in, tmpOut);
-	tmpOut.writeTo(out);
-
-	out.writeStartElement("span");
-	tmpOut.writeTo(out);
+    public void translateEndAttributeList(LWXMLPushbackReader in,
+	    LWXMLWriter out) throws IOException {
     }
 
     @Override
@@ -33,7 +28,6 @@ public class ParagraphTranslator extends SimpleElementTranslator {
 	if (LWXMLUtil.isEmptyElement(in)) {
 	    out.writeStartElement("br");
 	    out.writeEndEmptyElement();
-	    translateEndElement(in, out);
 	} else {
 	    in.unreadEvent();
 	}
@@ -42,8 +36,6 @@ public class ParagraphTranslator extends SimpleElementTranslator {
     @Override
     public void translateEndElement(LWXMLPushbackReader in, LWXMLWriter out)
 	    throws IOException {
-	out.writeEndElement("span");
-	out.writeEndElement("div");
     }
 
 }

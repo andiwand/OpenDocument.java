@@ -2,8 +2,8 @@ package at.andiwand.odf2html.translator.content;
 
 import java.io.IOException;
 
-import at.andiwand.commons.lwxml.translator.simple.SimpleElementReplacement;
 import at.andiwand.odf2html.odf.OpenDocumentFile;
+import at.andiwand.odf2html.translator.lwxml.SimpleElementReplacement;
 import at.andiwand.odf2html.translator.style.PresentationStyle;
 import at.andiwand.odf2html.util.FileCache;
 
