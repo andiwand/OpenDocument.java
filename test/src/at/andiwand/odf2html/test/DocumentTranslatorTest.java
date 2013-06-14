@@ -34,7 +34,6 @@ public class DocumentTranslatorTest {
 	File file = fileChooser.getSelectedFile();
 	OpenDocumentFile documentFile = new LocatedOpenDocumentFile(file);
 	documentFile.setPassword(TestFileUtil.getPassword(file.getName()));
-	System.out.println(documentFile.isPasswordValid());
 	OpenDocument document = documentFile.getAsDocument();
 
 	FileCache cache = new DefaultFileCache("/tmp/odr/");
