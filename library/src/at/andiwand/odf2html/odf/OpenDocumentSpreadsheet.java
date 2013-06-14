@@ -23,6 +23,7 @@ public class OpenDocumentSpreadsheet extends OpenDocument {
 	super(openDocumentFile);
     }
 
+    // TODO: use metrics?
     public int getTableCount() throws IOException {
 	return getTableDimensionMap().size();
     }

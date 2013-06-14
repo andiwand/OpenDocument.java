@@ -109,4 +109,5 @@ public abstract class DocumentTranslator<S extends DocumentStyle> {
 
 	currentCounter.close();
     }
+
 }

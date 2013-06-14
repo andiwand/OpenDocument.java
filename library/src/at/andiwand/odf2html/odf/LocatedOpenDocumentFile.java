@@ -26,6 +26,10 @@ public class LocatedOpenDocumentFile extends OpenDocumentFile {
 	init(file);
     }
 
+    public LocatedOpenDocumentFile(String path) throws IOException {
+	this(new File(path));
+    }
+
     // TODO: improve
     protected void init(File file) throws IOException {
 	this.file = file;
