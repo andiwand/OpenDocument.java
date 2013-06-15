@@ -24,7 +24,7 @@ import at.andiwand.odf2html.translator.lwxml.SimpleElementReplacement;
 import at.andiwand.odf2html.translator.style.DocumentStyle;
 
 // TODO: implement remove methods
-// TODO: renew source
+// TODO: renew
 public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 
     private static final String NEW_ELEMENT_NAME = "table";
@@ -84,13 +84,16 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
     @Override
     public boolean addAttributeTranslator(String attributeName,
 	    SimpleAttributeTranslator translator) {
-	super.addAttributeTranslator(attributeName, translator);
+	boolean result = super
+		.addAttributeTranslator(attributeName, translator);
 
-	columnTranslation.addAttributeTranslator(attributeName, translator);
-	rowTranslation.addAttributeTranslator(attributeName, translator);
-	cellTranslator.addAttributeTranslator(attributeName, translator);
+	if (result) {
+	    columnTranslation.addAttributeTranslator(attributeName, translator);
+	    rowTranslation.addAttributeTranslator(attributeName, translator);
+	    cellTranslator.addAttributeTranslator(attributeName, translator);
+	}
 
-	return true;
+	return result;
     }
 
     private LWXMLAttribute getCurrentColumnDefaultStyleAttribute() {
