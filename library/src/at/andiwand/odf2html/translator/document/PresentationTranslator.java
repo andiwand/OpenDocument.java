@@ -27,7 +27,7 @@ public class PresentationTranslator extends
 	    PresentationStyle style, LWXMLReader in, LWXMLWriter out)
 	    throws IOException {
 	PresentationContentTranslator contentTranslator = new PresentationContentTranslator(
-		document.getDocumentFile(), style, cache);
+		document, style, cache);
 	contentTranslator.translate(in, out);
     }
 
