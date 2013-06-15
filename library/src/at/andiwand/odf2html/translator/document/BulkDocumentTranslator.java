@@ -1,7 +1,8 @@
 package at.andiwand.odf2html.translator.document;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
 
 import at.andiwand.commons.lwxml.LWXMLUtil;
 import at.andiwand.commons.lwxml.reader.LWXMLElementDelegationReader;
@@ -12,7 +13,6 @@ import at.andiwand.commons.lwxml.writer.LWXMLMultiWriter;
 import at.andiwand.commons.lwxml.writer.LWXMLNullWriter;
 import at.andiwand.commons.lwxml.writer.LWXMLStreamWriter;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
-import at.andiwand.commons.util.iterator.ArrayIterable;
 import at.andiwand.odf2html.odf.OpenDocument;
 import at.andiwand.odf2html.odf.OpenDocumentPresentation;
 import at.andiwand.odf2html.odf.OpenDocumentSpreadsheet;
@@ -63,12 +63,11 @@ public class BulkDocumentTranslator<S extends DocumentStyle> extends
 
 	for (int i = 0; i < count; i++) {
 	    String name = cachePrefix + i + cacheSuffix;
-	    cache.create(name);
-	    OutputStream out = cache.getOutputStream(name);
-	    outs[i] = new LWXMLStreamWriter(out);
+	    File file = cache.create(name);
+	    outs[i] = new LWXMLStreamWriter(new FileWriter(file));
 	}
 
-	return new LWXMLMultiWriter(new ArrayIterable<LWXMLWriter>(outs));
+	return new LWXMLMultiWriter(outs);
     }
 
     @Override
@@ -88,13 +87,13 @@ public class BulkDocumentTranslator<S extends DocumentStyle> extends
 	LWXMLPushbackReader pin = new LWXMLPushbackReader(in);
 	LWXMLElementDelegationReader din = new LWXMLElementDelegationReader(pin);
 
-	for (LWXMLWriter single : (LWXMLMultiWriter) out) {
+	for (LWXMLWriter singleOut : (LWXMLMultiWriter) out) {
 	    LWXMLUtil.flushUntilStartElement(din, subContentElement);
 	    LWXMLElementReader ein = din.getElementReader();
-	    if (single instanceof LWXMLNullWriter)
+	    if (singleOut instanceof LWXMLNullWriter)
 		continue;
 	    pin.unreadEvent(subContentElement);
-	    translator.translateContent(document, style, ein, single);
+	    translator.translateContent(document, style, ein, singleOut);
 	}
     }
 

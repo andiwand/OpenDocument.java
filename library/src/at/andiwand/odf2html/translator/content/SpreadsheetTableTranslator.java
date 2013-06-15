@@ -87,9 +87,11 @@ public class SpreadsheetTableTranslator extends SimpleElementReplacement {
 	boolean result = super
 		.addAttributeTranslator(attributeName, translator);
 
-	columnTranslation.addAttributeTranslator(attributeName, translator);
-	rowTranslation.addAttributeTranslator(attributeName, translator);
-	cellTranslator.addAttributeTranslator(attributeName, translator);
+	if (result) {
+	    columnTranslation.addAttributeTranslator(attributeName, translator);
+	    rowTranslation.addAttributeTranslator(attributeName, translator);
+	    cellTranslator.addAttributeTranslator(attributeName, translator);
+	}
 
 	return result;
     }

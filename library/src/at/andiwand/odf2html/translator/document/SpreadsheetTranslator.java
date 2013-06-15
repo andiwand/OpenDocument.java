@@ -37,7 +37,7 @@ public class SpreadsheetTranslator extends DocumentTranslator<SpreadsheetStyle> 
 	    SpreadsheetStyle style, LWXMLReader in, LWXMLWriter out)
 	    throws IOException {
 	SpreadsheetContentTranslator contentTranslator = new SpreadsheetContentTranslator(
-		document.getDocumentFile(), style, cache, maxTableDimension);
+		document.getAsSpreadsheet(), style, cache, maxTableDimension);
 	contentTranslator.translate(in, out);
     }
 

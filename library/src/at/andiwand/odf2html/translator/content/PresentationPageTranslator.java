@@ -5,6 +5,7 @@ import java.io.IOException;
 import at.andiwand.commons.lwxml.reader.LWXMLPushbackReader;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
 import at.andiwand.commons.util.string.StringUtil;
+import at.andiwand.odf2html.translator.lwxml.SimpleAttributeTranslator;
 import at.andiwand.odf2html.translator.lwxml.SimpleElementReplacement;
 import at.andiwand.odf2html.translator.style.DocumentStyle;
 
@@ -26,6 +27,11 @@ public class PresentationPageTranslator extends SimpleElementReplacement {
 
 	addParseAttribute(STYLE_ATTRIBUTE);
 	addParseAttribute(MASTER_PAGE_ATTRIBUTE);
+    }
+
+    public boolean addAttributeTranslator(String attributeName,
+	    SimpleAttributeTranslator translator) {
+	return false;
     }
 
     @Override

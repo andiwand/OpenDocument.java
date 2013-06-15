@@ -2,24 +2,25 @@ package at.andiwand.odf2html.translator.content;
 
 import java.io.IOException;
 
-import at.andiwand.odf2html.odf.OpenDocumentFile;
+import at.andiwand.odf2html.odf.OpenDocument;
 import at.andiwand.odf2html.translator.style.PresentationStyle;
 import at.andiwand.odf2html.util.FileCache;
 
 public class PresentationContentTranslator extends DefaultContentTranslator {
 
-    public PresentationContentTranslator(OpenDocumentFile documentFile,
+    public PresentationContentTranslator(OpenDocument document,
 	    PresentationStyle style) throws IOException {
-	this(documentFile, style, new InlineImageTranslator(documentFile));
+	this(document, style, new InlineImageTranslator(
+		document.getDocumentFile()));
     }
 
-    public PresentationContentTranslator(OpenDocumentFile documentFile,
+    public PresentationContentTranslator(OpenDocument document,
 	    PresentationStyle style, FileCache fileCache) throws IOException {
-	this(documentFile, style, new CachedImageTranslator(documentFile,
-		fileCache));
+	this(document, style, new CachedImageTranslator(
+		document.getDocumentFile(), fileCache));
     }
 
-    public PresentationContentTranslator(OpenDocumentFile documentFile,
+    public PresentationContentTranslator(OpenDocument documentFile,
 	    PresentationStyle style, ImageTranslator imageTranslator)
 	    throws IOException {
 	super(style, imageTranslator);

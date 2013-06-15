@@ -25,7 +25,7 @@ public class TextTranslator extends DocumentTranslator<TextStyle> {
     protected void translateContent(OpenDocument document, TextStyle style,
 	    LWXMLReader in, LWXMLWriter out) throws IOException {
 	TextContentTranslator contentTranslator = new TextContentTranslator(
-		document.getDocumentFile(), style, cache);
+		document, style, cache);
 	contentTranslator.translate(in, out);
     }
 

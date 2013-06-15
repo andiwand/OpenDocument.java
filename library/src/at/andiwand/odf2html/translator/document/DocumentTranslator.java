@@ -53,8 +53,6 @@ public abstract class DocumentTranslator<S extends DocumentStyle> {
 	    LWXMLWriter out) throws IOException {
 	StyleSheetWriter styleOut = new StyleSheetWriter(out);
 
-	out.writeStartElement("head");
-
 	out.writeStartElement("base");
 	out.writeAttribute("target", "_blank");
 	out.writeEndElement("base");
@@ -81,14 +79,16 @@ public abstract class DocumentTranslator<S extends DocumentStyle> {
 	out.writeAttribute("http-equiv", "Content-Type");
 	out.writeAttribute("content", "text/html; charset=UTF-8");
 	out.writeEndElement("meta");
+
+	out.writeStartElement("meta");
+	out.writeAttribute("name", "viewport");
+	out.writeAttribute("content",
+		"initial-scale=1.0, minimum-scale=0.1, maximum-scale=5.0, width=device-width");
+	out.writeEndElement("meta");
     }
 
     protected abstract void translateContent(OpenDocument document, S style,
 	    LWXMLReader in, LWXMLWriter out) throws IOException;
-
-    protected void translateTail(LWXMLWriter out) throws IOException {
-
-    }
 
     public void translate(OpenDocument document, LWXMLWriter out)
 	    throws IOException {
@@ -97,6 +97,7 @@ public abstract class DocumentTranslator<S extends DocumentStyle> {
 	LWXMLReader in = new LWXMLStreamReader(currentCounter);
 
 	out.writeStartElement("html");
+	out.writeStartElement("head");
 
 	S style = translateHead(document, in, out);
 
@@ -110,4 +111,5 @@ public abstract class DocumentTranslator<S extends DocumentStyle> {
 
 	currentCounter.close();
     }
+
 }
