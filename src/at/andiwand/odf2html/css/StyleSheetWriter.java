@@ -44,7 +44,7 @@ public class StyleSheetWriter {
 	    throw new NullPointerException();
 
 	out.write(property.getName());
-	out.write(": ");
+	out.write(":");
 	out.write(property.getValue());
 	out.write(";");
     }

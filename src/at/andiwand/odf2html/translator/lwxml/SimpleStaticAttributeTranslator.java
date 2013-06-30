@@ -2,8 +2,8 @@ package at.andiwand.odf2html.translator.lwxml;
 
 import at.andiwand.commons.lwxml.LWXMLAttribute;
 
-public class SimpleStaticAttributeTranslator extends
-	AbstractSimpleAttributeTranslator {
+public class SimpleStaticAttributeTranslator implements
+	SimpleAttributeTranslator {
 
     private final String newAttributeName;
 

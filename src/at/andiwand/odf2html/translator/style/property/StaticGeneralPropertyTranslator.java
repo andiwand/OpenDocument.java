@@ -3,8 +3,7 @@ package at.andiwand.odf2html.translator.style.property;
 import at.andiwand.odf2html.css.StyleProperty;
 import at.andiwand.odf2html.translator.style.PropertyTranslator;
 
-public class StaticGeneralPropertyTranslator implements
-	PropertyTranslator {
+public class StaticGeneralPropertyTranslator implements PropertyTranslator {
 
     private final String propertyName;
 

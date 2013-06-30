@@ -3,8 +3,7 @@ package at.andiwand.odf2html.translator.style.property;
 import at.andiwand.odf2html.css.StyleProperty;
 import at.andiwand.odf2html.translator.style.PropertyTranslator;
 
-public class VerticalAlignPropertyTranslator implements
-	PropertyTranslator {
+public class VerticalAlignPropertyTranslator implements PropertyTranslator {
 
     private static final String STYLE_NAME = "vertical-align";
 

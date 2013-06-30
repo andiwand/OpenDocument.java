@@ -13,7 +13,6 @@ import at.andiwand.commons.lwxml.LWXMLAttribute;
 import at.andiwand.commons.lwxml.LWXMLEvent;
 import at.andiwand.commons.lwxml.LWXMLIllegalEventException;
 import at.andiwand.commons.lwxml.reader.LWXMLPushbackReader;
-import at.andiwand.commons.lwxml.translator.LWXMLPushbackTranslator;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
 import at.andiwand.commons.util.collection.OrderedPair;
 
@@ -47,9 +46,6 @@ public abstract class SimpleElementTranslator extends LWXMLPushbackTranslator {
 	    throw new NullPointerException();
 	if (translator == null)
 	    throw new NullPointerException();
-
-	if (!translator.accept(this))
-	    return false;
 
 	attributeTranslatorMap.put(attributeName, translator);
 	return true;
