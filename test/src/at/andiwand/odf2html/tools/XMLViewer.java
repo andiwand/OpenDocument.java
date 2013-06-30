@@ -36,7 +36,6 @@ import at.andiwand.commons.lwxml.LWXMLConstants;
 import at.andiwand.commons.lwxml.LWXMLEvent;
 import at.andiwand.commons.lwxml.reader.LWXMLCountingReader;
 import at.andiwand.commons.lwxml.reader.LWXMLStreamReader;
-import at.andiwand.commons.swing.JFrameUtil;
 import at.andiwand.commons.swing.JTreeUtil;
 import at.andiwand.odf2html.test.TestFileChooser;
 
@@ -332,7 +331,7 @@ public class XMLViewer extends JFrame {
 	viewer.setFileChooser(new TestFileChooser());
 	viewer.setDefaultCloseOperation(EXIT_ON_CLOSE);
 	viewer.setSize(600, 500);
-	JFrameUtil.centerFrame(viewer);
+	viewer.setLocationRelativeTo(null);
 	viewer.setVisible(true);
     }
 

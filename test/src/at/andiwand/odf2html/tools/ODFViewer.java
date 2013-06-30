@@ -26,7 +26,6 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
-import at.andiwand.commons.swing.JFrameUtil;
 import at.andiwand.odf2html.odf.LocatedOpenDocumentFile;
 import at.andiwand.odf2html.odf.OpenDocumentFile;
 import at.andiwand.odf2html.test.TestFileChooser;
@@ -190,7 +189,7 @@ public class ODFViewer extends JFrame {
 	    XMLViewer viewer = new XMLViewer(inputStream, file);
 	    inputStream.close();
 	    viewer.setSize(600, 500);
-	    JFrameUtil.centerFrame(viewer, this);
+	    viewer.setLocationRelativeTo(this);
 	    viewer.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 	    viewer.setVisible(true);
 	}
@@ -201,7 +200,7 @@ public class ODFViewer extends JFrame {
 	viewer.setFileChooser(new TestFileChooser());
 	viewer.setDefaultCloseOperation(EXIT_ON_CLOSE);
 	viewer.setSize(300, 400);
-	JFrameUtil.centerFrame(viewer);
+	viewer.setLocationRelativeTo(null);
 	viewer.setVisible(true);
     }
 

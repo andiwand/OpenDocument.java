@@ -7,7 +7,6 @@ import at.andiwand.commons.io.StreamableStringMap;
 import at.andiwand.commons.lwxml.LWXMLEvent;
 import at.andiwand.commons.lwxml.reader.LWXMLPushbackReader;
 import at.andiwand.commons.lwxml.reader.LWXMLReader;
-import at.andiwand.commons.lwxml.translator.LWXMLTranslator;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
 import at.andiwand.commons.util.collection.OrderedPair;
 
