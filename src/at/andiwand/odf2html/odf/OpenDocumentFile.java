@@ -122,6 +122,9 @@ public abstract class OpenDocumentFile implements Closeable {
 	    return "image/svg+xml";
 	else if (name.endsWith(".tiff") || name.endsWith(".tif"))
 	    return "image/tiff";
+	else if (name.endsWith(".wmf") || name.endsWith(".wmz")
+		|| name.endsWith(".emf") || name.endsWith(".emz"))
+	    return "image/x-wmf";
 	else
 	    return null;
     }
