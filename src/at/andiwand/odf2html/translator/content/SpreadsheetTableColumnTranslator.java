@@ -5,9 +5,11 @@ import java.io.IOException;
 import at.andiwand.commons.lwxml.reader.LWXMLPushbackReader;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
 import at.andiwand.commons.util.NumberUtil;
-import at.andiwand.odf2html.translator.lwxml.SimpleElementReplacement;
+import at.andiwand.odf2html.translator.context.SpreadsheetTranslationContext;
+import at.andiwand.odf2html.translator.lwxml.LWXMLElementReplacement;
 
-public class SpreadsheetTableColumnTranslator extends SimpleElementReplacement {
+public class SpreadsheetTableColumnTranslator extends
+	LWXMLElementReplacement<SpreadsheetTranslationContext> {
 
     private static final String NEW_ELEMENT_NAME = "col";
 
@@ -35,9 +37,9 @@ public class SpreadsheetTableColumnTranslator extends SimpleElementReplacement {
     }
 
     @Override
-    public void translateAttributeList(LWXMLPushbackReader in, LWXMLWriter out)
-	    throws IOException {
-	super.translateAttributeList(in, out);
+    public void translateAttributeList(LWXMLPushbackReader in, LWXMLWriter out,
+	    SpreadsheetTranslationContext context) throws IOException {
+	super.translateAttributeList(in, out, context);
 
 	currentSpan = NumberUtil.parseInt(
 		getCurrentParsedAttribute(COLUMNS_REPEATED_ATTRIBUTE_NAME), 1);

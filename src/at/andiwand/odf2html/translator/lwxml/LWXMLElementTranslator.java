@@ -17,9 +17,11 @@ import at.andiwand.commons.lwxml.writer.LWXMLWriter;
 import at.andiwand.commons.util.collection.OrderedPair;
 
 // TODO: implement remove methods
-public abstract class SimpleElementTranslator extends LWXMLPushbackTranslator {
+// TODO: thread-safe
+public abstract class LWXMLElementTranslator<C> extends
+	LWXMLTranslator<LWXMLPushbackReader, LWXMLWriter, C> {
 
-    private final StreamableStringMap<SimpleAttributeTranslator> attributeTranslatorMap = new StreamableStringMap<SimpleAttributeTranslator>();
+    private final StreamableStringMap<LWXMLAttributeTranslator<? super C>> attributeTranslatorMap = new StreamableStringMap<LWXMLAttributeTranslator<? super C>>();
 
     private final Set<String> parseAttributes = new HashSet<String>();
     private final Map<String, String> currentParsedAttributes = new HashMap<String, String>();
@@ -37,11 +39,11 @@ public abstract class SimpleElementTranslator extends LWXMLPushbackTranslator {
     public boolean addAttributeTranslator(String attributeName,
 	    String newAttributeName) {
 	return addAttributeTranslator(attributeName,
-		new SimpleStaticAttributeTranslator(newAttributeName));
+		new LWXMLStaticAttributeTranslator<C>(newAttributeName));
     }
 
     public boolean addAttributeTranslator(String attributeName,
-	    SimpleAttributeTranslator translator) {
+	    LWXMLAttributeTranslator<? super C> translator) {
 	if (attributeName == null)
 	    throw new NullPointerException();
 	if (translator == null)
@@ -72,20 +74,20 @@ public abstract class SimpleElementTranslator extends LWXMLPushbackTranslator {
     }
 
     @Override
-    public final void translate(LWXMLPushbackReader in, LWXMLWriter out)
-	    throws IOException {
+    public final void translate(LWXMLPushbackReader in, LWXMLWriter out,
+	    C context) throws IOException {
 	LWXMLEvent event = in.readEvent();
 
 	switch (event) {
 	case START_ELEMENT:
-	    translateStartElement(in, out);
-	    translateAttributeList(in, out);
-	    translateEndAttributeList(in, out);
-	    translateChildren(in, out);
+	    translateStartElement(in, out, context);
+	    translateAttributeList(in, out, context);
+	    translateEndAttributeList(in, out, context);
+	    translateChildren(in, out, context);
 	    break;
 	case END_EMPTY_ELEMENT:
 	case END_ELEMENT:
-	    translateEndElement(in, out);
+	    translateEndElement(in, out, context);
 	    break;
 	default:
 	    throw new LWXMLIllegalEventException(event);
@@ -93,11 +95,11 @@ public abstract class SimpleElementTranslator extends LWXMLPushbackTranslator {
     }
 
     public abstract void translateStartElement(LWXMLPushbackReader in,
-	    LWXMLWriter out) throws IOException;
+	    LWXMLWriter out, C context) throws IOException;
 
     public LWXMLAttribute translateAttribute(LWXMLPushbackReader in,
-	    LWXMLWriter out) throws IOException {
-	OrderedPair<String, SimpleAttributeTranslator> match = attributeTranslatorMap
+	    LWXMLWriter out, C context) throws IOException {
+	OrderedPair<String, LWXMLAttributeTranslator<? super C>> match = attributeTranslatorMap
 		.match(in);
 	if (match == null)
 	    return null;
@@ -108,14 +110,16 @@ public abstract class SimpleElementTranslator extends LWXMLPushbackTranslator {
 	if (parseAttributes.contains(attributeName))
 	    currentParsedAttributes.put(attributeName, attributeValue);
 
-	SimpleAttributeTranslator attributeTranslator = match.getElement2();
+	LWXMLAttributeTranslator<? super C> attributeTranslator = match
+		.getElement2();
 	if (attributeTranslator == null)
 	    return null;
-	return attributeTranslator.translate(attributeName, attributeValue);
+	return attributeTranslator.translate(attributeName, attributeValue,
+		context);
     }
 
-    public void translateAttributeList(LWXMLPushbackReader in, LWXMLWriter out)
-	    throws IOException {
+    public void translateAttributeList(LWXMLPushbackReader in, LWXMLWriter out,
+	    C context) throws IOException {
 	for (LWXMLAttribute attribute : newAttributes) {
 	    out.writeAttribute(attribute);
 	}
@@ -125,7 +129,7 @@ public abstract class SimpleElementTranslator extends LWXMLPushbackTranslator {
 
 	    switch (event) {
 	    case ATTRIBUTE_NAME:
-		LWXMLAttribute attribute = translateAttribute(in, out);
+		LWXMLAttribute attribute = translateAttribute(in, out, context);
 		if (attribute != null)
 		    out.writeAttribute(attribute);
 	    case ATTRIBUTE_VALUE:
@@ -139,17 +143,17 @@ public abstract class SimpleElementTranslator extends LWXMLPushbackTranslator {
     }
 
     public void translateEndAttributeList(LWXMLPushbackReader in,
-	    LWXMLWriter out) throws IOException {
+	    LWXMLWriter out, C context) throws IOException {
 	currentParsedAttributes.clear();
 
 	out.writeEvent(LWXMLEvent.END_ATTRIBUTE_LIST);
     }
 
-    public void translateChildren(LWXMLPushbackReader in, LWXMLWriter out)
-	    throws IOException {
+    public void translateChildren(LWXMLPushbackReader in, LWXMLWriter out,
+	    C context) throws IOException {
     }
 
     public abstract void translateEndElement(LWXMLPushbackReader in,
-	    LWXMLWriter out) throws IOException;
+	    LWXMLWriter out, C context) throws IOException;
 
 }

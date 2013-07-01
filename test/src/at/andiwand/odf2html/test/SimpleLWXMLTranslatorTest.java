@@ -9,7 +9,7 @@ import at.andiwand.commons.lwxml.reader.LWXMLReader;
 import at.andiwand.commons.lwxml.reader.LWXMLStreamReader;
 import at.andiwand.commons.lwxml.writer.LWXMLStreamWriter;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
-import at.andiwand.odf2html.translator.lwxml.SimpleLWXMLTranslator;
+import at.andiwand.odf2html.translator.lwxml.LWXMLHierarchyTranslator;
 
 public class SimpleLWXMLTranslatorTest {
 
@@ -22,14 +22,14 @@ public class SimpleLWXMLTranslatorTest {
 	CharArrayWriter writer = new CharArrayWriter();
 	LWXMLWriter out = new LWXMLStreamWriter(writer);
 
-	SimpleLWXMLTranslator lwxmlTranslator = new SimpleLWXMLTranslator();
+	LWXMLHierarchyTranslator<Object> lwxmlTranslator = new LWXMLHierarchyTranslator<Object>();
 	lwxmlTranslator.addElementTranslator("html", "xml");
 	lwxmlTranslator.addElementTranslator("head", "kopf");
 	lwxmlTranslator.addElementTranslator("title", "name");
 	lwxmlTranslator.addElementTranslator("body", "bauch");
 	lwxmlTranslator.addElementTranslator("empty", "leer");
 	lwxmlTranslator.addStaticAttributeTranslator("name", "attribute");
-	lwxmlTranslator.translate(in, out);
+	lwxmlTranslator.translate(in, out, null);
 
 	out.close();
 

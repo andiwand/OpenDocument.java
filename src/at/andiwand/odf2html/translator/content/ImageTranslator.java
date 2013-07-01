@@ -1,35 +1,44 @@
 package at.andiwand.odf2html.translator.content;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Writer;
 
+import at.andiwand.commons.codec.Base64OutputStream;
+import at.andiwand.commons.io.ByteStreamUtil;
 import at.andiwand.commons.lwxml.LWXMLIllegalEventException;
 import at.andiwand.commons.lwxml.LWXMLUtil;
 import at.andiwand.commons.lwxml.reader.LWXMLPushbackReader;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
-import at.andiwand.odf2html.odf.OpenDocumentFile;
-import at.andiwand.odf2html.translator.lwxml.SimpleElementReplacement;
+import at.andiwand.odf2html.translator.context.TranslationContext;
+import at.andiwand.odf2html.translator.lwxml.LWXMLElementReplacement;
+import at.andiwand.odf2html.util.FileCache;
 
 // TODO: implement charts
 // TODO: skip empty images
-public abstract class ImageTranslator extends SimpleElementReplacement {
+public class ImageTranslator extends
+	LWXMLElementReplacement<TranslationContext> {
 
     private static final String NEW_ELEMENT_NAME = "img";
     private static final String PATH_ATTRIBUTE_NAME = "xlink:href";
 
     private static final String OBJECT_REPLACEMENT_STRING = "ObjectReplacement";
 
-    protected final OpenDocumentFile documentFile;
+    private static final String ALT_CHART = "Charts are not implemented so far... :/";
+    private static final String ALT_FAILED = "Image not found or unsupported: ";
 
-    public ImageTranslator(OpenDocumentFile documentFile) {
+    private final ByteStreamUtil streamUtil = new ByteStreamUtil();
+
+    public ImageTranslator() {
 	super(NEW_ELEMENT_NAME);
-
-	this.documentFile = documentFile;
     }
 
     @Override
-    public void translateAttributeList(LWXMLPushbackReader in, LWXMLWriter out)
-	    throws IOException {
+    public void translateAttributeList(LWXMLPushbackReader in, LWXMLWriter out,
+	    TranslationContext context) throws IOException {
 	String name = LWXMLUtil.parseSingleAttribute(in, PATH_ATTRIBUTE_NAME);
 	// TODO: log
 	if (name == null)
@@ -39,13 +48,13 @@ public abstract class ImageTranslator extends SimpleElementReplacement {
 
 	// TODO: improve
 	if (name.contains(OBJECT_REPLACEMENT_STRING)) {
-	    out.writeAttribute("alt", "Charts are not implemented so far... :/");
+	    out.writeAttribute("alt", ALT_CHART);
 	} else {
-	    out.writeAttribute("alt", "Image not found: " + name);
+	    out.writeAttribute("alt", ALT_FAILED + name);
 
 	    out.writeAttribute("src", "");
-	    if (documentFile.isFile(name))
-		writeSource(name, out);
+	    if (context.getDocumentFile().isFile(name))
+		writeSource(name, out, context);
 	    else
 		out.write(name);
 	}
@@ -53,20 +62,71 @@ public abstract class ImageTranslator extends SimpleElementReplacement {
     }
 
     @Override
-    public void translateChildren(LWXMLPushbackReader in, LWXMLWriter out)
-	    throws IOException {
+    public void translateChildren(LWXMLPushbackReader in, LWXMLWriter out,
+	    TranslationContext context) throws IOException {
 	LWXMLUtil.flushBranch(in);
 
 	out.writeEndEmptyElement();
     }
 
     @Override
-    public void translateEndElement(LWXMLPushbackReader in, LWXMLWriter out)
-	    throws IOException {
+    public void translateEndElement(LWXMLPushbackReader in, LWXMLWriter out,
+	    TranslationContext context) throws IOException {
 	throw new LWXMLIllegalEventException(in);
     }
 
-    public abstract void writeSource(String name, Writer out)
-	    throws IOException;
+    private void writeSource(String name, Writer out, TranslationContext context)
+	    throws IOException {
+	switch (context.getSettings().getImageStoreMode()) {
+	case CACHE:
+	    writeSourceCached(name, out, context);
+	    break;
+	case INLINE:
+	    writeSourceInline(name, out, context);
+	    break;
+	default:
+	    throw new UnsupportedOperationException();
+	}
+    }
+
+    private void writeSourceCached(String name, Writer out,
+	    TranslationContext context) throws IOException {
+	FileCache cache = context.getSettings().getCache();
+	String imageName = new File(name).getName();
+
+	if (!cache.exists(imageName)) {
+	    File file = cache.create(imageName);
+	    InputStream fileIn = context.getDocumentFile().getFileStream(name);
+	    OutputStream fileOut = new FileOutputStream(file);
+
+	    try {
+		streamUtil.writeStream(fileIn, fileOut);
+	    } finally {
+		fileOut.close();
+		fileIn.close();
+	    }
+	}
+
+	out.write(cache.getURI(imageName).toString());
+    }
+
+    private void writeSourceInline(String name, Writer out,
+	    TranslationContext context) throws IOException {
+	String mimetype = context.getDocumentFile().getFileMimetype(name);
+	if (mimetype == null) {
+	    // TODO: log
+	    // TODO: "null" ?
+	    out.write("null");
+	    return;
+	}
+
+	out.write("data:");
+	out.write(mimetype);
+	out.write(";base64,");
+
+	InputStream imgIn = context.getDocumentFile().getFileStream(name);
+	OutputStream imgOut = new Base64OutputStream(out);
+	streamUtil.writeStream(imgIn, imgOut);
+    }
 
 }

@@ -41,7 +41,7 @@ public class LocatedOpenDocumentFile extends OpenDocumentFile {
     }
 
     @Override
-    public long getFileSize(String name) throws IOException {
+    public long getFileSize(String name) {
 	return zipFile.getEntry(name).getSize();
     }
 
@@ -81,4 +81,5 @@ public class LocatedOpenDocumentFile extends OpenDocumentFile {
     public void close() throws IOException {
 	zipFile.close();
     }
+
 }

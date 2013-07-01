@@ -10,24 +10,26 @@ import at.andiwand.commons.lwxml.reader.LWXMLReader;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
 import at.andiwand.commons.util.collection.OrderedPair;
 
-// TODO: implement remove methods
-public class SimpleLWXMLTranslator extends LWXMLTranslator {
+// TODO: fix generics
+public class LWXMLHierarchyTranslator<C> extends
+	LWXMLTranslator<LWXMLReader, LWXMLWriter, C> {
 
-    private StreamableStringMap<SimpleElementTranslator> elementTranslators = new StreamableStringMap<SimpleElementTranslator>();
+    private StreamableStringMap<LWXMLElementTranslator> elementTranslators = new StreamableStringMap<LWXMLElementTranslator>();
 
-    private StreamableStringMap<SimpleAttributeTranslator> staticAttributeTranslators = new StreamableStringMap<SimpleAttributeTranslator>();
+    private StreamableStringMap<LWXMLAttributeTranslator> staticAttributeTranslators = new StreamableStringMap<LWXMLAttributeTranslator>();
 
     public void addElementTranslator(String element, String newElement) {
-	addElementTranslator(element, new SimpleElementReplacement(newElement));
+	addElementTranslator(element,
+		new LWXMLElementReplacement<C>(newElement));
     }
 
     public void addElementTranslator(String element,
-	    SimpleElementTranslator translator) {
+	    LWXMLElementTranslator<? super C> translator) {
 	if (element == null)
 	    throw new NullPointerException();
 	elementTranslators.put(element, translator);
 
-	for (Map.Entry<String, SimpleAttributeTranslator> entry : staticAttributeTranslators
+	for (Map.Entry<String, LWXMLAttributeTranslator> entry : staticAttributeTranslators
 		.entrySet()) {
 	    translator.addAttributeTranslator(entry.getKey(), entry.getValue());
 	}
@@ -36,16 +38,16 @@ public class SimpleLWXMLTranslator extends LWXMLTranslator {
     public void addStaticAttributeTranslator(String attribute,
 	    String newAttribute) {
 	addStaticAttributeTranslator(attribute,
-		new SimpleStaticAttributeTranslator(newAttribute));
+		new LWXMLStaticAttributeTranslator<C>(newAttribute));
     }
 
     public void addStaticAttributeTranslator(String attribute,
-	    SimpleAttributeTranslator attributeTranslator) {
+	    LWXMLAttributeTranslator<? super C> attributeTranslator) {
 	if (attributeTranslator == null)
 	    throw new NullPointerException();
 	staticAttributeTranslators.put(attribute, attributeTranslator);
 
-	for (SimpleElementTranslator translator : elementTranslators.values()) {
+	for (LWXMLElementTranslator<C> translator : elementTranslators.values()) {
 	    translator.addAttributeTranslator(attribute, attributeTranslator);
 	}
     }
@@ -59,10 +61,11 @@ public class SimpleLWXMLTranslator extends LWXMLTranslator {
     }
 
     @Override
-    public void translate(LWXMLReader in, LWXMLWriter out) throws IOException {
+    public void translate(LWXMLReader in, LWXMLWriter out, C context)
+	    throws IOException {
 	LWXMLPushbackReader pin = new LWXMLPushbackReader(in);
 
-	OrderedPair<String, SimpleElementTranslator> match = null;
+	OrderedPair<String, LWXMLElementTranslator> match = null;
 
 	LWXMLEvent event;
 	while (true) {
@@ -79,10 +82,11 @@ public class SimpleLWXMLTranslator extends LWXMLTranslator {
 		    break;
 
 		String elementName = match.getElement1();
-		SimpleElementTranslator translator = match.getElement2();
+		LWXMLElementTranslator<? super C> translator = match
+			.getElement2();
 
 		pin.unreadEvent(elementName);
-		translator.translate(pin, out);
+		translator.translate(pin, out, context);
 
 		break;
 	    case CHARACTERS:

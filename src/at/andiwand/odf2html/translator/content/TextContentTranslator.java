@@ -1,25 +1,11 @@
 package at.andiwand.odf2html.translator.content;
 
-import at.andiwand.odf2html.odf.OpenDocument;
-import at.andiwand.odf2html.translator.style.TextStyle;
-import at.andiwand.odf2html.util.FileCache;
+import at.andiwand.odf2html.translator.context.TextTranslationContext;
 
-public class TextContentTranslator extends DefaultContentTranslator {
+public class TextContentTranslator extends
+	DefaultContentTranslator<TextTranslationContext> {
 
-    public TextContentTranslator(OpenDocument document, TextStyle style) {
-	this(style, new InlineImageTranslator(document.getDocumentFile()));
-    }
-
-    public TextContentTranslator(OpenDocument document, TextStyle style,
-	    FileCache fileCache) {
-	this(style, new CachedImageTranslator(document.getDocumentFile(),
-		fileCache));
-    }
-
-    public TextContentTranslator(TextStyle style,
-	    ImageTranslator imageTranslator) {
-	super(style, imageTranslator);
-
+    public TextContentTranslator() {
 	addElementTranslator("draw:frame", new FrameTranslator(false));
 
 	addElementTranslator("text:list", "ul");

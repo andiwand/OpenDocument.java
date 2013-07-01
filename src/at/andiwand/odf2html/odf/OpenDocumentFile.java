@@ -104,45 +104,72 @@ public abstract class OpenDocumentFile implements Closeable {
 	return mimetypeMap.get(name);
     }
 
-    public abstract long getFileSize(String name) throws IOException;
+    public abstract long getFileSize(String name);
+
+    // TODO: outsource
+    private String mimetypeFromExtension(String name) {
+	if (name.endsWith(".xml"))
+	    return "text/xml";
+	else if (name.endsWith(".gif"))
+	    return "image/gif";
+	else if (name.endsWith(".jpg") || name.endsWith(".jpeg")
+		|| name.endsWith(".jpe") || name.endsWith(".jif")
+		|| name.endsWith(".jfif") || name.endsWith(".jfi"))
+	    return "image/jpeg";
+	else if (name.endsWith(".png"))
+	    return "image/png";
+	else if (name.endsWith(".svg") || name.endsWith(".svgz"))
+	    return "image/svg+xml";
+	else if (name.endsWith(".tiff") || name.endsWith(".tif"))
+	    return "image/tiff";
+	else
+	    return null;
+    }
 
     private Map<String, String> getFileMimetypeImpl() throws IOException {
 	Map<String, String> result = new HashMap<String, String>();
 
-	LWXMLReader in = new LWXMLStreamReader(getManifest());
+	for (String name : getFileNames())
+	    result.put(name, mimetypeFromExtension(name));
 
-	String mimetype = null;
-	String path = null;
+	try {
+	    LWXMLReader in = new LWXMLStreamReader(getManifest());
 
-	while (true) {
-	    LWXMLEvent event = in.readEvent();
-	    if (event == LWXMLEvent.END_DOCUMENT)
-		break;
+	    String mimetype = null;
+	    String name = null;
 
-	    switch (event) {
-	    case ATTRIBUTE_NAME:
-		String attributeName = in.readValue();
+	    while (true) {
+		LWXMLEvent event = in.readEvent();
+		if (event == LWXMLEvent.END_DOCUMENT)
+		    break;
 
-		if (attributeName.equals("manifest:media-type")) {
-		    mimetype = in.readFollowingValue();
-		} else if (attributeName.equals("manifest:full-path")) {
-		    path = in.readFollowingValue();
+		switch (event) {
+		case ATTRIBUTE_NAME:
+		    String attributeName = in.readValue();
+
+		    if (attributeName.equals("manifest:media-type")) {
+			mimetype = in.readFollowingValue();
+		    } else if (attributeName.equals("manifest:full-path")) {
+			name = in.readFollowingValue();
+		    }
+
+		    break;
+		case END_ATTRIBUTE_LIST:
+		    if ((mimetype != null) && !mimetype.trim().isEmpty())
+			result.put(name, mimetype);
+
+		    mimetype = null;
+		    name = null;
+		    break;
+		default:
+		    break;
 		}
-
-		break;
-	    case END_ATTRIBUTE_LIST:
-		if (mimetype != null)
-		    result.put(path, mimetype);
-
-		mimetype = null;
-		path = null;
-		break;
-	    default:
-		break;
 	    }
-	}
 
-	in.close();
+	    in.close();
+	} catch (ZipEntryNotFoundException e) {
+	    // TODO: log
+	}
 
 	return result;
     }

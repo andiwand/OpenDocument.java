@@ -17,6 +17,8 @@ import at.andiwand.odf2html.odf.TemporaryOpenDocumentFile;
 import at.andiwand.odf2html.translator.document.PresentationTranslator;
 import at.andiwand.odf2html.translator.document.SpreadsheetTranslator;
 import at.andiwand.odf2html.translator.document.TextTranslator;
+import at.andiwand.odf2html.translator.settings.ImageStoreMode;
+import at.andiwand.odf2html.translator.settings.TranslationSettings;
 import at.andiwand.odf2html.util.DefaultFileCache;
 import at.andiwand.odf2html.util.FileCache;
 
@@ -26,7 +28,18 @@ public class AutomaticTranslatorTest {
 
     private final Map<File, String> files;
 
-    private final FileCache fileCache = new DefaultFileCache("/tmp");
+    private final FileCache cache = new DefaultFileCache("/tmp");
+
+    private final TextTranslator textTranslator = new TextTranslator();
+    private final SpreadsheetTranslator spreadsheetTranslator = new SpreadsheetTranslator();
+    private final PresentationTranslator presentationTranslator = new PresentationTranslator();
+
+    private final TranslationSettings translationSettings = new TranslationSettings() {
+	{
+	    setCache(cache);
+	    setImageStoreMode(ImageStoreMode.INLINE);
+	}
+    };
 
     public AutomaticTranslatorTest(Map<File, String> files) {
 	this.files = new HashMap<File, String>(files);
@@ -45,7 +58,7 @@ public class AutomaticTranslatorTest {
 	System.out.println(FILE_GAP);
 
 	OpenDocumentFile documentFile = new TemporaryOpenDocumentFile(
-		new FileInputStream(file), fileCache);
+		new FileInputStream(file), cache);
 	documentFile.setPassword(password);
 
 	OpenDocumentFileTest.test(documentFile);
@@ -57,29 +70,26 @@ public class AutomaticTranslatorTest {
 		OpenDocumentText text = (OpenDocumentText) document;
 		OpenDocumentTextTest.test(text);
 
-		TextTranslator textTranslator = new TextTranslator(fileCache);
-		textTranslator.translate(document, LWXMLNullWriter.NULL);
+		textTranslator.translate(document, LWXMLNullWriter.NULL,
+			translationSettings);
 	    } else if (document instanceof OpenDocumentSpreadsheet) {
 		OpenDocumentSpreadsheet spreadsheet = (OpenDocumentSpreadsheet) document;
 		OpenDocumentSpreadsheetTest.test(spreadsheet);
 
-		SpreadsheetTranslator spreadsheetTranslator = new SpreadsheetTranslator(
-			fileCache);
-		spreadsheetTranslator.translate(document, LWXMLNullWriter.NULL);
+		spreadsheetTranslator.translate(document, LWXMLNullWriter.NULL,
+			translationSettings);
 	    } else if (document instanceof OpenDocumentPresentation) {
 		OpenDocumentPresentation presentation = (OpenDocumentPresentation) document;
 		OpenDocumentPresentationTest.test(presentation);
 
-		PresentationTranslator presentationTranslator = new PresentationTranslator(
-			fileCache);
-		presentationTranslator
-			.translate(document, LWXMLNullWriter.NULL);
+		presentationTranslator.translate(document,
+			LWXMLNullWriter.NULL, translationSettings);
 	    } else {
 		throw new IllegalStateException();
 	    }
 	} finally {
 	    documentFile.close();
-	    fileCache.clear();
+	    cache.clear();
 	}
     }
 

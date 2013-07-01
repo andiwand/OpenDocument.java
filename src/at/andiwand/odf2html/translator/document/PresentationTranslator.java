@@ -2,30 +2,25 @@ package at.andiwand.odf2html.translator.document;
 
 import java.io.IOException;
 
-import at.andiwand.commons.lwxml.reader.LWXMLReader;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
-import at.andiwand.odf2html.odf.OpenDocument;
+import at.andiwand.odf2html.odf.OpenDocumentPresentation;
 import at.andiwand.odf2html.translator.content.PresentationContentTranslator;
+import at.andiwand.odf2html.translator.context.PresentationTranslationContext;
 import at.andiwand.odf2html.translator.style.PresentationStyle;
 import at.andiwand.odf2html.translator.style.PresentationStyleTranslator;
-import at.andiwand.odf2html.util.FileCache;
 
-public class PresentationTranslator extends
-	DocumentTranslator<PresentationStyle> {
+public class PresentationTranslator
+	extends
+	GenericDocumentTranslator<OpenDocumentPresentation, PresentationStyle, PresentationTranslationContext> {
 
-    public PresentationTranslator(FileCache cache) {
-	super(cache);
+    public PresentationTranslator() {
+	super(new PresentationStyleTranslator(),
+		new PresentationContentTranslator());
     }
 
     @Override
-    protected PresentationStyleTranslator newStyleTranslator() {
-	return new PresentationStyleTranslator();
-    }
-
-    @Override
-    protected void translateMeta(OpenDocument document, LWXMLWriter out)
-	    throws IOException {
-	super.translateMeta(document, out);
+    protected void translateMeta(LWXMLWriter out) throws IOException {
+	super.translateMeta(out);
 
 	out.writeStartElement("meta");
 	out.writeAttribute("name", "viewport");
@@ -35,12 +30,8 @@ public class PresentationTranslator extends
     }
 
     @Override
-    protected void translateContent(OpenDocument document,
-	    PresentationStyle style, LWXMLReader in, LWXMLWriter out)
-	    throws IOException {
-	PresentationContentTranslator contentTranslator = new PresentationContentTranslator(
-		document, style, cache);
-	contentTranslator.translate(in, out);
+    protected PresentationTranslationContext createContext() {
+	return new PresentationTranslationContext();
     }
 
 }

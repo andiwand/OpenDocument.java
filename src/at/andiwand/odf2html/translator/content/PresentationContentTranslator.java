@@ -1,30 +1,11 @@
 package at.andiwand.odf2html.translator.content;
 
-import java.io.IOException;
+import at.andiwand.odf2html.translator.context.PresentationTranslationContext;
 
-import at.andiwand.odf2html.odf.OpenDocument;
-import at.andiwand.odf2html.translator.style.PresentationStyle;
-import at.andiwand.odf2html.util.FileCache;
+public class PresentationContentTranslator extends
+	DefaultContentTranslator<PresentationTranslationContext> {
 
-public class PresentationContentTranslator extends DefaultContentTranslator {
-
-    public PresentationContentTranslator(OpenDocument document,
-	    PresentationStyle style) throws IOException {
-	this(document, style, new InlineImageTranslator(
-		document.getDocumentFile()));
-    }
-
-    public PresentationContentTranslator(OpenDocument document,
-	    PresentationStyle style, FileCache fileCache) throws IOException {
-	this(document, style, new CachedImageTranslator(
-		document.getDocumentFile(), fileCache));
-    }
-
-    public PresentationContentTranslator(OpenDocument documentFile,
-	    PresentationStyle style, ImageTranslator imageTranslator)
-	    throws IOException {
-	super(style, imageTranslator);
-
+    public PresentationContentTranslator() {
 	addElementTranslator("text:list", "ul");
 	addElementTranslator("text:list-item", "li");
 
@@ -33,7 +14,7 @@ public class PresentationContentTranslator extends DefaultContentTranslator {
 	addElementTranslator("table:table-row", "tr");
 	addElementTranslator("table:table-cell", "td");
 
-	addElementTranslator("draw:page", new PresentationPageTranslator(style));
+	addElementTranslator("draw:page", new PresentationPageTranslator());
 	FrameTranslator frameTranslator = new FrameTranslator();
 	addElementTranslator("draw:frame", frameTranslator);
 	addElementTranslator("draw:custom-shape", frameTranslator);

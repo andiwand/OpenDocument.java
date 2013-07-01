@@ -5,11 +5,11 @@ import java.io.IOException;
 import at.andiwand.commons.lwxml.reader.LWXMLPushbackReader;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
 
-public class SimpleElementReplacement extends SimpleElementTranslator {
+public class LWXMLElementReplacement<C> extends LWXMLElementTranslator<C> {
 
     private final String newElementName;
 
-    public SimpleElementReplacement(String newElementName) {
+    public LWXMLElementReplacement(String newElementName) {
 	this.newElementName = newElementName;
     }
 
@@ -18,14 +18,14 @@ public class SimpleElementReplacement extends SimpleElementTranslator {
     }
 
     @Override
-    public void translateStartElement(LWXMLPushbackReader in, LWXMLWriter out)
-	    throws IOException {
+    public void translateStartElement(LWXMLPushbackReader in, LWXMLWriter out,
+	    C context) throws IOException {
 	out.writeStartElement(newElementName);
     }
 
     @Override
-    public void translateEndElement(LWXMLPushbackReader in, LWXMLWriter out)
-	    throws IOException {
+    public void translateEndElement(LWXMLPushbackReader in, LWXMLWriter out,
+	    C context) throws IOException {
 	out.writeEndElement(newElementName);
     }
 

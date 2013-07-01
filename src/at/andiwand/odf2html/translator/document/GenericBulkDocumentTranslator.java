@@ -16,39 +16,18 @@ import at.andiwand.commons.lwxml.writer.LWXMLWriter;
 import at.andiwand.odf2html.odf.OpenDocument;
 import at.andiwand.odf2html.odf.OpenDocumentPresentation;
 import at.andiwand.odf2html.odf.OpenDocumentSpreadsheet;
+import at.andiwand.odf2html.translator.context.GenericTranslationContext;
+import at.andiwand.odf2html.translator.settings.TranslationSettings;
 import at.andiwand.odf2html.translator.style.DocumentStyle;
-import at.andiwand.odf2html.translator.style.DocumentStyleTranslator;
+import at.andiwand.odf2html.util.FileCache;
 
-public class BulkDocumentTranslator<S extends DocumentStyle> extends
-	DocumentTranslator<S> {
-
-    private final DocumentTranslator<S> translator;
-
-    private final String contentElement;
-    private final String subContentElement;
-
-    public BulkDocumentTranslator(DocumentTranslator<S> translator,
-	    String contentElement, String subContentElement) {
-	super(translator.cache);
-
-	this.translator = translator;
-
-	this.contentElement = contentElement;
-	this.subContentElement = subContentElement;
-    }
-
-    public DocumentTranslator<S> getTranslator() {
-	return translator;
-    }
-
-    @Override
-    protected DocumentStyleTranslator<S> newStyleTranslator() {
-	return translator.newStyleTranslator();
-    }
+public class GenericBulkDocumentTranslator<D extends OpenDocument, S extends DocumentStyle, C extends GenericTranslationContext<D, S>>
+	extends GenericDocumentTranslator<D, S, C> {
 
     // TODO: improve
-    public LWXMLMultiWriter provideOutput(OpenDocument document,
-	    String cachePrefix, String cacheSuffix) throws IOException {
+    public static LWXMLMultiWriter provideOutput(OpenDocument document,
+	    FileCache cache, String cachePrefix, String cacheSuffix)
+	    throws IOException {
 	int count;
 
 	if (document instanceof OpenDocumentSpreadsheet) {
@@ -70,18 +49,38 @@ public class BulkDocumentTranslator<S extends DocumentStyle> extends
 	return new LWXMLMultiWriter(outs);
     }
 
-    @Override
-    public void translate(OpenDocument document, LWXMLWriter out)
-	    throws IOException {
-	if (!(out instanceof LWXMLMultiWriter))
-	    throw new IllegalArgumentException();
+    private final GenericDocumentTranslator<D, S, C> translator;
 
-	super.translate(document, out);
+    private final String contentElement;
+    private final String subContentElement;
+
+    public GenericBulkDocumentTranslator(
+	    GenericDocumentTranslator<D, S, C> translator,
+	    String contentElement, String subContentElement) {
+	super(translator);
+
+	this.translator = translator;
+
+	this.contentElement = contentElement;
+	this.subContentElement = subContentElement;
+    }
+
+    public GenericDocumentTranslator<D, S, C> getTranslator() {
+	return translator;
     }
 
     @Override
-    protected void translateContent(OpenDocument document, S style,
-	    LWXMLReader in, LWXMLWriter out) throws IOException {
+    public void translate(OpenDocument document, LWXMLWriter out,
+	    TranslationSettings settings) throws IOException {
+	if (!(out instanceof LWXMLMultiWriter))
+	    throw new IllegalArgumentException();
+
+	super.translate(document, out, settings);
+    }
+
+    @Override
+    protected void translateContent(LWXMLReader in, LWXMLWriter out, C context)
+	    throws IOException {
 	LWXMLUtil.flushUntilStartElement(in, contentElement);
 
 	LWXMLPushbackReader pin = new LWXMLPushbackReader(in);
@@ -93,8 +92,13 @@ public class BulkDocumentTranslator<S extends DocumentStyle> extends
 	    if (singleOut instanceof LWXMLNullWriter)
 		continue;
 	    pin.unreadEvent(subContentElement);
-	    translator.translateContent(document, style, ein, singleOut);
+	    contentTranslator.translate(ein, singleOut, context);
 	}
+    }
+
+    @Override
+    protected C createContext() {
+	return translator.createContext();
     }
 
 }

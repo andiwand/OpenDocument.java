@@ -1,29 +1,25 @@
 package at.andiwand.odf2html.translator.content;
 
-import at.andiwand.odf2html.translator.lwxml.SimpleElementReplacement;
-import at.andiwand.odf2html.translator.style.DocumentStyle;
+import at.andiwand.odf2html.translator.context.TranslationContext;
+import at.andiwand.odf2html.translator.lwxml.LWXMLElementReplacement;
 
-public abstract class DefaultContentTranslator extends ContentTranslator {
+public abstract class DefaultContentTranslator<C extends TranslationContext>
+	extends ContentTranslator<C> {
 
-    public DefaultContentTranslator(DocumentStyle style,
-	    ImageTranslator imageTranslator) {
-	translateStyle(style);
-
+    public DefaultContentTranslator() {
 	addElementTranslator("text:span", "span");
-	addElementTranslator("text:a", new SimpleElementReplacement("a") {
-	    {
-		addAttributeTranslator("xlink:href", "href");
-	    }
-	});
+	addElementTranslator("text:a",
+		new LWXMLElementReplacement<Object>("a") {
+		    {
+			addAttributeTranslator("xlink:href", "href");
+		    }
+		});
 
 	addElementTranslator("text:s", new SpaceTranslator());
 	addElementTranslator("text:tab", new TabTranslator());
-	addElementTranslator("draw:image", imageTranslator);
-    }
+	addElementTranslator("draw:image", new ImageTranslator());
 
-    protected void translateStyle(DocumentStyle style) {
-	StyleAttributeTranslator styleAttributeTranslator = new StyleAttributeTranslator(
-		style);
+	StyleAttributeTranslator styleAttributeTranslator = new StyleAttributeTranslator();
 	translateStyleAttribute(styleAttributeTranslator);
     }
 

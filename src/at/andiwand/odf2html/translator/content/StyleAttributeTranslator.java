@@ -1,24 +1,16 @@
 package at.andiwand.odf2html.translator.content;
 
 import at.andiwand.commons.lwxml.LWXMLAttribute;
-import at.andiwand.odf2html.translator.lwxml.SimpleAttributeTranslator;
-import at.andiwand.odf2html.translator.style.DocumentStyle;
+import at.andiwand.odf2html.translator.context.TranslationContext;
+import at.andiwand.odf2html.translator.lwxml.LWXMLAttributeTranslator;
 
-public class StyleAttributeTranslator implements SimpleAttributeTranslator {
-
-    private final DocumentStyle style;
-
-    public StyleAttributeTranslator(DocumentStyle style) {
-	this.style = style;
-    }
-
-    public DocumentStyle getStyle() {
-	return style;
-    }
+public class StyleAttributeTranslator implements
+	LWXMLAttributeTranslator<TranslationContext> {
 
     @Override
-    public LWXMLAttribute translate(String name, String value) {
-	return style.getStyleAttribute(value);
+    public LWXMLAttribute translate(String name, String value,
+	    TranslationContext context) {
+	return context.getStyle().getStyleAttribute(value);
     }
 
 }

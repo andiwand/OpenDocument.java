@@ -38,7 +38,7 @@ public abstract class OpenDocument {
 	return documentFile.getFileStream(META);
     }
 
-    public long getMetaSize() throws IOException {
+    public long getMetaSize() {
 	return documentFile.getFileSize(META);
     }
 
@@ -46,7 +46,7 @@ public abstract class OpenDocument {
 	return documentFile.getFileStream(STYLES);
     }
 
-    public long getStylesSize() throws IOException {
+    public long getStylesSize() {
 	return documentFile.getFileSize(STYLES);
     }
 
@@ -54,7 +54,7 @@ public abstract class OpenDocument {
 	return documentFile.getFileStream(CONTENT);
     }
 
-    public long getContentSize() throws IOException {
+    public long getContentSize() {
 	return documentFile.getFileSize(CONTENT);
     }
 

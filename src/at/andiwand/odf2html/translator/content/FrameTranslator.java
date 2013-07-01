@@ -5,9 +5,11 @@ import java.io.IOException;
 import at.andiwand.commons.lwxml.LWXMLUtil;
 import at.andiwand.commons.lwxml.reader.LWXMLPushbackReader;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
-import at.andiwand.odf2html.translator.lwxml.SimpleElementReplacement;
+import at.andiwand.odf2html.translator.context.TranslationContext;
+import at.andiwand.odf2html.translator.lwxml.LWXMLElementReplacement;
 
-public class FrameTranslator extends SimpleElementReplacement {
+public class FrameTranslator extends
+	LWXMLElementReplacement<TranslationContext> {
 
     private static final String NEW_ELEMENT_NAME = "div";
     private static final String X_ATTRIBUTE_NAME = "svg:x";
@@ -34,9 +36,9 @@ public class FrameTranslator extends SimpleElementReplacement {
     }
 
     @Override
-    public void translateAttributeList(LWXMLPushbackReader in, LWXMLWriter out)
-	    throws IOException {
-	super.translateAttributeList(in, out);
+    public void translateAttributeList(LWXMLPushbackReader in, LWXMLWriter out,
+	    TranslationContext context) throws IOException {
+	super.translateAttributeList(in, out, context);
 
 	String style = "";
 
@@ -64,12 +66,12 @@ public class FrameTranslator extends SimpleElementReplacement {
     }
 
     @Override
-    public void translateChildren(LWXMLPushbackReader in, LWXMLWriter out)
-	    throws IOException {
+    public void translateChildren(LWXMLPushbackReader in, LWXMLWriter out,
+	    TranslationContext context) throws IOException {
 	if (LWXMLUtil.isEmptyElement(in)) {
 	    out.writeStartElement("br");
 	    out.writeEndEmptyElement();
-	    translateEndElement(in, out);
+	    translateEndElement(in, out, context);
 	} else {
 	    in.unreadEvent();
 	}

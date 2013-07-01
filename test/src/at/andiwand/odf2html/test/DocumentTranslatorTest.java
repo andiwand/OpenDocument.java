@@ -7,7 +7,6 @@ import javax.swing.JFileChooser;
 
 import at.andiwand.commons.lwxml.writer.LWXMLStreamWriter;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
-import at.andiwand.commons.math.vector.Vector2i;
 import at.andiwand.odf2html.odf.LocatedOpenDocumentFile;
 import at.andiwand.odf2html.odf.OpenDocument;
 import at.andiwand.odf2html.odf.OpenDocumentFile;
@@ -18,6 +17,8 @@ import at.andiwand.odf2html.translator.document.DocumentTranslator;
 import at.andiwand.odf2html.translator.document.PresentationTranslator;
 import at.andiwand.odf2html.translator.document.SpreadsheetTranslator;
 import at.andiwand.odf2html.translator.document.TextTranslator;
+import at.andiwand.odf2html.translator.settings.ImageStoreMode;
+import at.andiwand.odf2html.translator.settings.TranslationSettings;
 import at.andiwand.odf2html.util.DefaultFileCache;
 import at.andiwand.odf2html.util.FileCache;
 
@@ -41,29 +42,24 @@ public class DocumentTranslatorTest {
 	File htmlFile = cache.create(file.getName() + ".html");
 	LWXMLWriter out = new LWXMLStreamWriter(new FileWriter(htmlFile));
 
-	DocumentTranslator<?> translator;
+	TranslationSettings settings = new TranslationSettings();
+	settings.setCache(cache);
+	settings.setImageStoreMode(ImageStoreMode.INLINE);
+
+	DocumentTranslator translator;
 
 	if (document instanceof OpenDocumentText) {
-	    TextTranslator textTranslator = new TextTranslator(cache);
-
-	    translator = textTranslator;
+	    translator = new TextTranslator();
 	} else if (document instanceof OpenDocumentSpreadsheet) {
-	    SpreadsheetTranslator spreadsheetTranslator = new SpreadsheetTranslator(
-		    cache);
-	    spreadsheetTranslator.setMaxTableDimension(new Vector2i(100));
-
-	    translator = spreadsheetTranslator;
+	    translator = new SpreadsheetTranslator();
 	} else if (document instanceof OpenDocumentPresentation) {
-	    PresentationTranslator presentationTranslator = new PresentationTranslator(
-		    cache);
-
-	    translator = presentationTranslator;
+	    translator = new PresentationTranslator();
 	} else {
 	    throw new IllegalArgumentException();
 	}
 
 	long start = System.nanoTime();
-	translator.translate(document, out);
+	translator.translate(document, out, settings);
 	long end = System.nanoTime();
 	System.out.println((end - start) / 1000000000d);
 
