@@ -19,6 +19,8 @@ public class TextContentTranslator extends
 	ParagraphTranslator paragraphTranslator = new ParagraphTranslator();
 	addElementTranslator("text:p", paragraphTranslator);
 	addElementTranslator("text:h", paragraphTranslator);
+
+	addElementTranslator("text:line-break", "br");
     }
 
 }
