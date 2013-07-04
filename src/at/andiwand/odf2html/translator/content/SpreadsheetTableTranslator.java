@@ -13,21 +13,20 @@ import at.andiwand.commons.lwxml.LWXMLUtil;
 import at.andiwand.commons.lwxml.reader.LWXMLBranchReader;
 import at.andiwand.commons.lwxml.reader.LWXMLPushbackReader;
 import at.andiwand.commons.lwxml.reader.LWXMLReader;
+import at.andiwand.commons.lwxml.translator.LWXMLAttributeTranslator;
+import at.andiwand.commons.lwxml.translator.LWXMLElementReplacement;
 import at.andiwand.commons.lwxml.writer.LWXMLEventQueueWriter;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
 import at.andiwand.commons.math.vector.Vector2i;
 import at.andiwand.commons.util.collection.OrderedPair;
 import at.andiwand.commons.util.iterator.CycleIterator;
 import at.andiwand.odf2html.translator.context.SpreadsheetTranslationContext;
-import at.andiwand.odf2html.translator.lwxml.LWXMLAttributeTranslator;
-import at.andiwand.odf2html.translator.lwxml.LWXMLElementReplacement;
+import at.andiwand.odf2html.translator.style.property.StylePropertyGroup;
 
 // TODO: implement remove methods
 // TODO: renew
 public class SpreadsheetTableTranslator extends
 	LWXMLElementReplacement<SpreadsheetTranslationContext> {
-
-    private static final String NEW_ELEMENT_NAME = "table";
 
     private static final String TABLE_ELEMENT_NAME = "table:table";
     private static final String TABLE_NAME_ATTRIBUTE_NAME = "table:name";
@@ -57,7 +56,7 @@ public class SpreadsheetTableTranslator extends
 
     public SpreadsheetTableTranslator(
 	    ContentTranslator<SpreadsheetTranslationContext> contentTranslator) {
-	super(NEW_ELEMENT_NAME);
+	super("table");
 
 	this.contentTranslator = contentTranslator;
 
@@ -92,7 +91,8 @@ public class SpreadsheetTableTranslator extends
 	if (!currentColumnDefaultStylesIterator.hasNext())
 	    return null;
 	String name = currentColumnDefaultStylesIterator.next();
-	return context.getStyle().getStyleAttribute(name);
+	return context.getStyle().getStyleAttribute(name,
+		StylePropertyGroup.TABLE);
     }
 
     private void spanCurrentColumnDefaultStyle(int span) {
@@ -151,7 +151,7 @@ public class SpreadsheetTableTranslator extends
 	translateColumns(in, out, context);
 	translateRows(in, out, context);
 
-	out.writeEndElement(NEW_ELEMENT_NAME);
+	out.writeEndElement(elementName);
 
 	currentColumnDefaultStyles.clear();
 	currentColumnDefaultStylesIterator = null;

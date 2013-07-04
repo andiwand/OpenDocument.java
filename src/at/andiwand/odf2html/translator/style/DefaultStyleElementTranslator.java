@@ -1,8 +1,7 @@
 package at.andiwand.odf2html.translator.style;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -18,6 +17,7 @@ import at.andiwand.odf2html.css.StyleProperty;
 import at.andiwand.odf2html.translator.style.property.StaticGeneralPropertyTranslator;
 import at.andiwand.odf2html.translator.style.property.StylePropertyGroup;
 
+// TODO: switch by StylePropertyGroup?
 public class DefaultStyleElementTranslator extends
 	StyleElementTranslator<DocumentStyle> {
 
@@ -32,7 +32,11 @@ public class DefaultStyleElementTranslator extends
 	    .toCollection(new LinkedHashSet<String>(2), FAMILY_ATTRIBUTE_NAME,
 		    PARENT_ATTRIBUTE_NAME);
 
-    private final Set<String> parentAttributes;
+    private static String getToAttributeNameByColon(String attribute) {
+	int colonIndex = attribute.indexOf(':');
+	return (colonIndex == -1) ? attribute : attribute
+		.substring(colonIndex + 1);
+    }
 
     public DefaultStyleElementTranslator() {
 	this(DEFAULT_PARENT_ATTRIBUTES);
@@ -42,67 +46,44 @@ public class DefaultStyleElementTranslator extends
 	this.parentAttributes = new LinkedHashSet<String>(parentAttributes);
     }
 
-    private static String getToAttributeNameByColon(String attribute) {
-	int colonIndex = attribute.indexOf(':');
-	return (colonIndex == -1) ? attribute : attribute
-		.substring(colonIndex + 1);
+    private final Set<String> parentAttributes;
+
+    private final StreamableStringMap<PropertyTranslator> attributeTranslatorMap = new StreamableStringMap<PropertyTranslator>();
+
+    public void addPropertyTranslator(String attribute) {
+	addPropertyTranslator(attribute, getToAttributeNameByColon(attribute));
     }
 
-    private final EnumMap<StylePropertyGroup, StreamableStringMap<PropertyTranslator>> groupAttributeTranslatorMap = new EnumMap<StylePropertyGroup, StreamableStringMap<PropertyTranslator>>(
-	    StylePropertyGroup.class);
-
-    private StreamableStringMap<PropertyTranslator> getAttributeTranslators(
-	    StylePropertyGroup group) {
-	StreamableStringMap<PropertyTranslator> result = groupAttributeTranslatorMap
-		.get(group);
-
-	if (result == null) {
-	    result = new StreamableStringMap<PropertyTranslator>();
-	    groupAttributeTranslatorMap.put(group, result);
-	}
-
-	return result;
-    }
-
-    public void addPropertyTranslator(String attribute, StylePropertyGroup group) {
-	addPropertyTranslator(attribute, group,
-		getToAttributeNameByColon(attribute));
+    public void addPropertyTranslator(String attribute, String property) {
+	addPropertyTranslator(attribute, new StaticGeneralPropertyTranslator(
+		property));
     }
 
     public void addPropertyTranslator(String attribute,
-	    StylePropertyGroup group, String property) {
-	addPropertyTranslator(attribute, group,
-		new StaticGeneralPropertyTranslator(property));
-    }
-
-    public void addPropertyTranslator(String attribute,
-	    StylePropertyGroup group, PropertyTranslator translator) {
+	    PropertyTranslator translator) {
 	if (attribute == null)
 	    throw new NullPointerException();
 	if (translator == null)
 	    throw new NullPointerException();
 
-	getAttributeTranslators(group).put(attribute, translator);
+	attributeTranslatorMap.put(attribute, translator);
     }
 
     public void addDirectionPropertyTranslator(String attribute,
-	    StylePropertyGroup group, PropertyTranslator translator) {
+	    PropertyTranslator translator) {
 	for (String directionPrefix : DIRECTION_SUFFIXES) {
-	    addPropertyTranslator(attribute + directionPrefix, group,
-		    translator);
+	    addPropertyTranslator(attribute + directionPrefix, translator);
 	}
     }
 
-    public void addDirectionPropertyTranslator(String attribute,
-	    StylePropertyGroup group) {
-	addDirectionPropertyTranslator(attribute, group,
+    public void addDirectionPropertyTranslator(String attribute) {
+	addDirectionPropertyTranslator(attribute,
 		getToAttributeNameByColon(attribute));
     }
 
-    public void addDirectionPropertyTranslator(String attribute,
-	    StylePropertyGroup group, String property) {
+    public void addDirectionPropertyTranslator(String attribute, String property) {
 	for (String directionPrefix : DIRECTION_SUFFIXES) {
-	    addPropertyTranslator(attribute + directionPrefix, group, property
+	    addPropertyTranslator(attribute + directionPrefix, property
 		    + directionPrefix);
 	}
     }
@@ -112,7 +93,7 @@ public class DefaultStyleElementTranslator extends
     }
 
     public void removePropertyTranslator(String attribute) {
-	groupAttributeTranslatorMap.remove(attribute);
+	attributeTranslatorMap.remove(attribute);
     }
 
     public void removeDirectionPropertyTranslator(String attribute) {
@@ -134,9 +115,8 @@ public class DefaultStyleElementTranslator extends
 	return name;
     }
 
-    protected LinkedHashSet<String> getParentStyles(
-	    Map<String, String> attributes) {
-	LinkedHashSet<String> result = new LinkedHashSet<String>();
+    protected Set<String> getParentStyles(Map<String, String> attributes) {
+	Set<String> result = new HashSet<String>();
 	CollectionUtil.getNotNull(attributes, parentAttributes, result);
 	return result;
     }
@@ -149,7 +129,7 @@ public class DefaultStyleElementTranslator extends
 	String name = getStyleName(attributes);
 	if (name == null)
 	    return;
-	Collection<String> parents = getParentStyles(attributes);
+	Set<String> parents = getParentStyles(attributes);
 	out.addStyleInheritance(name, parents);
 
 	StylePropertyGroup group = null;
@@ -171,8 +151,8 @@ public class DefaultStyleElementTranslator extends
 	    case ATTRIBUTE_NAME:
 		if (group == null)
 		    break;
-		OrderedPair<String, PropertyTranslator> match = groupAttributeTranslatorMap
-			.get(group).match(in);
+		OrderedPair<String, PropertyTranslator> match = attributeTranslatorMap
+			.match(in);
 
 		if (match != null) {
 		    String attributeName = match.getElement1();

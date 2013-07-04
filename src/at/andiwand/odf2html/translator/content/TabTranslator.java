@@ -7,19 +7,22 @@ import at.andiwand.commons.lwxml.LWXMLUtil;
 import at.andiwand.commons.lwxml.reader.LWXMLPushbackReader;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
 import at.andiwand.odf2html.translator.context.TranslationContext;
-import at.andiwand.odf2html.translator.lwxml.LWXMLElementTranslator;
 
-public class TabTranslator extends LWXMLElementTranslator<TranslationContext> {
+public class TabTranslator extends DefaultElementTranslator {
+
+    public TabTranslator() {
+	super(null);
+    }
 
     @Override
     public void translateStartElement(LWXMLPushbackReader in, LWXMLWriter out,
 	    TranslationContext context) throws IOException {
 	out.writeCharacters("\t");
     }
-
+    
     @Override
     public void translateAttributeList(LWXMLPushbackReader in, LWXMLWriter out,
-	    TranslationContext context) throws IOException {
+            TranslationContext context) throws IOException {
 	LWXMLUtil.flushEmptyElement(in);
     }
 

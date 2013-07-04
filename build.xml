@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project basedir="." default="make-jar" name="odf2html">
+<project basedir="." default="make-jar" name="OpenDocument.java">
 	<property name="target" value="1.6" />
 	<property name="source" value="1.6" />
-	<property name="jar" value="odf2html.jar" />
+	<property name="jar" value="OpenDocument.jar" />
 	
-	<path id="odf2html.classpath">
+	<path id="classpath">
 		<pathelement location="bin" />
-		<pathelement location="dep/commons/library/commons.jar" />
+		<pathelement location="dep/commons/bin" />
 	</path>
 	
 	<target name="init">
@@ -24,7 +24,7 @@
 	
 	<target name="make" depends="init">
 		<javac srcdir="src" destdir="bin" source="${source}" target="${target}" includeantruntime="true">
-			<classpath refid="odf2html.classpath" />
+			<classpath refid="classpath" />
 		</javac>
 	</target>
 	

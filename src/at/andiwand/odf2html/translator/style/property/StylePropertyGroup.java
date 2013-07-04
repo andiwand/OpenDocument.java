@@ -7,8 +7,8 @@ import at.andiwand.commons.util.object.ObjectTransformer;
 
 public enum StylePropertyGroup {
 
-    TEXT("text"), PARAGRAPH("paragraph"), GRAPHIC("graphic"), DRAWING("drawing"), PAGE_LAYOUT(
-	    "page-layout");
+    TEXT("text"), PARAGRAPH("paragraph"), TABLE("table"), GRAPHIC("graphic"), DRAWING(
+	    "drawing"), PAGE_LAYOUT("page-layout");
 
     private static final ObjectTransformer<StylePropertyGroup, String> CODE_KEY_GENERATOR = new ObjectTransformer<StylePropertyGroup, String>() {
 	@Override

@@ -3,9 +3,8 @@ package at.andiwand.odf2html.translator.style;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -22,6 +21,8 @@ public class DocumentStyle {
 
     private static final String DEFAULT_STYLE_SHEET_NAME = "default.css";
     private static final StyleSheet DEFAULT_STYLE_SHEET;
+
+    private static final String GROUP_PREFIX = "_group-";
 
     static {
 	try {
@@ -44,9 +45,12 @@ public class DocumentStyle {
 	}
     }
 
-    private static String translateStyleName(String name,
-	    StylePropertyGroup group) {
-	return name.replaceAll("\\.", "_") + "-" + group;
+    private static String escapeStyleName(String name) {
+	return name.replaceAll("\\.", "_");
+    }
+
+    private static String escapeStyleGroup(StylePropertyGroup group) {
+	return GROUP_PREFIX + group;
     }
 
     private Map<String, Set<String>> styleInheritance = new HashMap<String, Set<String>>();
@@ -67,46 +71,22 @@ public class DocumentStyle {
 	return new ArrayList<String>(parents);
     }
 
-    // TODO: remove?
-    public String getStyleReference(String name) {
-	Set<String> parents = styleInheritance.get(name);
-	if (parents == null)
-	    return null;
-
-	String result = "";
-
-	for (StylePropertyGroup group : StylePropertyGroup.values()) {
-	    result += translateStyleName(name, group) + " ";
-	}
-
-	for (String parent : parents) {
-	    for (StylePropertyGroup group : StylePropertyGroup.values()) {
-		result += " " + translateStyleName(parent, group);
-	    }
-	}
-
-	return result;
-    }
-
     public String getStyleReference(String name, StylePropertyGroup group) {
 	Set<String> parents = styleInheritance.get(name);
 	if (parents == null)
 	    return null;
 
-	String result = translateStyleName(name, group);
+	StringBuilder builder = new StringBuilder();
+
+	builder.append(escapeStyleGroup(group));
+	builder.append(' ');
+	builder.append(escapeStyleName(name));
 	for (String parent : parents) {
-	    result += " " + translateStyleName(parent, group);
+	    builder.append(' ');
+	    builder.append(escapeStyleName(parent));
 	}
 
-	return result;
-    }
-
-    // TODO: remove?
-    public LWXMLAttribute getStyleAttribute(String name) {
-	String reference = getStyleReference(name);
-	if (reference == null)
-	    reference = "null";
-	return new LWXMLAttribute("class", reference);
+	return builder.toString();
     }
 
     public LWXMLAttribute getStyleAttribute(String name,
@@ -117,13 +97,14 @@ public class DocumentStyle {
 	return new LWXMLAttribute("class", reference);
     }
 
-    public void addStyleInheritance(String name, Collection<String> parents) {
-	Set<String> parentSet = new LinkedHashSet<String>();
+    public void addStyleInheritance(String name, Set<String> parents) {
+	Set<String> parentSet = new HashSet<String>();
 
 	for (String parent : parents) {
 	    parentSet.add(parent);
 
 	    Set<String> parentsParentSet = styleInheritance.get(parent);
+	    // TODO: log null
 	    if (parentsParentSet != null)
 		parentSet.addAll(parentsParentSet);
 	}
@@ -135,7 +116,8 @@ public class DocumentStyle {
 	    throws IOException {
 	if (styleOut.isDefinitionStarted())
 	    styleOut.writeEndDefinition();
-	styleOut.writeStartDefinition("." + translateStyleName(name, group));
+	styleOut.writeStartDefinition("." + escapeStyleName(name) + "."
+		+ escapeStyleGroup(group));
     }
 
     public void writeProperty(StyleProperty property) throws IOException {

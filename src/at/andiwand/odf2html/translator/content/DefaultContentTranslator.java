@@ -1,34 +1,25 @@
 package at.andiwand.odf2html.translator.content;
 
 import at.andiwand.odf2html.translator.context.TranslationContext;
-import at.andiwand.odf2html.translator.lwxml.LWXMLElementReplacement;
 
 public abstract class DefaultContentTranslator<C extends TranslationContext>
 	extends ContentTranslator<C> {
 
     public DefaultContentTranslator() {
-	addElementTranslator("text:span", "span");
-	addElementTranslator("text:a",
-		new LWXMLElementReplacement<Object>("a") {
-		    {
-			addAttributeTranslator("xlink:href", "href");
-		    }
-		});
+	ParagraphTranslator paragraphTranslator = new ParagraphTranslator("p");
+	addElementTranslator("text:p", paragraphTranslator);
+	addElementTranslator("text:h", paragraphTranslator);
+
+	addElementTranslator("text:span", new DefaultSpanTranslator());
+	addElementTranslator("text:a", new LinkTranslator());
 
 	addElementTranslator("text:s", new SpaceTranslator());
 	addElementTranslator("text:tab", new TabTranslator());
+	addElementTranslator("text:line-break", new DefaultElementTranslator(
+		"br"));
+
 	addElementTranslator("draw:image", new ImageTranslator());
-
-	StyleAttributeTranslator styleAttributeTranslator = new StyleAttributeTranslator();
-	translateStyleAttribute(styleAttributeTranslator);
-    }
-
-    protected void translateStyleAttribute(
-	    StyleAttributeTranslator styleAttributeTranslator) {
-	addStaticAttributeTranslator("text:style-name",
-		styleAttributeTranslator);
-	addStaticAttributeTranslator("table:style-name",
-		styleAttributeTranslator);
+	addElementTranslator("draw:frame", new FrameTranslator());
     }
 
 }

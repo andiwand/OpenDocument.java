@@ -6,12 +6,10 @@ import at.andiwand.commons.lwxml.LWXMLUtil;
 import at.andiwand.commons.lwxml.reader.LWXMLPushbackReader;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
 import at.andiwand.odf2html.translator.context.TranslationContext;
-import at.andiwand.odf2html.translator.lwxml.LWXMLElementReplacement;
+import at.andiwand.odf2html.translator.style.property.StylePropertyGroup;
 
-public class FrameTranslator extends
-	LWXMLElementReplacement<TranslationContext> {
+public class FrameTranslator extends DefaultStyledElementTranslator {
 
-    private static final String NEW_ELEMENT_NAME = "div";
     private static final String X_ATTRIBUTE_NAME = "svg:x";
     private static final String Y_ATTRIBUTE_NAME = "svg:y";
     private static final String WIDTH_ATTRIBUTE_NAME = "svg:width";
@@ -25,7 +23,7 @@ public class FrameTranslator extends
     }
 
     public FrameTranslator(boolean translatePosition) {
-	super(NEW_ELEMENT_NAME);
+	super("div", StyleAttribute.DRAW, StylePropertyGroup.GRAPHIC);
 
 	this.translatePosition = translatePosition;
 

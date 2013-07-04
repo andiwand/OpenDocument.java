@@ -9,20 +9,16 @@ import java.io.Writer;
 
 import at.andiwand.commons.codec.Base64OutputStream;
 import at.andiwand.commons.io.ByteStreamUtil;
-import at.andiwand.commons.lwxml.LWXMLIllegalEventException;
 import at.andiwand.commons.lwxml.LWXMLUtil;
 import at.andiwand.commons.lwxml.reader.LWXMLPushbackReader;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
 import at.andiwand.odf2html.translator.context.TranslationContext;
-import at.andiwand.odf2html.translator.lwxml.LWXMLElementReplacement;
 import at.andiwand.odf2html.util.FileCache;
 
 // TODO: implement charts
 // TODO: skip empty images
-public class ImageTranslator extends
-	LWXMLElementReplacement<TranslationContext> {
+public class ImageTranslator extends DefaultElementTranslator {
 
-    private static final String NEW_ELEMENT_NAME = "img";
     private static final String PATH_ATTRIBUTE_NAME = "xlink:href";
 
     private static final String OBJECT_REPLACEMENT_STRING = "ObjectReplacement";
@@ -33,7 +29,7 @@ public class ImageTranslator extends
     private final ByteStreamUtil streamUtil = new ByteStreamUtil();
 
     public ImageTranslator() {
-	super(NEW_ELEMENT_NAME);
+	super("img");
     }
 
     @Override
@@ -72,7 +68,7 @@ public class ImageTranslator extends
     @Override
     public void translateEndElement(LWXMLPushbackReader in, LWXMLWriter out,
 	    TranslationContext context) throws IOException {
-	throw new LWXMLIllegalEventException(in);
+	// TODO: log
     }
 
     private void writeSource(String name, Writer out, TranslationContext context)

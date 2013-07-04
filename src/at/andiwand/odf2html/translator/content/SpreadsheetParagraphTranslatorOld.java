@@ -2,27 +2,24 @@ package at.andiwand.odf2html.translator.content;
 
 import java.io.IOException;
 
-import at.andiwand.commons.lwxml.LWXMLIllegalEventException;
 import at.andiwand.commons.lwxml.LWXMLUtil;
 import at.andiwand.commons.lwxml.reader.LWXMLBranchReader;
 import at.andiwand.commons.lwxml.reader.LWXMLPushbackReader;
 import at.andiwand.commons.lwxml.reader.LWXMLReader;
 import at.andiwand.commons.lwxml.writer.LWXMLEventListWriter;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
-import at.andiwand.odf2html.translator.context.SpreadsheetTranslationContext;
-import at.andiwand.odf2html.translator.lwxml.LWXMLElementReplacement;
+import at.andiwand.odf2html.translator.context.TranslationContext;
 
-public class SpreadsheetParagraphTranslator extends
-	LWXMLElementReplacement<SpreadsheetTranslationContext> {
+public class SpreadsheetParagraphTranslatorOld extends DefaultElementTranslator {
 
     private static final String NEW_ELEMENT_NAME = "span";
 
-    private final ContentTranslator<SpreadsheetTranslationContext> contentTranslator;
+    private final ContentTranslator<TranslationContext> contentTranslator;
 
     private LWXMLEventListWriter tmpStartElement = new LWXMLEventListWriter();
 
-    public SpreadsheetParagraphTranslator(
-	    ContentTranslator<SpreadsheetTranslationContext> contentTranslator) {
+    public SpreadsheetParagraphTranslatorOld(
+	    ContentTranslator<TranslationContext> contentTranslator) {
 	super(NEW_ELEMENT_NAME);
 
 	this.contentTranslator = contentTranslator;
@@ -30,26 +27,25 @@ public class SpreadsheetParagraphTranslator extends
 
     @Override
     public void translateStartElement(LWXMLPushbackReader in, LWXMLWriter out,
-	    SpreadsheetTranslationContext context) throws IOException {
+	    TranslationContext context) throws IOException {
 	super.translateStartElement(in, tmpStartElement, context);
     }
 
     @Override
     public void translateAttributeList(LWXMLPushbackReader in, LWXMLWriter out,
-	    SpreadsheetTranslationContext context) throws IOException {
+	    TranslationContext context) throws IOException {
 	super.translateAttributeList(in, tmpStartElement, context);
     }
 
     @Override
     public void translateEndAttributeList(LWXMLPushbackReader in,
-	    LWXMLWriter out, SpreadsheetTranslationContext context)
-	    throws IOException {
+	    LWXMLWriter out, TranslationContext context) throws IOException {
 	super.translateEndAttributeList(in, tmpStartElement, context);
     }
 
     @Override
     public void translateChildren(LWXMLPushbackReader in, LWXMLWriter out,
-	    SpreadsheetTranslationContext context) throws IOException {
+	    TranslationContext context) throws IOException {
 	if (tmpStartElement.getEventCount() > 2)
 	    tmpStartElement.writeTo(out);
 
@@ -70,8 +66,8 @@ public class SpreadsheetParagraphTranslator extends
 
     @Override
     public void translateEndElement(LWXMLPushbackReader in, LWXMLWriter out,
-	    SpreadsheetTranslationContext context) throws IOException {
-	throw new LWXMLIllegalEventException(in);
+	    TranslationContext context) throws IOException {
+	// TODO: log
     }
 
 }

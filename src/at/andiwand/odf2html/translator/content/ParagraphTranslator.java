@@ -2,50 +2,55 @@ package at.andiwand.odf2html.translator.content;
 
 import java.io.IOException;
 
-import at.andiwand.commons.lwxml.LWXMLUtil;
 import at.andiwand.commons.lwxml.reader.LWXMLPushbackReader;
-import at.andiwand.commons.lwxml.writer.LWXMLEventListWriter;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
 import at.andiwand.odf2html.translator.context.TranslationContext;
-import at.andiwand.odf2html.translator.lwxml.LWXMLElementTranslator;
+import at.andiwand.odf2html.translator.style.DocumentStyle;
+import at.andiwand.odf2html.translator.style.property.StylePropertyGroup;
 
-public class ParagraphTranslator extends
-	LWXMLElementTranslator<TranslationContext> {
+public class ParagraphTranslator extends DefaultBlockTranslator {
 
-    @Override
-    public void translateStartElement(LWXMLPushbackReader in, LWXMLWriter out,
-	    TranslationContext context) throws IOException {
-	out.writeStartElement("div");
+    private final boolean insertSpan;
+
+    public ParagraphTranslator(String elementName) {
+	this(elementName, false);
+    }
+
+    public ParagraphTranslator(String elementName, boolean insertSpan) {
+	super(elementName);
+
+	this.insertSpan = insertSpan;
+
+	addParseAttribute(StyleAttribute.TEXT.getName());
     }
 
     @Override
     public void translateAttributeList(LWXMLPushbackReader in, LWXMLWriter out,
 	    TranslationContext context) throws IOException {
-	LWXMLEventListWriter tmpOut = new LWXMLEventListWriter();
-	super.translateAttributeList(in, tmpOut, context);
-	tmpOut.writeTo(out);
+	super.translateAttributeList(in, out, context);
 
-	out.writeStartElement("span");
-	tmpOut.writeTo(out);
-    }
+	DocumentStyle style = context.getStyle();
+	String name = getCurrentParsedAttribute(StyleAttribute.TEXT.getName());
 
-    @Override
-    public void translateChildren(LWXMLPushbackReader in, LWXMLWriter out,
-	    TranslationContext context) throws IOException {
-	if (LWXMLUtil.isEmptyElement(in)) {
-	    out.writeStartElement("br");
-	    out.writeEndEmptyElement();
-	    translateEndElement(in, out, context);
-	} else {
-	    in.unreadEvent();
+	// TODO: add text style if not insertSpan?
+	out.writeAttribute(style.getStyleAttribute(name,
+		StylePropertyGroup.PARAGRAPH));
+
+	if (insertSpan) {
+	    out.writeStartElement("span");
+	    out.writeAttribute(style.getStyleAttribute(name,
+		    StylePropertyGroup.TEXT));
 	}
     }
 
     @Override
     public void translateEndElement(LWXMLPushbackReader in, LWXMLWriter out,
 	    TranslationContext context) throws IOException {
-	out.writeEndElement("span");
-	out.writeEndElement("div");
+	if (insertSpan) {
+	    out.writeEndElement("span");
+	}
+
+	super.translateEndElement(in, out, context);
     }
 
 }

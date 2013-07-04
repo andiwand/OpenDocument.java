@@ -1,15 +1,9 @@
 package at.andiwand.odf2html.translator.content;
 
-import at.andiwand.odf2html.translator.context.TranslationContext;
-import at.andiwand.odf2html.translator.lwxml.LWXMLElementReplacement;
-
-public class SimpleTableTranslator extends
-	LWXMLElementReplacement<TranslationContext> {
-
-    private static final String NEW_ELEMENT_NAME = "table";
+public class SimpleTableTranslator extends SimpleTableElementTranslator {
 
     public SimpleTableTranslator() {
-	super(NEW_ELEMENT_NAME);
+	super("table");
 
 	addNewAttribute("border", "0");
 	addNewAttribute("cellspacing", "0");

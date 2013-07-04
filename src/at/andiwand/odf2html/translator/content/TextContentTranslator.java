@@ -3,24 +3,17 @@ package at.andiwand.odf2html.translator.content;
 import at.andiwand.odf2html.translator.context.TextTranslationContext;
 
 public class TextContentTranslator extends
-	DefaultContentTranslator<TextTranslationContext> {
+	DefaultTextContentTranslator<TextTranslationContext> {
 
     public TextContentTranslator() {
-	addElementTranslator("draw:frame", new FrameTranslator(false));
-
-	addElementTranslator("text:list", "ul");
-	addElementTranslator("text:list-item", "li");
-
-	addElementTranslator("table:table", new SimpleTableTranslator());
-	addElementTranslator("table:table-column", "col");
-	addElementTranslator("table:table-row", "tr");
-	addElementTranslator("table:table-cell", "td");
-
-	ParagraphTranslator paragraphTranslator = new ParagraphTranslator();
+	ParagraphTranslator paragraphTranslator = new ParagraphTranslator("p",
+		true);
 	addElementTranslator("text:p", paragraphTranslator);
 	addElementTranslator("text:h", paragraphTranslator);
 
-	addElementTranslator("text:line-break", "br");
+	BookmarkTranslator bookmarkTranslator = new BookmarkTranslator();
+	addElementTranslator(BookmarkTranslator.START, bookmarkTranslator);
+	addElementTranslator(BookmarkTranslator.END, bookmarkTranslator);
     }
 
 }
