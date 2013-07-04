@@ -65,8 +65,15 @@ public abstract class GenericDocumentTranslator<D extends OpenDocument, S extend
 	out.writeStartElement("style");
 	out.writeAttribute("type", "text/css");
 	out.writeCharacters("");
+	contentTranslator.generateStyle(out, context);
 	translateStyle(in, new StyleSheetWriter(out), context);
 	out.writeEndElement("style");
+
+	out.writeStartElement("script");
+	out.writeAttribute("type", "text/javascript");
+	out.writeCharacters("");
+	contentTranslator.generateScript(out, context);
+	out.writeEndElement("script");
     }
 
     // TODO: outsource?

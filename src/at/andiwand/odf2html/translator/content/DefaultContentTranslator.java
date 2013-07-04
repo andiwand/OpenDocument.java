@@ -1,5 +1,8 @@
 package at.andiwand.odf2html.translator.content;
 
+import java.io.IOException;
+import java.io.Writer;
+
 import at.andiwand.odf2html.translator.context.TranslationContext;
 
 public abstract class DefaultContentTranslator<C extends TranslationContext>
@@ -20,6 +23,18 @@ public abstract class DefaultContentTranslator<C extends TranslationContext>
 
 	addElementTranslator("draw:image", new ImageTranslator());
 	addElementTranslator("draw:frame", new FrameTranslator());
+    }
+
+    @Override
+    public void generateStyle(Writer out, C context) throws IOException {
+	// TODO: out-source?
+	out.write("* {margin:0px;position:relative;}");
+	out.write("body {padding:5px;}");
+	out.write("td {vertical-align:top;}");
+	out.write("span {white-space:pre-wrap;}");
+	out.write("table {border-collapse:collapse;}");
+
+	super.generateStyle(out, context);
     }
 
 }

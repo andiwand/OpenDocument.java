@@ -19,19 +19,7 @@ import at.andiwand.odf2html.translator.style.property.StylePropertyGroup;
 // TODO: make use of multiple class selector
 public class DocumentStyle {
 
-    private static final String DEFAULT_STYLE_SHEET_NAME = "default.css";
-    private static final StyleSheet DEFAULT_STYLE_SHEET;
-
     private static final String GROUP_PREFIX = "_group-";
-
-    static {
-	try {
-	    DEFAULT_STYLE_SHEET = loadStyleSheet(DEFAULT_STYLE_SHEET_NAME,
-		    DocumentStyle.class);
-	} catch (IOException e) {
-	    throw new IllegalStateException();
-	}
-    }
 
     protected static StyleSheet loadStyleSheet(String name, Class<?> location)
 	    throws IOException {
@@ -60,8 +48,6 @@ public class DocumentStyle {
 	if (styleOut == null)
 	    throw new NullPointerException();
 	this.styleOut = styleOut;
-
-	styleOut.writeSheet(DEFAULT_STYLE_SHEET);
     }
 
     public List<String> getStyleParents(String name) {
