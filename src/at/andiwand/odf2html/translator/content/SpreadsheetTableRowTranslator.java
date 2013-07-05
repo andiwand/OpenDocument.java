@@ -3,13 +3,12 @@ package at.andiwand.odf2html.translator.content;
 import java.io.IOException;
 
 import at.andiwand.commons.lwxml.reader.LWXMLPushbackReader;
-import at.andiwand.commons.lwxml.translator.LWXMLElementReplacement;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
 import at.andiwand.commons.util.NumberUtil;
 import at.andiwand.odf2html.translator.context.SpreadsheetTranslationContext;
 
 public class SpreadsheetTableRowTranslator extends
-	LWXMLElementReplacement<SpreadsheetTranslationContext> {
+	SpreadsheetTableElementTranslator {
 
     private static final String ROWS_REPEATED_ATTRIBUTE_NAME = "table:number-rows-repeated";
 

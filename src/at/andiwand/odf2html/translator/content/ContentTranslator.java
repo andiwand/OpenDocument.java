@@ -18,7 +18,7 @@ public abstract class ContentTranslator<C extends TranslationContext> extends
 	for (LWXMLElementTranslator<? super C> lwxmlTranslator : elementTranslators()) {
 	    if (!(lwxmlTranslator instanceof DefaultElementTranslator))
 		continue;
-	    DefaultElementTranslator translator = (DefaultElementTranslator) lwxmlTranslator;
+	    DefaultElementTranslator<? super C> translator = (DefaultElementTranslator<? super C>) lwxmlTranslator;
 	    translator.generateStyle(out, context);
 	}
     }
@@ -28,7 +28,7 @@ public abstract class ContentTranslator<C extends TranslationContext> extends
 	for (LWXMLElementTranslator<? super C> lwxmlTranslator : elementTranslators()) {
 	    if (!(lwxmlTranslator instanceof DefaultElementTranslator))
 		continue;
-	    DefaultElementTranslator translator = (DefaultElementTranslator) lwxmlTranslator;
+	    DefaultElementTranslator<? super C> translator = (DefaultElementTranslator<? super C>) lwxmlTranslator;
 	    translator.generateScript(out, context);
 	}
     }

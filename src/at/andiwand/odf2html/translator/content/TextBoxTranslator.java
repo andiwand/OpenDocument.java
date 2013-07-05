@@ -6,7 +6,8 @@ import at.andiwand.commons.lwxml.reader.LWXMLPushbackReader;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
 import at.andiwand.odf2html.translator.context.TranslationContext;
 
-public class TextBoxTranslator extends DefaultBlockTranslator {
+public class TextBoxTranslator extends
+	DefaultBlockTranslator<TranslationContext> {
 
     public TextBoxTranslator() {
 	super(null);

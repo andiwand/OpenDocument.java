@@ -8,7 +8,7 @@ import at.andiwand.commons.lwxml.reader.LWXMLPushbackReader;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
 import at.andiwand.odf2html.translator.context.TranslationContext;
 
-public class TabTranslator extends DefaultElementTranslator {
+public class TabTranslator extends DefaultElementTranslator<TranslationContext> {
 
     public TabTranslator() {
 	super(null);
@@ -19,10 +19,10 @@ public class TabTranslator extends DefaultElementTranslator {
 	    TranslationContext context) throws IOException {
 	out.writeCharacters("\t");
     }
-    
+
     @Override
     public void translateAttributeList(LWXMLPushbackReader in, LWXMLWriter out,
-            TranslationContext context) throws IOException {
+	    TranslationContext context) throws IOException {
 	LWXMLUtil.flushEmptyElement(in);
     }
 

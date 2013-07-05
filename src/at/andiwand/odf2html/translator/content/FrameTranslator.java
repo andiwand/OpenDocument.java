@@ -8,7 +8,8 @@ import at.andiwand.commons.lwxml.writer.LWXMLWriter;
 import at.andiwand.odf2html.translator.context.TranslationContext;
 import at.andiwand.odf2html.translator.style.property.StylePropertyGroup;
 
-public class FrameTranslator extends DefaultStyledElementTranslator {
+public class FrameTranslator extends
+	DefaultStyledElementTranslator<TranslationContext> {
 
     private static final String X_ATTRIBUTE_NAME = "svg:x";
     private static final String Y_ATTRIBUTE_NAME = "svg:y";

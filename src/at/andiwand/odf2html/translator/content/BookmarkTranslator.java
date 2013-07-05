@@ -7,7 +7,8 @@ import at.andiwand.commons.lwxml.reader.LWXMLPushbackReader;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
 import at.andiwand.odf2html.translator.context.TranslationContext;
 
-public class BookmarkTranslator extends DefaultElementTranslator {
+public class BookmarkTranslator extends
+	DefaultElementTranslator<TranslationContext> {
 
     public static final String START = "text:bookmark-start";
     public static final String END = "text:bookmark-end";

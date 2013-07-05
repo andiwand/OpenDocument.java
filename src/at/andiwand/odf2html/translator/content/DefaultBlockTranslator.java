@@ -7,7 +7,8 @@ import at.andiwand.commons.lwxml.reader.LWXMLPushbackReader;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
 import at.andiwand.odf2html.translator.context.TranslationContext;
 
-public class DefaultBlockTranslator extends DefaultElementTranslator {
+public class DefaultBlockTranslator<C extends TranslationContext> extends
+	DefaultElementTranslator<C> {
 
     public DefaultBlockTranslator(String elementName) {
 	super(elementName);

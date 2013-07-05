@@ -4,13 +4,12 @@ import java.io.IOException;
 
 import at.andiwand.commons.lwxml.LWXMLAttribute;
 import at.andiwand.commons.lwxml.reader.LWXMLPushbackReader;
-import at.andiwand.commons.lwxml.translator.LWXMLElementReplacement;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
 import at.andiwand.commons.util.NumberUtil;
 import at.andiwand.odf2html.translator.context.SpreadsheetTranslationContext;
 
 public class SpreadsheetTableCellTranslator extends
-	LWXMLElementReplacement<SpreadsheetTranslationContext> {
+	SpreadsheetTableElementTranslator {
 
     private static final String STYLE_ATTRIBUTE_NAME = "table:style-name";
     private static final String COLUMNS_REPEATED_ATTRIBUTE_NAME = "table:number-columns-repeated";

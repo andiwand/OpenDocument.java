@@ -8,7 +8,8 @@ import at.andiwand.odf2html.translator.context.TranslationContext;
 import at.andiwand.odf2html.translator.style.DocumentStyle;
 import at.andiwand.odf2html.translator.style.property.StylePropertyGroup;
 
-public class ParagraphTranslator extends DefaultBlockTranslator {
+public class ParagraphTranslator extends
+	DefaultBlockTranslator<TranslationContext> {
 
     private final boolean insertSpan;
 

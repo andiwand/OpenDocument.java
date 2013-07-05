@@ -1,10 +1,12 @@
 package at.andiwand.odf2html.translator.content;
 
+import at.andiwand.odf2html.translator.context.TranslationContext;
 import at.andiwand.odf2html.translator.style.property.StylePropertyGroup;
 
-public class DefaultSpanTranslator extends DefaultStyledElementTranslator {
+public class SpanTranslator extends
+	DefaultStyledElementTranslator<TranslationContext> {
 
-    public DefaultSpanTranslator() {
+    public SpanTranslator() {
 	super("span", StyleAttribute.TEXT, StylePropertyGroup.TEXT);
     }
 

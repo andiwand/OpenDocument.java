@@ -7,9 +7,8 @@ public class DefaultTextContentTranslator<C extends TranslationContext> extends
 
     public DefaultTextContentTranslator() {
 	// TODO: translate list style
-	addElementTranslator("text:list", new DefaultElementTranslator("ul"));
-	addElementTranslator("text:list-item", new DefaultElementTranslator(
-		"li"));
+	addElementTranslator("text:list", "ul");
+	addElementTranslator("text:list-item", "li");
 
 	addElementTranslator("table:table", new SimpleTableTranslator());
 	addElementTranslator("table:table-column",

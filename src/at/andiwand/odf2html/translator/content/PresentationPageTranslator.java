@@ -6,12 +6,13 @@ import at.andiwand.commons.lwxml.reader.LWXMLPushbackReader;
 import at.andiwand.commons.lwxml.translator.LWXMLAttributeTranslator;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
 import at.andiwand.commons.util.string.StringUtil;
-import at.andiwand.odf2html.translator.context.TranslationContext;
+import at.andiwand.odf2html.translator.context.PresentationTranslationContext;
 import at.andiwand.odf2html.translator.style.DocumentStyle;
 import at.andiwand.odf2html.translator.style.property.StylePropertyGroup;
 
 // TODO: improve with complex attribute translator
-public class PresentationPageTranslator extends DefaultElementTranslator {
+public class PresentationPageTranslator extends
+	DefaultElementTranslator<PresentationTranslationContext> {
 
     private static final String STYLE_ATTRIBUTE = StyleAttribute.DRAW.getName();
     private static final String MASTER_PAGE_ATTRIBUTE = StyleAttribute.MASTER_PAGE
@@ -26,14 +27,15 @@ public class PresentationPageTranslator extends DefaultElementTranslator {
 	addParseAttribute(MASTER_PAGE_ATTRIBUTE);
     }
 
-    public boolean addAttributeTranslator(String attributeName,
-	    LWXMLAttributeTranslator<? super TranslationContext> translator) {
+    public boolean addAttributeTranslator(
+	    String attributeName,
+	    LWXMLAttributeTranslator<? super PresentationTranslationContext> translator) {
 	return false;
     }
 
     @Override
     public void translateAttributeList(LWXMLPushbackReader in, LWXMLWriter out,
-	    TranslationContext context) throws IOException {
+	    PresentationTranslationContext context) throws IOException {
 	super.translateAttributeList(in, out, context);
 
 	DocumentStyle style = context.getStyle();

@@ -3,6 +3,7 @@ package at.andiwand.odf2html.translator.content;
 import java.io.IOException;
 import java.io.Writer;
 
+import at.andiwand.odf2html.translator.StyleScriptUtil;
 import at.andiwand.odf2html.translator.context.TranslationContext;
 
 public abstract class DefaultContentTranslator<C extends TranslationContext>
@@ -13,13 +14,12 @@ public abstract class DefaultContentTranslator<C extends TranslationContext>
 	addElementTranslator("text:p", paragraphTranslator);
 	addElementTranslator("text:h", paragraphTranslator);
 
-	addElementTranslator("text:span", new DefaultSpanTranslator());
+	addElementTranslator("text:span", new SpanTranslator());
 	addElementTranslator("text:a", new LinkTranslator());
 
 	addElementTranslator("text:s", new SpaceTranslator());
 	addElementTranslator("text:tab", new TabTranslator());
-	addElementTranslator("text:line-break", new DefaultElementTranslator(
-		"br"));
+	addElementTranslator("text:line-break", "br");
 
 	addElementTranslator("draw:image", new ImageTranslator());
 	addElementTranslator("draw:frame", new FrameTranslator());
@@ -27,12 +27,7 @@ public abstract class DefaultContentTranslator<C extends TranslationContext>
 
     @Override
     public void generateStyle(Writer out, C context) throws IOException {
-	// TODO: out-source?
-	out.write("* {margin:0px;position:relative;}");
-	out.write("body {padding:5px;}");
-	out.write("td {vertical-align:top;}");
-	out.write("span {white-space:pre-wrap;}");
-	out.write("table {border-collapse:collapse;}");
+	StyleScriptUtil.pipeStyleResource(DefaultContentTranslator.class, out);
 
 	super.generateStyle(out, context);
     }

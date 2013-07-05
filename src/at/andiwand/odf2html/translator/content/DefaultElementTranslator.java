@@ -8,22 +8,20 @@ import at.andiwand.odf2html.translator.ScriptGenerator;
 import at.andiwand.odf2html.translator.StyleGenerator;
 import at.andiwand.odf2html.translator.context.TranslationContext;
 
-public class DefaultElementTranslator extends
-	LWXMLElementReplacement<TranslationContext> implements
-	StyleGenerator<TranslationContext>, ScriptGenerator<TranslationContext> {
+public class DefaultElementTranslator<C extends TranslationContext> extends
+	LWXMLElementReplacement<C> implements StyleGenerator<C>,
+	ScriptGenerator<C> {
 
     public DefaultElementTranslator(String elementName) {
 	super(elementName);
     }
 
     @Override
-    public void generateStyle(Writer out, TranslationContext context)
-	    throws IOException {
+    public void generateStyle(Writer out, C context) throws IOException {
     }
 
     @Override
-    public void generateScript(Writer out, TranslationContext context)
-	    throws IOException {
+    public void generateScript(Writer out, C context) throws IOException {
     }
 
 }

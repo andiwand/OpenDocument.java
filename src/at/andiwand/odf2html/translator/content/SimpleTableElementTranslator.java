@@ -1,12 +1,12 @@
 package at.andiwand.odf2html.translator.content;
 
-import at.andiwand.odf2html.translator.style.property.StylePropertyGroup;
+import at.andiwand.odf2html.translator.context.TranslationContext;
 
 public class SimpleTableElementTranslator extends
-	DefaultStyledElementTranslator {
+	TableElementTranslator<TranslationContext> {
 
     public SimpleTableElementTranslator(String elementName) {
-	super(elementName, StyleAttribute.TABLE, StylePropertyGroup.TABLE);
+	super(elementName);
     }
 
 }

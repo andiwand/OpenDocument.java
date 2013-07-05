@@ -6,7 +6,8 @@ import at.andiwand.commons.lwxml.reader.LWXMLPushbackReader;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
 import at.andiwand.odf2html.translator.context.TranslationContext;
 
-public class LinkTranslator extends DefaultElementTranslator {
+public class LinkTranslator extends
+	DefaultElementTranslator<TranslationContext> {
 
     private static final String HREF_ATTRIBUTE = "xlink:href";
 

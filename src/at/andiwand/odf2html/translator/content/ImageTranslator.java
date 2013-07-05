@@ -17,7 +17,8 @@ import at.andiwand.odf2html.util.FileCache;
 
 // TODO: implement charts
 // TODO: skip empty images
-public class ImageTranslator extends DefaultElementTranslator {
+public class ImageTranslator extends
+	DefaultElementTranslator<TranslationContext> {
 
     private static final String PATH_ATTRIBUTE_NAME = "xlink:href";
 

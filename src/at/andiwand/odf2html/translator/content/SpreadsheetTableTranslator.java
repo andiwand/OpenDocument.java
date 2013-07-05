@@ -1,6 +1,7 @@
 package at.andiwand.odf2html.translator.content;
 
 import java.io.IOException;
+import java.io.Writer;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,20 +14,19 @@ import at.andiwand.commons.lwxml.LWXMLUtil;
 import at.andiwand.commons.lwxml.reader.LWXMLBranchReader;
 import at.andiwand.commons.lwxml.reader.LWXMLPushbackReader;
 import at.andiwand.commons.lwxml.reader.LWXMLReader;
-import at.andiwand.commons.lwxml.translator.LWXMLAttributeTranslator;
-import at.andiwand.commons.lwxml.translator.LWXMLElementReplacement;
 import at.andiwand.commons.lwxml.writer.LWXMLEventQueueWriter;
 import at.andiwand.commons.lwxml.writer.LWXMLWriter;
 import at.andiwand.commons.math.vector.Vector2i;
 import at.andiwand.commons.util.collection.OrderedPair;
 import at.andiwand.commons.util.iterator.CycleIterator;
+import at.andiwand.odf2html.translator.StyleScriptUtil;
 import at.andiwand.odf2html.translator.context.SpreadsheetTranslationContext;
 import at.andiwand.odf2html.translator.style.property.StylePropertyGroup;
 
 // TODO: implement remove methods
 // TODO: renew
 public class SpreadsheetTableTranslator extends
-	LWXMLElementReplacement<SpreadsheetTranslationContext> {
+	SpreadsheetTableElementTranslator {
 
     private static final String TABLE_ELEMENT_NAME = "table:table";
     private static final String TABLE_NAME_ATTRIBUTE_NAME = "table:name";
@@ -48,7 +48,7 @@ public class SpreadsheetTableTranslator extends
     private final List<String> currentColumnDefaultStyles = new LinkedList<String>();
     private Iterator<String> currentColumnDefaultStylesIterator;
 
-    private final LWXMLEventQueueWriter untilShapesTmpOut = new LWXMLEventQueueWriter();
+    private final LWXMLEventQueueWriter untilShapes = new LWXMLEventQueueWriter();
 
     private final LWXMLEventQueueWriter tmpRowHead = new LWXMLEventQueueWriter();
     private final LWXMLEventQueueWriter tmpCellOut = new LWXMLEventQueueWriter();
@@ -68,19 +68,10 @@ public class SpreadsheetTableTranslator extends
     }
 
     @Override
-    public boolean addAttributeTranslator(
-	    String attributeName,
-	    LWXMLAttributeTranslator<? super SpreadsheetTranslationContext> translator) {
-	boolean result = super
-		.addAttributeTranslator(attributeName, translator);
-
-	if (result) {
-	    columnTranslation.addAttributeTranslator(attributeName, translator);
-	    rowTranslation.addAttributeTranslator(attributeName, translator);
-	    cellTranslator.addAttributeTranslator(attributeName, translator);
-	}
-
-	return result;
+    public void generateStyle(Writer out, SpreadsheetTranslationContext context)
+	    throws IOException {
+	StyleScriptUtil
+		.pipeStyleResource(SpreadsheetTableTranslator.class, out);
     }
 
     private LWXMLAttribute getCurrentColumnDefaultStyleAttribute(
@@ -115,26 +106,29 @@ public class SpreadsheetTableTranslator extends
     @Override
     public void translateStartElement(LWXMLPushbackReader in, LWXMLWriter out,
 	    SpreadsheetTranslationContext context) throws IOException {
-	super.translateStartElement(in, untilShapesTmpOut, context);
+	super.translateStartElement(in, untilShapes, context);
     }
 
     @Override
     public void translateAttributeList(LWXMLPushbackReader in, LWXMLWriter out,
 	    SpreadsheetTranslationContext context) throws IOException {
-	super.translateAttributeList(in, untilShapesTmpOut, context);
+	super.translateAttributeList(in, untilShapes, context);
 
 	currentMaxDimension = context.getDocument().getTableDimensionMap()
 		.get(getCurrentParsedAttribute(TABLE_NAME_ATTRIBUTE_NAME));
 	if (context.getSettings().getMaximalTableDimension() != null)
 	    currentMaxDimension = currentMaxDimension.min(context.getSettings()
 		    .getMaximalTableDimension());
+	else
+	    currentMaxDimension = context.getSettings()
+		    .getMaximalTableDimension();
     }
 
     @Override
     public void translateEndAttributeList(LWXMLPushbackReader in,
 	    LWXMLWriter out, SpreadsheetTranslationContext context)
 	    throws IOException {
-	super.translateEndAttributeList(in, untilShapesTmpOut, context);
+	super.translateEndAttributeList(in, untilShapes, context);
     }
 
     @Override
@@ -142,8 +136,8 @@ public class SpreadsheetTableTranslator extends
 	    SpreadsheetTranslationContext context) throws IOException {
 	translateShapes(in, out, context);
 
-	untilShapesTmpOut.writeTo(out);
-	untilShapesTmpOut.reset();
+	untilShapes.writeTo(out);
+	untilShapes.reset();
 
 	// LWXMLUtil.flushUntilStartElement(in, COLUMN_ELEMENT_NAME);
 	// in.unreadEvent(COLUMN_ELEMENT_NAME);
