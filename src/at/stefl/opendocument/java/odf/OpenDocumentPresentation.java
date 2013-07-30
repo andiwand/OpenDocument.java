@@ -10,23 +10,16 @@ import at.stefl.commons.lwxml.reader.LWXMLFlatReader;
 import at.stefl.commons.lwxml.reader.LWXMLReader;
 import at.stefl.commons.lwxml.reader.LWXMLStreamReader;
 
-public class OpenDocumentPresentation extends OpenDocument {
-
-    public static final String MIMETYPE = "application/vnd.oasis.opendocument.presentation";
+public final class OpenDocumentPresentation extends OpenDocument {
 
     private static final LWXMLPath PAGE_PATH = new LWXMLPath(
 	    "office:document-content/office:body/office:presentation");
     private static final String PAGE_NAME_ATTRIBUTE = "draw:name";
 
-    public static boolean checkMimetype(String mimetype) {
-	return mimetype.startsWith(MIMETYPE);
-    }
-
     private List<String> pageNames;
 
-    public OpenDocumentPresentation(OpenDocumentFile openDocumentFile)
-	    throws IOException {
-	super(openDocumentFile);
+    public OpenDocumentPresentation(OpenDocumentFile documentFile) {
+	super(documentFile);
     }
 
     public int getPageCount() throws IOException {
@@ -44,11 +37,6 @@ public class OpenDocumentPresentation extends OpenDocument {
 	}
 
 	return pageNames;
-    }
-
-    @Override
-    protected boolean isMimetypeValid(String mimetype) {
-	return checkMimetype(mimetype);
     }
 
 }

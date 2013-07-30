@@ -7,26 +7,16 @@ import at.stefl.commons.lwxml.path.LWXMLPath;
 
 public abstract class OpenDocument {
 
-    public static final String MIMETYPE = "application/vnd.oasis.opendocument";
+    private static final String META = "meta.xml";
+    private static final String STYLES = "styles.xml";
+    private static final String CONTENT = "content.xml";
 
-    public static final String META = "meta.xml";
-    public static final String STYLES = "styles.xml";
-    public static final String CONTENT = "content.xml";
-
-    public static final LWXMLPath META_DOCUMENT_STATISTICS_PATH = new LWXMLPath(
+    protected static final LWXMLPath META_DOCUMENT_STATISTICS_PATH = new LWXMLPath(
 	    "office:document-meta/office:meta/meta:document-statistic");
-
-    public static boolean checkMimetype(String mimetype) {
-	return mimetype.startsWith(MIMETYPE);
-    }
 
     private OpenDocumentFile documentFile;
 
-    public OpenDocument(OpenDocumentFile documentFile) throws IOException {
-	String mimetype = documentFile.getMimetype();
-	if (!isMimetypeValid(mimetype))
-	    throw new IllegalMimeTypeException(mimetype);
-
+    OpenDocument(OpenDocumentFile documentFile) {
 	this.documentFile = documentFile;
     }
 
@@ -69,7 +59,5 @@ public abstract class OpenDocument {
     public OpenDocumentPresentation getAsPresentation() {
 	return (OpenDocumentPresentation) this;
     }
-
-    protected abstract boolean isMimetypeValid(String mimetype);
 
 }

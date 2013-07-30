@@ -4,7 +4,8 @@ import java.io.File;
 
 import javax.swing.JFileChooser;
 
-import at.stefl.opendocument.java.odf.TemporaryOpenDocumentFile;
+import at.stefl.opendocument.java.odf.LocatedOpenDocumentFile;
+import at.stefl.opendocument.java.odf.OpenDocumentFile;
 
 public class DigestTest {
 
@@ -16,8 +17,7 @@ public class DigestTest {
 	    return;
 
 	File file = fileChooser.getSelectedFile();
-	TemporaryOpenDocumentFile documentFile = new TemporaryOpenDocumentFile(
-		file);
+	OpenDocumentFile documentFile = new LocatedOpenDocumentFile(file);
 
 	documentFile.setPassword("testpassword");
 	System.out.println(documentFile.isPasswordValid());

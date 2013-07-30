@@ -18,10 +18,6 @@ public class LocatedOpenDocumentFile extends OpenDocumentFile {
 
     private Map<String, ZipEntry> entryMap;
 
-    // TODO: improve
-    protected LocatedOpenDocumentFile() {
-    }
-
     public LocatedOpenDocumentFile(File file) throws IOException {
 	init(file);
     }
@@ -30,7 +26,6 @@ public class LocatedOpenDocumentFile extends OpenDocumentFile {
 	this(new File(path));
     }
 
-    // TODO: improve
     protected void init(File file) throws IOException {
 	this.file = file;
 	this.zipFile = new ZipFile(file);

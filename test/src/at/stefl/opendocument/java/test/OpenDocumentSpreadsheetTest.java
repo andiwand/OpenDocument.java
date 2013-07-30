@@ -26,7 +26,8 @@ public class OpenDocumentSpreadsheetTest {
 
 	File file = fileChooser.getSelectedFile();
 	OpenDocumentFile documentFile = new LocatedOpenDocumentFile(file);
-	OpenDocumentSpreadsheet spreadsheet = documentFile.getAsSpreadsheet();
+	OpenDocumentSpreadsheet spreadsheet = documentFile.getAsDocument()
+		.getAsSpreadsheet();
 
 	test(spreadsheet);
 

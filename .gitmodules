@@ -1,6 +1,3 @@
 [submodule "dep/commons"]
 	path = dep/commons
 	url = git@github.com:andiwand/commons.git
-[submodule "test/dep/OpenDocument.test"]
-	path = test/dep/OpenDocument.test
-	url = git@github.com:TomTasche/OpenDocument.test.git

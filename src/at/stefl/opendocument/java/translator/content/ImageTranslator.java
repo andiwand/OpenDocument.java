@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.io.Writer;
 
 import at.stefl.commons.codec.Base64OutputStream;
+import at.stefl.commons.codec.Base64Settings;
 import at.stefl.commons.io.ByteStreamUtil;
 import at.stefl.commons.lwxml.LWXMLUtil;
 import at.stefl.commons.lwxml.reader.LWXMLPushbackReader;
@@ -122,7 +123,8 @@ public class ImageTranslator extends
 	out.write(";base64,");
 
 	InputStream imgIn = context.getDocumentFile().getFileStream(name);
-	OutputStream imgOut = new Base64OutputStream(out);
+	OutputStream imgOut = new Base64OutputStream(out,
+		Base64Settings.ORIGINAL);
 	streamUtil.writeStream(imgIn, imgOut);
     }
 

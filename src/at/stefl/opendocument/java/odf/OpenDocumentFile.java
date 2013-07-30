@@ -198,29 +198,7 @@ public abstract class OpenDocumentFile implements Closeable {
     }
 
     public OpenDocument getAsDocument() throws IOException {
-	String mimetype = getMimetype();
-
-	if (OpenDocumentText.checkMimetype(mimetype)) {
-	    return getAsText();
-	} else if (OpenDocumentSpreadsheet.checkMimetype(mimetype)) {
-	    return getAsSpreadsheet();
-	} else if (OpenDocumentPresentation.checkMimetype(mimetype)) {
-	    return getAsPresentation();
-	}
-
-	throw new IllegalMimeTypeException(mimetype);
-    }
-
-    public OpenDocumentText getAsText() throws IOException {
-	return new OpenDocumentText(this);
-    }
-
-    public OpenDocumentSpreadsheet getAsSpreadsheet() throws IOException {
-	return new OpenDocumentSpreadsheet(this);
-    }
-
-    public OpenDocumentPresentation getAsPresentation() throws IOException {
-	return new OpenDocumentPresentation(this);
+	return OpenDocumentType.getSuitableDocument(this);
     }
 
 }

@@ -26,7 +26,7 @@ public class OpenDocumentPresentationTest {
 
 	File file = fileChooser.getSelectedFile();
 	OpenDocumentFile documentFile = new LocatedOpenDocumentFile(file);
-	OpenDocumentPresentation presentation = documentFile
+	OpenDocumentPresentation presentation = documentFile.getAsDocument()
 		.getAsPresentation();
 
 	test(presentation);

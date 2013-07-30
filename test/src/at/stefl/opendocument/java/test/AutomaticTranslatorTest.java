@@ -1,19 +1,18 @@
 package at.stefl.opendocument.java.test;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import at.stefl.commons.lwxml.writer.LWXMLNullWriter;
 import at.stefl.commons.util.string.StringUtil;
+import at.stefl.opendocument.java.odf.LocatedOpenDocumentFile;
 import at.stefl.opendocument.java.odf.OpenDocument;
 import at.stefl.opendocument.java.odf.OpenDocumentFile;
 import at.stefl.opendocument.java.odf.OpenDocumentPresentation;
 import at.stefl.opendocument.java.odf.OpenDocumentSpreadsheet;
 import at.stefl.opendocument.java.odf.OpenDocumentText;
-import at.stefl.opendocument.java.odf.TemporaryOpenDocumentFile;
 import at.stefl.opendocument.java.translator.document.PresentationTranslator;
 import at.stefl.opendocument.java.translator.document.SpreadsheetTranslator;
 import at.stefl.opendocument.java.translator.document.TextTranslator;
@@ -57,8 +56,7 @@ public class AutomaticTranslatorTest {
 	System.out.println(file);
 	System.out.println(FILE_GAP);
 
-	OpenDocumentFile documentFile = new TemporaryOpenDocumentFile(
-		new FileInputStream(file), cache);
+	OpenDocumentFile documentFile = new LocatedOpenDocumentFile(file);
 	documentFile.setPassword(password);
 
 	OpenDocumentFileTest.test(documentFile);

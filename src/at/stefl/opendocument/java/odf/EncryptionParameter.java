@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import at.stefl.commons.codec.Base64;
+import at.stefl.commons.codec.Base64Settings;
 import at.stefl.commons.lwxml.LWXMLEvent;
 import at.stefl.commons.lwxml.reader.LWXMLReader;
 import at.stefl.commons.lwxml.reader.LWXMLStreamReader;
@@ -161,7 +162,7 @@ public class EncryptionParameter {
     }
 
     private void parseChecksum(String string) {
-	byte[] checksum = Base64.decodeChars(string);
+	byte[] checksum = Base64.decodeChars(string, Base64Settings.ORIGINAL);
 	setChecksum(checksum);
     }
 
@@ -187,7 +188,8 @@ public class EncryptionParameter {
     }
 
     private void parseInitialisationVector(String string) {
-	byte[] initialisationVector = Base64.decodeChars(string);
+	byte[] initialisationVector = Base64.decodeChars(string,
+		Base64Settings.ORIGINAL);
 	setInitialisationVector(initialisationVector);
     }
 
@@ -208,7 +210,7 @@ public class EncryptionParameter {
     }
 
     private void parseKeyDerivationSalt(String string) {
-	byte[] salt = Base64.decodeChars(string);
+	byte[] salt = Base64.decodeChars(string, Base64Settings.ORIGINAL);
 	setKeyDerivationSalt(salt);
     }
 

@@ -13,7 +13,7 @@ public class OpenDocumentTextTest {
 
     public static void test(OpenDocumentText text) throws IOException {
 	System.out.println(text.getPageCount());
-	System.out.println(text.useSoftPageBreaks());
+	System.out.println(text.isSoftPageBreaks());
     }
 
     public static void main(String[] args) throws Exception {
@@ -25,7 +25,7 @@ public class OpenDocumentTextTest {
 
 	File file = fileChooser.getSelectedFile();
 	OpenDocumentFile documentFile = new LocatedOpenDocumentFile(file);
-	OpenDocumentText text = documentFile.getAsText();
+	OpenDocumentText text = documentFile.getAsDocument().getAsText();
 
 	test(text);
 

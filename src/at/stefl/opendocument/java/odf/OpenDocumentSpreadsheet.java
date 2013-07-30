@@ -8,19 +8,12 @@ import java.util.Map;
 import at.stefl.commons.lwxml.reader.LWXMLStreamReader;
 import at.stefl.commons.math.vector.Vector2i;
 
-public class OpenDocumentSpreadsheet extends OpenDocument {
-
-    public static final String MIMETYPE = "application/vnd.oasis.opendocument.spreadsheet";
-
-    public static boolean checkMimetype(String mimetype) {
-	return mimetype.startsWith(MIMETYPE);
-    }
+public final class OpenDocumentSpreadsheet extends OpenDocument {
 
     private Map<String, Vector2i> tableMap;
 
-    public OpenDocumentSpreadsheet(OpenDocumentFile openDocumentFile)
-	    throws IOException {
-	super(openDocumentFile);
+    public OpenDocumentSpreadsheet(OpenDocumentFile documentFile) {
+	super(documentFile);
     }
 
     // TODO: use metrics?
@@ -40,11 +33,6 @@ public class OpenDocumentSpreadsheet extends OpenDocument {
 
     public Collection<String> getTableNames() throws IOException {
 	return getTableDimensionMap().keySet();
-    }
-
-    @Override
-    protected boolean isMimetypeValid(String mimetype) {
-	return checkMimetype(mimetype);
     }
 
 }
