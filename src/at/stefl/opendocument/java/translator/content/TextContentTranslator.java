@@ -14,6 +14,8 @@ public class TextContentTranslator extends
 	BookmarkTranslator bookmarkTranslator = new BookmarkTranslator();
 	addElementTranslator(BookmarkTranslator.START, bookmarkTranslator);
 	addElementTranslator(BookmarkTranslator.END, bookmarkTranslator);
+
+	addElementTranslator("draw:frame", new FrameTranslator(false));
     }
 
 }

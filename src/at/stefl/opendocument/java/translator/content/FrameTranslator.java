@@ -16,7 +16,6 @@ public class FrameTranslator extends
     private static final String WIDTH_ATTRIBUTE_NAME = "svg:width";
     private static final String HEIGHT_ATTRIBUTE_NAME = "svg:height";
 
-    // TODO: remove?
     private final boolean translatePosition;
 
     public FrameTranslator() {
@@ -41,6 +40,7 @@ public class FrameTranslator extends
 
 	String style = "";
 
+	// TODO: improve
 	if (translatePosition) {
 	    String x = getCurrentParsedAttribute(X_ATTRIBUTE_NAME);
 	    String y = getCurrentParsedAttribute(Y_ATTRIBUTE_NAME);
