@@ -5,6 +5,7 @@ import java.io.InputStream;
 
 import at.stefl.commons.lwxml.path.LWXMLPath;
 
+// TODO: provide OpenDocumentType?
 public abstract class OpenDocument {
 
     private static final String META = "meta.xml";
@@ -19,6 +20,8 @@ public abstract class OpenDocument {
     OpenDocument(OpenDocumentFile documentFile) {
 	this.documentFile = documentFile;
     }
+
+    public abstract OpenDocumentType getDocumentType();
 
     public OpenDocumentFile getDocumentFile() {
 	return documentFile;

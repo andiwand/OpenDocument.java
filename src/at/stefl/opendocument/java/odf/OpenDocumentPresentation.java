@@ -22,6 +22,11 @@ public final class OpenDocumentPresentation extends OpenDocument {
 	super(documentFile);
     }
 
+    @Override
+    public OpenDocumentType getDocumentType() {
+	return OpenDocumentType.PRESENTATION;
+    }
+
     public int getPageCount() throws IOException {
 	return getPageNames().size();
     }

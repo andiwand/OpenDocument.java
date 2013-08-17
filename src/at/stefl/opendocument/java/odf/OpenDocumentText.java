@@ -17,6 +17,11 @@ public final class OpenDocumentText extends OpenDocument {
 	super(documentFile);
     }
 
+    @Override
+    public OpenDocumentType getDocumentType() {
+	return OpenDocumentType.TEXT;
+    }
+
     public int getPageCount() throws IOException {
 	if (pageCount == -1) {
 	    try {

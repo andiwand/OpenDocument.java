@@ -1,3 +1,6 @@
 [submodule "dep/commons"]
 	path = dep/commons
 	url = git@github.com:andiwand/commons.git
+[submodule "dep/svm"]
+	path = dep/svm
+	url = https://github.com/andiwand/svm

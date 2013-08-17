@@ -16,6 +16,11 @@ public final class OpenDocumentSpreadsheet extends OpenDocument {
 	super(documentFile);
     }
 
+    @Override
+    public OpenDocumentType getDocumentType() {
+	return OpenDocumentType.SPREADSHEET;
+    }
+
     // TODO: use metrics?
     public int getTableCount() throws IOException {
 	return getTableDimensionMap().size();
