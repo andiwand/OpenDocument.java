@@ -14,6 +14,7 @@ public class DefaultBlockTranslator<C extends TranslationContext> extends
 	super(elementName);
     }
 
+    // TODO: fix me (whitespace?)
     @Override
     public void translateChildren(LWXMLPushbackReader in, LWXMLWriter out,
 	    TranslationContext context) throws IOException {
