@@ -17,6 +17,7 @@ import at.stefl.commons.lwxml.reader.LWXMLReader;
 import at.stefl.commons.lwxml.reader.LWXMLStreamReader;
 import at.stefl.commons.util.array.ArrayUtil;
 
+// TODO: rename "name" to "path" (context: file)
 public abstract class OpenDocumentFile implements Closeable {
 
     private static final String MIMETYPE_PATH = "mimetype";
@@ -106,7 +107,8 @@ public abstract class OpenDocumentFile implements Closeable {
 
     public abstract long getFileSize(String name);
 
-    // TODO: outsource
+    // TODO: out-source
+    // TODO: use mimetype class
     private String mimetypeFromExtension(String name) {
 	if (name.endsWith(".xml"))
 	    return "text/xml";
@@ -125,6 +127,9 @@ public abstract class OpenDocumentFile implements Closeable {
 	else if (name.endsWith(".wmf") || name.endsWith(".wmz")
 		|| name.endsWith(".emf") || name.endsWith(".emz"))
 	    return "image/x-wmf";
+	// TODO: improve
+	else if (name.contains("ObjectReplacement"))
+	    return "application/x-openoffice-gdimetafile;windows_formatname=\"GDIMetaFile\"";
 	else
 	    return null;
     }
@@ -152,6 +157,8 @@ public abstract class OpenDocumentFile implements Closeable {
 
 		    if (attributeName.equals("manifest:media-type")) {
 			mimetype = in.readFollowingValue();
+			// TODO: remove quickfix
+			mimetype = mimetype.replaceAll("&quot;", "\"");
 		    } else if (attributeName.equals("manifest:full-path")) {
 			name = in.readFollowingValue();
 		    }
