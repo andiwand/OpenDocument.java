@@ -37,6 +37,9 @@ public enum OpenDocumentType {
 	}
     };
 
+    private static final OpenDocumentType[] VALUES = values();
+    private static final String[] EXTENSIONS;
+
     private static final ObjectTransformer<OpenDocumentType, Class<? extends OpenDocument>> CLASS_KEY_GENERATOR = new ObjectTransformer<OpenDocumentType, Class<? extends OpenDocument>>() {
 	@Override
 	public Class<? extends OpenDocument> transform(OpenDocumentType value) {
@@ -47,6 +50,22 @@ public enum OpenDocumentType {
     private static final Map<Class<? extends OpenDocument>, OpenDocumentType> BY_CLASS_MAP = CollectionUtil
 	    .toHashMap(CLASS_KEY_GENERATOR, values());
 
+    static {
+	int count = 0;
+
+	for (OpenDocumentType type : VALUES) {
+	    count += type.extensions.size();
+	}
+
+	EXTENSIONS = new String[count];
+
+	int index = 0;
+	for (OpenDocumentType type : VALUES) {
+	    CollectionUtil.toArray(type.extensions, EXTENSIONS, index);
+	    index += type.extensions.size();
+	}
+    }
+    
     public static OpenDocumentType getByClass(
 	    Class<? extends OpenDocument> clazz) {
 	return BY_CLASS_MAP.get(clazz);
@@ -68,6 +87,10 @@ public enum OpenDocumentType {
 	    throws IOException {
 	return getByMimeType(documentFile.getMimetype()).getDocument(
 		documentFile);
+    }
+
+    public static String[] getExtensions() {
+	return EXTENSIONS.clone();
     }
 
     private final Set<String> extensions;
