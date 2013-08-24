@@ -12,115 +12,118 @@ import at.stefl.commons.util.object.ObjectTransformer;
 
 // TODO: provide "application/vnd.oasis.opendocument" check
 public enum OpenDocumentType {
-
+    
     TEXT(new String[] { "odt", "fodt" },
-	    "application/vnd.oasis.opendocument.text", OpenDocumentText.class) {
-	@Override
-	OpenDocumentText getDocument(OpenDocumentFile documentFile) {
-	    return new OpenDocumentText(documentFile);
-	}
+            "application/vnd.oasis.opendocument.text", OpenDocumentText.class) {
+        
+        @Override
+        OpenDocumentText getDocument(OpenDocumentFile documentFile) {
+            return new OpenDocumentText(documentFile);
+        }
     },
     SPREADSHEET(new String[] { "ods", "fods" },
-	    "application/vnd.oasis.opendocument.spreadsheet",
-	    OpenDocumentSpreadsheet.class) {
-	@Override
-	OpenDocumentSpreadsheet getDocument(OpenDocumentFile documentFile) {
-	    return new OpenDocumentSpreadsheet(documentFile);
-	}
+            "application/vnd.oasis.opendocument.spreadsheet",
+            OpenDocumentSpreadsheet.class) {
+        
+        @Override
+        OpenDocumentSpreadsheet getDocument(OpenDocumentFile documentFile) {
+            return new OpenDocumentSpreadsheet(documentFile);
+        }
     },
     PRESENTATION(new String[] { "odp", "fodp" },
-	    "application/vnd.oasis.opendocument.presentation",
-	    OpenDocumentPresentation.class) {
-	@Override
-	OpenDocumentPresentation getDocument(OpenDocumentFile documentFile) {
-	    return new OpenDocumentPresentation(documentFile);
-	}
+            "application/vnd.oasis.opendocument.presentation",
+            OpenDocumentPresentation.class) {
+        
+        @Override
+        OpenDocumentPresentation getDocument(OpenDocumentFile documentFile) {
+            return new OpenDocumentPresentation(documentFile);
+        }
     };
-
+    
     private static final OpenDocumentType[] VALUES = values();
     private static final String[] EXTENSIONS;
-
+    
     private static final ObjectTransformer<OpenDocumentType, Class<? extends OpenDocument>> CLASS_KEY_GENERATOR = new ObjectTransformer<OpenDocumentType, Class<? extends OpenDocument>>() {
-	@Override
-	public Class<? extends OpenDocument> transform(OpenDocumentType value) {
-	    return value.documentClass;
-	}
+        
+        @Override
+        public Class<? extends OpenDocument> transform(OpenDocumentType value) {
+            return value.documentClass;
+        }
     };
-
+    
     private static final Map<Class<? extends OpenDocument>, OpenDocumentType> BY_CLASS_MAP = CollectionUtil
-	    .toHashMap(CLASS_KEY_GENERATOR, values());
-
+            .toHashMap(CLASS_KEY_GENERATOR, values());
+    
     static {
-	int count = 0;
-
-	for (OpenDocumentType type : VALUES) {
-	    count += type.extensions.size();
-	}
-
-	EXTENSIONS = new String[count];
-
-	int index = 0;
-	for (OpenDocumentType type : VALUES) {
-	    CollectionUtil.toArray(type.extensions, EXTENSIONS, index);
-	    index += type.extensions.size();
-	}
+        int count = 0;
+        
+        for (OpenDocumentType type : VALUES) {
+            count += type.extensions.size();
+        }
+        
+        EXTENSIONS = new String[count];
+        
+        int index = 0;
+        for (OpenDocumentType type : VALUES) {
+            CollectionUtil.toArray(type.extensions, EXTENSIONS, index);
+            index += type.extensions.size();
+        }
     }
     
     public static OpenDocumentType getByClass(
-	    Class<? extends OpenDocument> clazz) {
-	return BY_CLASS_MAP.get(clazz);
+            Class<? extends OpenDocument> clazz) {
+        return BY_CLASS_MAP.get(clazz);
     }
-
+    
     public static OpenDocumentType getByMimeType(String mimeType) {
-	if (!mimeType.startsWith("application/vnd.oasis.opendocument"))
-	    throw new IllegalMimeTypeException(mimeType);
-
-	for (OpenDocumentType type : values()) {
-	    if (type.validMimeType(mimeType))
-		return type;
-	}
-
-	throw new UnsupportedMimeTypeException(mimeType);
+        if (!mimeType.startsWith("application/vnd.oasis.opendocument")) throw new IllegalMimeTypeException(
+                mimeType);
+        
+        for (OpenDocumentType type : values()) {
+            if (type.validMimeType(mimeType)) return type;
+        }
+        
+        throw new UnsupportedMimeTypeException(mimeType);
     }
-
+    
     public static OpenDocument getSuitableDocument(OpenDocumentFile documentFile)
-	    throws IOException {
-	return getByMimeType(documentFile.getMimetype()).getDocument(
-		documentFile);
+            throws IOException {
+        return getByMimeType(documentFile.getMimetype()).getDocument(
+                documentFile);
     }
-
+    
     public static String[] getExtensions() {
-	return EXTENSIONS.clone();
+        return EXTENSIONS.clone();
     }
-
+    
     private final Set<String> extensions;
     private final String mimeType;
     private final Class<? extends OpenDocument> documentClass;
-
+    
     private OpenDocumentType(String[] extensions, String mimetype,
-	    Class<? extends OpenDocument> documentClass) {
-	this.extensions = Collections.unmodifiableSet(ArrayUtil.toCollection(
-		new LinkedHashSet<String>(extensions.length), extensions));
-	this.mimeType = mimetype;
-	this.documentClass = documentClass;
+            Class<? extends OpenDocument> documentClass) {
+        this.extensions = Collections.unmodifiableSet(ArrayUtil.toCollection(
+                new LinkedHashSet<String>(extensions.length), extensions));
+        this.mimeType = mimetype;
+        this.documentClass = documentClass;
     }
-
+    
     public Set<String> getExtension() {
-	return extensions;
+        return extensions;
     }
-
+    
     public String getMimeType() {
-	return mimeType;
+        return mimeType;
     }
-
+    
     public Class<? extends OpenDocument> getDocumentClass() {
-	return documentClass;
+        return documentClass;
     }
-
+    
     public boolean validMimeType(String mimeType) {
-	return mimeType.startsWith(this.mimeType);
+        return mimeType.startsWith(this.mimeType);
     }
-
+    
     abstract OpenDocument getDocument(OpenDocumentFile documentFile);
-
+    
 }

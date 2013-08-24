@@ -10,28 +10,28 @@ import at.stefl.opendocument.java.translator.style.PresentationStyle;
 import at.stefl.opendocument.java.translator.style.PresentationStyleTranslator;
 
 public class PresentationTranslator
-	extends
-	GenericDocumentTranslator<OpenDocumentPresentation, PresentationStyle, PresentationTranslationContext> {
-
+        extends
+        GenericDocumentTranslator<OpenDocumentPresentation, PresentationStyle, PresentationTranslationContext> {
+    
     public PresentationTranslator() {
-	super(new PresentationStyleTranslator(),
-		new PresentationContentTranslator());
+        super(new PresentationStyleTranslator(),
+                new PresentationContentTranslator());
     }
-
+    
     @Override
     protected void translateMeta(LWXMLWriter out) throws IOException {
-	super.translateMeta(out);
-
-	out.writeStartElement("meta");
-	out.writeAttribute("name", "viewport");
-	out.writeAttribute("content",
-		"width=device-width; initial-scale=1.0; user-scalable=yes");
-	out.writeEndElement("meta");
+        super.translateMeta(out);
+        
+        out.writeStartElement("meta");
+        out.writeAttribute("name", "viewport");
+        out.writeAttribute("content",
+                "width=device-width; initial-scale=1.0; user-scalable=yes");
+        out.writeEndElement("meta");
     }
-
+    
     @Override
     protected PresentationTranslationContext createContext() {
-	return new PresentationTranslationContext();
+        return new PresentationTranslationContext();
     }
-
+    
 }

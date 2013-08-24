@@ -4,10 +4,10 @@ import at.stefl.opendocument.java.translator.context.TranslationContext;
 import at.stefl.opendocument.java.translator.style.property.StylePropertyGroup;
 
 public class SimpleTableElementTranslator extends
-	TableElementTranslator<TranslationContext> {
-
+        TableElementTranslator<TranslationContext> {
+    
     public SimpleTableElementTranslator(String elementName) {
-	super(elementName, StylePropertyGroup.TABLE);
+        super(elementName, StylePropertyGroup.TABLE);
     }
-
+    
 }

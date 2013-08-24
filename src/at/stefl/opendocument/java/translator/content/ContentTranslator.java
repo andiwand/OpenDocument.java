@@ -10,27 +10,25 @@ import at.stefl.opendocument.java.translator.StyleGenerator;
 import at.stefl.opendocument.java.translator.context.TranslationContext;
 
 public abstract class ContentTranslator<C extends TranslationContext> extends
-	LWXMLHierarchyTranslator<C> implements StyleGenerator<C>,
-	ScriptGenerator<C> {
-
+        LWXMLHierarchyTranslator<C> implements StyleGenerator<C>,
+        ScriptGenerator<C> {
+    
     @Override
     public void generateStyle(Writer out, C context) throws IOException {
-	for (LWXMLElementTranslator<? super C> lwxmlTranslator : elementTranslators()) {
-	    if (!(lwxmlTranslator instanceof DefaultElementTranslator))
-		continue;
-	    DefaultElementTranslator<? super C> translator = (DefaultElementTranslator<? super C>) lwxmlTranslator;
-	    translator.generateStyle(out, context);
-	}
+        for (LWXMLElementTranslator<? super C> lwxmlTranslator : elementTranslators()) {
+            if (!(lwxmlTranslator instanceof DefaultElementTranslator)) continue;
+            DefaultElementTranslator<? super C> translator = (DefaultElementTranslator<? super C>) lwxmlTranslator;
+            translator.generateStyle(out, context);
+        }
     }
-
+    
     @Override
     public void generateScript(Writer out, C context) throws IOException {
-	for (LWXMLElementTranslator<? super C> lwxmlTranslator : elementTranslators()) {
-	    if (!(lwxmlTranslator instanceof DefaultElementTranslator))
-		continue;
-	    DefaultElementTranslator<? super C> translator = (DefaultElementTranslator<? super C>) lwxmlTranslator;
-	    translator.generateScript(out, context);
-	}
+        for (LWXMLElementTranslator<? super C> lwxmlTranslator : elementTranslators()) {
+            if (!(lwxmlTranslator instanceof DefaultElementTranslator)) continue;
+            DefaultElementTranslator<? super C> translator = (DefaultElementTranslator<? super C>) lwxmlTranslator;
+            translator.generateScript(out, context);
+        }
     }
-
+    
 }

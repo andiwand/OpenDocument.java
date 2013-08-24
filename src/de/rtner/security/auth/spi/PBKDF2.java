@@ -32,6 +32,7 @@ package de.rtner.security.auth.spi;
  * @version 1.0
  */
 public interface PBKDF2 {
+    
     /**
      * Convert String-based input to internal byte array, then invoke PBKDF2.
      * Desired key length defaults to Pseudo Random Function block size.
@@ -41,7 +42,7 @@ public interface PBKDF2 {
      * @return internal byte array
      */
     public abstract byte[] deriveKey(String inputPassword);
-
+    
     /**
      * Convert String-based input to internal byte array, then invoke PBKDF2.
      * 
@@ -52,7 +53,7 @@ public interface PBKDF2 {
      * @return internal byte array
      */
     public abstract byte[] deriveKey(String inputPassword, int dkLen);
-
+    
     /**
      * Convert String-based input to internal byte arrays, then invoke PBKDF2
      * and verify result against the reference data that is supplied in the
@@ -64,28 +65,28 @@ public interface PBKDF2 {
      *         password
      */
     public abstract boolean verifyKey(String inputPassword);
-
+    
     /**
      * Allow reading of configured parameters.
      * 
      * @return Currently set parameters.
      */
     public abstract PBKDF2Parameters getParameters();
-
+    
     /**
      * Allow setting of configured parameters.
      * 
      * @param parameters
      */
     public abstract void setParameters(PBKDF2Parameters parameters);
-
+    
     /**
      * Get currently set Pseudo Random Function.
      * 
      * @return Currently set Pseudo Random Function
      */
     public abstract PRF getPseudoRandomFunction();
-
+    
     /**
      * Set the Pseudo Random Function to use. Note that deriveKeys/getPRF does
      * init this object using the supplied candidate password. If this is

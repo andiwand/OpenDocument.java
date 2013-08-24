@@ -7,31 +7,31 @@ import java.io.OutputStream;
 import at.stefl.svm.tosvg.SVGTranslator;
 
 public class SVM2SVGConverter implements ImageConverter {
-
+    
     // TODO: out-source
     public static final String FROM_MIMETYPE = "application/x-openoffice-gdimetafile;windows_formatname=\"GDIMetaFile\"";
     public static final String TO_MIMETYPE = "image/svg+xml";
-
+    
     @Override
     public String getFromMimetype() {
-	return FROM_MIMETYPE;
+        return FROM_MIMETYPE;
     }
-
+    
     @Override
     public String getToMimetype() {
-	return TO_MIMETYPE;
+        return TO_MIMETYPE;
     }
-
+    
     @Override
     public void convert(InputStream in, OutputStream out) throws IOException {
-	SVGTranslator.TRANSLATOR.translate(in, out);
+        SVGTranslator.TRANSLATOR.translate(in, out);
     }
-
+    
     @Override
     public String convertName(String from) {
-	if (from.endsWith(".svm"))
-	    from = from.substring(0, from.length() - ".svm".length());
-	return from + ".svg";
+        if (from.endsWith(".svm")) from = from.substring(0, from.length()
+                - ".svm".length());
+        return from + ".svg";
     }
-
+    
 }

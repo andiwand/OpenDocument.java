@@ -9,21 +9,21 @@ import at.stefl.opendocument.java.translator.context.TranslationContext;
 import at.stefl.opendocument.java.translator.style.property.StylePropertyGroup;
 
 public class SpanTranslator extends
-	DefaultStyledElementTranslator<TranslationContext> {
-
+        DefaultStyledElementTranslator<TranslationContext> {
+    
     public SpanTranslator() {
-	super("span", StyleAttribute.TEXT, StylePropertyGroup.TEXT);
+        super("span", StyleAttribute.TEXT, StylePropertyGroup.TEXT);
     }
-
+    
     // TODO: fix me (whitespace?)
     @Override
     public void translateChildren(LWXMLPushbackReader in, LWXMLWriter out,
-	    TranslationContext context) throws IOException {
-	if (LWXMLUtil.isEmptyElement(in)) {
-	    out.writeEmptyElement("br");
-	} else {
-	    in.unreadEvent();
-	}
+            TranslationContext context) throws IOException {
+        if (LWXMLUtil.isEmptyElement(in)) {
+            out.writeEmptyElement("br");
+        } else {
+            in.unreadEvent();
+        }
     }
-
+    
 }

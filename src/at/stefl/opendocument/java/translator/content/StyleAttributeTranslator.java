@@ -6,18 +6,18 @@ import at.stefl.opendocument.java.translator.context.TranslationContext;
 import at.stefl.opendocument.java.translator.style.property.StylePropertyGroup;
 
 public class StyleAttributeTranslator implements
-	LWXMLAttributeTranslator<TranslationContext> {
-
+        LWXMLAttributeTranslator<TranslationContext> {
+    
     private final StylePropertyGroup group;
-
+    
     public StyleAttributeTranslator(StylePropertyGroup group) {
-	this.group = group;
+        this.group = group;
     }
-
+    
     @Override
     public LWXMLAttribute translate(String name, String value,
-	    TranslationContext context) {
-	return context.getStyle().getStyleAttribute(value, group);
+            TranslationContext context) {
+        return context.getStyle().getStyleAttribute(value, group);
     }
-
+    
 }

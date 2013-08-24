@@ -32,6 +32,7 @@ package de.rtner.security.auth.spi;
  * @version 1.0
  */
 public interface PRF {
+    
     /**
      * Initialize this instance with the user-supplied password.
      * 
@@ -40,7 +41,7 @@ public interface PRF {
      *            task to convert String passwords to bytes as appropriate.
      */
     public void init(byte[] P);
-
+    
     /**
      * Pseudo Random Function
      * 
@@ -50,7 +51,7 @@ public interface PRF {
      * @return Random bytes of hLen length.
      */
     public byte[] doFinal(byte[] M);
-
+    
     /**
      * Query block size of underlying algorithm/mechanism.
      * 

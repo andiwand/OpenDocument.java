@@ -32,6 +32,7 @@ package de.rtner.security.auth.spi;
  * @version 1.0
  */
 public interface PBKDF2Formatter {
+    
     /**
      * Convert parameters to String.
      * 
@@ -40,7 +41,7 @@ public interface PBKDF2Formatter {
      * @return String representation
      */
     public abstract String toString(PBKDF2Parameters p);
-
+    
     /**
      * Convert String to parameters. Depending on actual implementation, it may
      * be required to set further fields externally.

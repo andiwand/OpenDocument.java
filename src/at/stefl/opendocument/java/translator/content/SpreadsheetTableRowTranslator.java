@@ -9,29 +9,29 @@ import at.stefl.opendocument.java.translator.context.SpreadsheetTranslationConte
 import at.stefl.opendocument.java.translator.style.property.StylePropertyGroup;
 
 public class SpreadsheetTableRowTranslator extends
-	SpreadsheetTableElementTranslator {
-
+        SpreadsheetTableElementTranslator {
+    
     private static final String ROWS_REPEATED_ATTRIBUTE_NAME = "table:number-rows-repeated";
-
+    
     private int currentRepeated;
-
+    
     public SpreadsheetTableRowTranslator() {
-	super("tr", StylePropertyGroup.TABLE);
-
-	addParseAttribute(ROWS_REPEATED_ATTRIBUTE_NAME);
+        super("tr", StylePropertyGroup.TABLE);
+        
+        addParseAttribute(ROWS_REPEATED_ATTRIBUTE_NAME);
     }
-
+    
     public int getCurrentRepeated() {
-	return currentRepeated;
+        return currentRepeated;
     }
-
+    
     @Override
     public void translateAttributeList(LWXMLPushbackReader in, LWXMLWriter out,
-	    SpreadsheetTranslationContext context) throws IOException {
-	super.translateAttributeList(in, out, context);
-
-	currentRepeated = NumberUtil.parseInt(
-		getCurrentParsedAttribute(ROWS_REPEATED_ATTRIBUTE_NAME), 1);
+            SpreadsheetTranslationContext context) throws IOException {
+        super.translateAttributeList(in, out, context);
+        
+        currentRepeated = NumberUtil.parseInt(
+                getCurrentParsedAttribute(ROWS_REPEATED_ATTRIBUTE_NAME), 1);
     }
-
+    
 }

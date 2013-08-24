@@ -9,19 +9,17 @@ import at.stefl.opendocument.java.translator.StyleGenerator;
 import at.stefl.opendocument.java.translator.context.TranslationContext;
 
 public class DefaultElementTranslator<C extends TranslationContext> extends
-	LWXMLElementReplacement<C> implements StyleGenerator<C>,
-	ScriptGenerator<C> {
-
+        LWXMLElementReplacement<C> implements StyleGenerator<C>,
+        ScriptGenerator<C> {
+    
     public DefaultElementTranslator(String elementName) {
-	super(elementName);
+        super(elementName);
     }
-
+    
     @Override
-    public void generateStyle(Writer out, C context) throws IOException {
-    }
-
+    public void generateStyle(Writer out, C context) throws IOException {}
+    
     @Override
-    public void generateScript(Writer out, C context) throws IOException {
-    }
-
+    public void generateScript(Writer out, C context) throws IOException {}
+    
 }

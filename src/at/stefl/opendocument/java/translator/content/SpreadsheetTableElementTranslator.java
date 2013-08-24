@@ -4,11 +4,11 @@ import at.stefl.opendocument.java.translator.context.SpreadsheetTranslationConte
 import at.stefl.opendocument.java.translator.style.property.StylePropertyGroup;
 
 public class SpreadsheetTableElementTranslator extends
-	TableElementTranslator<SpreadsheetTranslationContext> {
-
+        TableElementTranslator<SpreadsheetTranslationContext> {
+    
     public SpreadsheetTableElementTranslator(String elementName,
-	    StylePropertyGroup group) {
-	super(elementName, group);
+            StylePropertyGroup group) {
+        super(elementName, group);
     }
-
+    
 }

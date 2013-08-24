@@ -7,41 +7,41 @@ import at.stefl.opendocument.java.translator.style.property.UnderlinePropertyTra
 import at.stefl.opendocument.java.translator.style.property.VerticalAlignPropertyTranslator;
 
 public class GeneralStyleElementTranslator extends
-	DefaultStyleElementTranslator {
-
+        DefaultStyleElementTranslator {
+    
     public GeneralStyleElementTranslator() {
-	addPropertyTranslator("fo:text-align");
-	addDirectionPropertyTranslator("fo:margin");
-	addDirectionPropertyTranslator("fo:padding");
-	addDirectionPropertyTranslator("fo:border");
-	addPropertyTranslator("style:column-width", "width");
-	addPropertyTranslator("style:row-height", "height");
-	addDirectionPropertyTranslator("fo:border",
-		new BorderPropertyTranslator());
-	addPropertyTranslator("fo:margin", new MarginPropertyTranslator());
-
-	addPropertyTranslator("fo:font-size");
-	addPropertyTranslator("style:font-name", "font-family");
-	addPropertyTranslator("fo:font-weight");
-	addPropertyTranslator("fo:font-style");
-	addPropertyTranslator("fo:font-size");
-	addPropertyTranslator("fo:text-shadow");
-	addPropertyTranslator("fo:color");
-	addPropertyTranslator("fo:background-color");
-	addPropertyTranslator("style:vertical-align");
-	addPropertyTranslator("style:text-underline-style",
-		new UnderlinePropertyTranslator());
-	addPropertyTranslator("style:text-line-through-style",
-		new LineThroughPropertyTranslator());
-	addPropertyTranslator("style:text-position",
-		new VerticalAlignPropertyTranslator());
-
-	addPropertyTranslator("style:width");
-	addPropertyTranslator("style:height");
-	addPropertyTranslator("draw:fill-color", "background-color");
-
-	addPropertyTranslator("fo:page-width", "width");
-	addPropertyTranslator("fo:page-height", "height");
+        addPropertyTranslator("fo:text-align");
+        addDirectionPropertyTranslator("fo:margin");
+        addDirectionPropertyTranslator("fo:padding");
+        addDirectionPropertyTranslator("fo:border");
+        addPropertyTranslator("style:column-width", "width");
+        addPropertyTranslator("style:row-height", "height");
+        addDirectionPropertyTranslator("fo:border",
+                new BorderPropertyTranslator());
+        addPropertyTranslator("fo:margin", new MarginPropertyTranslator());
+        
+        addPropertyTranslator("fo:font-size");
+        addPropertyTranslator("style:font-name", "font-family");
+        addPropertyTranslator("fo:font-weight");
+        addPropertyTranslator("fo:font-style");
+        addPropertyTranslator("fo:font-size");
+        addPropertyTranslator("fo:text-shadow");
+        addPropertyTranslator("fo:color");
+        addPropertyTranslator("fo:background-color");
+        addPropertyTranslator("style:vertical-align");
+        addPropertyTranslator("style:text-underline-style",
+                new UnderlinePropertyTranslator());
+        addPropertyTranslator("style:text-line-through-style",
+                new LineThroughPropertyTranslator());
+        addPropertyTranslator("style:text-position",
+                new VerticalAlignPropertyTranslator());
+        
+        addPropertyTranslator("style:width");
+        addPropertyTranslator("style:height");
+        addPropertyTranslator("draw:fill-color", "background-color");
+        
+        addPropertyTranslator("fo:page-width", "width");
+        addPropertyTranslator("fo:page-height", "height");
     }
-
+    
 }

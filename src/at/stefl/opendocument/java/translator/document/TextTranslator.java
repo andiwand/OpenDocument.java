@@ -7,16 +7,16 @@ import at.stefl.opendocument.java.translator.style.TextStyle;
 import at.stefl.opendocument.java.translator.style.TextStyleTranslator;
 
 public class TextTranslator
-	extends
-	GenericDocumentTranslator<OpenDocumentText, TextStyle, TextTranslationContext> {
-
+        extends
+        GenericDocumentTranslator<OpenDocumentText, TextStyle, TextTranslationContext> {
+    
     public TextTranslator() {
-	super(new TextStyleTranslator(), new TextContentTranslator());
+        super(new TextStyleTranslator(), new TextContentTranslator());
     }
-
+    
     @Override
     protected TextTranslationContext createContext() {
-	return new TextTranslationContext();
+        return new TextTranslationContext();
     }
-
+    
 }

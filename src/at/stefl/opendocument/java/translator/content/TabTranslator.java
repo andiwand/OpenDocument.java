@@ -9,32 +9,31 @@ import at.stefl.commons.lwxml.writer.LWXMLWriter;
 import at.stefl.opendocument.java.translator.context.TranslationContext;
 
 public class TabTranslator extends DefaultElementTranslator<TranslationContext> {
-
+    
     public TabTranslator() {
-	super(null);
+        super(null);
     }
-
+    
     @Override
     public void translateStartElement(LWXMLPushbackReader in, LWXMLWriter out,
-	    TranslationContext context) throws IOException {
-	out.writeCharacters("\t");
+            TranslationContext context) throws IOException {
+        out.writeCharacters("\t");
     }
-
+    
     @Override
     public void translateAttributeList(LWXMLPushbackReader in, LWXMLWriter out,
-	    TranslationContext context) throws IOException {
-	LWXMLUtil.flushEmptyElement(in);
+            TranslationContext context) throws IOException {
+        LWXMLUtil.flushEmptyElement(in);
     }
-
+    
     @Override
     public void translateEndAttributeList(LWXMLPushbackReader in,
-	    LWXMLWriter out, TranslationContext context) throws IOException {
-    }
-
+            LWXMLWriter out, TranslationContext context) throws IOException {}
+    
     @Override
     public void translateEndElement(LWXMLPushbackReader in, LWXMLWriter out,
-	    TranslationContext context) throws IOException {
-	throw new LWXMLIllegalEventException(in);
+            TranslationContext context) throws IOException {
+        throw new LWXMLIllegalEventException(in);
     }
-
+    
 }

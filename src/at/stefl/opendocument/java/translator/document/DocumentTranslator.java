@@ -7,8 +7,8 @@ import at.stefl.opendocument.java.odf.OpenDocument;
 import at.stefl.opendocument.java.translator.settings.TranslationSettings;
 
 public interface DocumentTranslator {
-
+    
     public void translate(OpenDocument document, LWXMLWriter out,
-	    TranslationSettings settings) throws IOException;
-
+            TranslationSettings settings) throws IOException;
+    
 }

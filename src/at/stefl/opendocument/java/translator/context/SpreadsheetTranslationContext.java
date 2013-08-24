@@ -4,10 +4,10 @@ import at.stefl.opendocument.java.odf.OpenDocumentSpreadsheet;
 import at.stefl.opendocument.java.translator.style.SpreadsheetStyle;
 
 public class SpreadsheetTranslationContext extends
-	GenericTranslationContext<OpenDocumentSpreadsheet, SpreadsheetStyle> {
-
+        GenericTranslationContext<OpenDocumentSpreadsheet, SpreadsheetStyle> {
+    
     public SpreadsheetTranslationContext() {
-	super(OpenDocumentSpreadsheet.class, SpreadsheetStyle.class);
+        super(OpenDocumentSpreadsheet.class, SpreadsheetStyle.class);
     }
-
+    
 }

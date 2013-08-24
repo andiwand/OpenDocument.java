@@ -7,25 +7,22 @@ import at.stefl.commons.lwxml.writer.LWXMLWriter;
 import at.stefl.opendocument.java.translator.context.TranslationContext;
 
 public class TextBoxTranslator extends
-	DefaultBlockTranslator<TranslationContext> {
-
+        DefaultBlockTranslator<TranslationContext> {
+    
     public TextBoxTranslator() {
-	super(null);
+        super(null);
     }
-
+    
     @Override
     public void translateStartElement(LWXMLPushbackReader in, LWXMLWriter out,
-	    TranslationContext context) throws IOException {
-    }
-
+            TranslationContext context) throws IOException {}
+    
     @Override
     public void translateEndAttributeList(LWXMLPushbackReader in,
-	    LWXMLWriter out, TranslationContext context) throws IOException {
-    }
-
+            LWXMLWriter out, TranslationContext context) throws IOException {}
+    
     @Override
     public void translateEndElement(LWXMLPushbackReader in, LWXMLWriter out,
-	    TranslationContext context) throws IOException {
-    }
-
+            TranslationContext context) throws IOException {}
+    
 }

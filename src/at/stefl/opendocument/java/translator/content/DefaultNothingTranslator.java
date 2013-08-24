@@ -4,6 +4,6 @@ import at.stefl.commons.lwxml.translator.LWXMLNothingTranslator;
 import at.stefl.opendocument.java.translator.context.TranslationContext;
 
 public class DefaultNothingTranslator extends
-	LWXMLNothingTranslator<TranslationContext> {
-
+        LWXMLNothingTranslator<TranslationContext> {
+    
 }

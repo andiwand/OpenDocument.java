@@ -4,7 +4,6 @@ package de.rtner.security.auth.spi;
  * <p>
  * Parameter data holder for PBKDF2 configuration.
  * </p>
- * 
  * <hr />
  * <p>
  * A free Java implementation of Password Based Key Derivation Function 2 as
@@ -37,46 +36,45 @@ package de.rtner.security.auth.spi;
  * @version 1.0
  */
 public class PBKDF2Parameters {
+    
     protected byte[] salt;
-
+    
     protected int iterationCount;
-
+    
     protected String hashAlgorithm;
-
+    
     protected String hashCharset;
-
+    
     /**
      * The derived key is actually only a convenience to store a reference
      * derived key. It is not used during computation.
      */
     protected byte[] derivedKey;
-
+    
     /**
      * Constructor. Defaults to <code>null</code> for byte arrays, UTF-8 as
      * character set and 1000 for iteration count.
-     * 
      */
     public PBKDF2Parameters() {
-	this.hashAlgorithm = null;
-	this.hashCharset = "UTF-8";
-	this.salt = null;
-	this.iterationCount = 1000;
-	this.derivedKey = null;
+        this.hashAlgorithm = null;
+        this.hashCharset = "UTF-8";
+        this.salt = null;
+        this.iterationCount = 1000;
+        this.derivedKey = null;
     }
-
+    
     /**
      * Constructor. Defaults to <code>null</code> for byte arrays, UTF-8 as
      * character.
-     * 
      */
     public PBKDF2Parameters(byte[] salt, int iterationCount) {
-	this.hashAlgorithm = null;
-	this.hashCharset = "UTF-8";
-	this.salt = salt;
-	this.iterationCount = iterationCount;
-	this.derivedKey = null;
+        this.hashAlgorithm = null;
+        this.hashCharset = "UTF-8";
+        this.salt = salt;
+        this.iterationCount = iterationCount;
+        this.derivedKey = null;
     }
-
+    
     /**
      * Constructor.
      * 
@@ -90,14 +88,14 @@ public class PBKDF2Parameters {
      *            Number of iterations to execute. Recommended value 1000.
      */
     public PBKDF2Parameters(String hashAlgorithm, String hashCharset,
-	    byte[] salt, int iterationCount) {
-	this.hashAlgorithm = hashAlgorithm;
-	this.hashCharset = hashCharset;
-	this.salt = salt;
-	this.iterationCount = iterationCount;
-	this.derivedKey = null;
+            byte[] salt, int iterationCount) {
+        this.hashAlgorithm = hashAlgorithm;
+        this.hashCharset = hashCharset;
+        this.salt = salt;
+        this.iterationCount = iterationCount;
+        this.derivedKey = null;
     }
-
+    
     /**
      * Constructor.
      * 
@@ -113,51 +111,51 @@ public class PBKDF2Parameters {
      *            Convenience data holder, not used during computation.
      */
     public PBKDF2Parameters(String hashAlgorithm, String hashCharset,
-	    byte[] salt, int iterationCount, byte[] derivedKey) {
-	this.hashAlgorithm = hashAlgorithm;
-	this.hashCharset = hashCharset;
-	this.salt = salt;
-	this.iterationCount = iterationCount;
-	this.derivedKey = derivedKey;
+            byte[] salt, int iterationCount, byte[] derivedKey) {
+        this.hashAlgorithm = hashAlgorithm;
+        this.hashCharset = hashCharset;
+        this.salt = salt;
+        this.iterationCount = iterationCount;
+        this.derivedKey = derivedKey;
     }
-
+    
     public int getIterationCount() {
-	return iterationCount;
+        return iterationCount;
     }
-
+    
     public void setIterationCount(int iterationCount) {
-	this.iterationCount = iterationCount;
+        this.iterationCount = iterationCount;
     }
-
+    
     public byte[] getSalt() {
-	return salt;
+        return salt;
     }
-
+    
     public void setSalt(byte[] salt) {
-	this.salt = salt;
+        this.salt = salt;
     }
-
+    
     public byte[] getDerivedKey() {
-	return derivedKey;
+        return derivedKey;
     }
-
+    
     public void setDerivedKey(byte[] derivedKey) {
-	this.derivedKey = derivedKey;
+        this.derivedKey = derivedKey;
     }
-
+    
     public String getHashAlgorithm() {
-	return hashAlgorithm;
+        return hashAlgorithm;
     }
-
+    
     public void setHashAlgorithm(String hashAlgorithm) {
-	this.hashAlgorithm = hashAlgorithm;
+        this.hashAlgorithm = hashAlgorithm;
     }
-
+    
     public String getHashCharset() {
-	return hashCharset;
+        return hashCharset;
     }
-
+    
     public void setHashCharset(String hashCharset) {
-	this.hashCharset = hashCharset;
+        this.hashCharset = hashCharset;
     }
 }
