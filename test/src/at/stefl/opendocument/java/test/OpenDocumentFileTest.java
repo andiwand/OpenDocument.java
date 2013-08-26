@@ -1,11 +1,9 @@
 package at.stefl.opendocument.java.test;
 
-import java.io.File;
 import java.io.IOException;
 
 import javax.swing.JFileChooser;
 
-import at.stefl.opendocument.java.odf.LocatedOpenDocumentFile;
 import at.stefl.opendocument.java.odf.OpenDocumentFile;
 
 public class OpenDocumentFileTest {
@@ -27,14 +25,13 @@ public class OpenDocumentFileTest {
     }
     
     public static void main(String[] args) throws IOException {
-        JFileChooser fileChooser = new TestFileChooser();
-        int option = fileChooser.showOpenDialog(null);
+        TestFileChooser chooser = new TestFileChooser();
+        int option = chooser.showOpenDialog(null);
         
         if (option == JFileChooser.CANCEL_OPTION) return;
         
-        File file = fileChooser.getSelectedFile();
-        OpenDocumentFile documentFile = new LocatedOpenDocumentFile(file);
-        documentFile.setPassword(TestFileUtil.getPassword(file.getName()));
+        TestFile testFile = chooser.getSelectedTestFile();
+        OpenDocumentFile documentFile = testFile.getDocumentFile();
         
         test(documentFile);
         

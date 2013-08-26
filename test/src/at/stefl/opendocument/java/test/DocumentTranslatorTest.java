@@ -7,7 +7,6 @@ import javax.swing.JFileChooser;
 
 import at.stefl.commons.lwxml.writer.LWXMLStreamWriter;
 import at.stefl.commons.lwxml.writer.LWXMLWriter;
-import at.stefl.opendocument.java.odf.LocatedOpenDocumentFile;
 import at.stefl.opendocument.java.odf.OpenDocument;
 import at.stefl.opendocument.java.odf.OpenDocumentFile;
 import at.stefl.opendocument.java.odf.OpenDocumentPresentation;
@@ -26,19 +25,18 @@ public class DocumentTranslatorTest {
     
     @SuppressWarnings("resource")
     public static void main(String[] args) throws Throwable {
-        JFileChooser fileChooser = new TestFileChooser();
-        int option = fileChooser.showOpenDialog(null);
+        TestFileChooser chooser = new TestFileChooser();
+        int option = chooser.showOpenDialog(null);
         
         if (option == JFileChooser.CANCEL_OPTION) return;
         
-        File file = fileChooser.getSelectedFile();
-        OpenDocumentFile documentFile = new LocatedOpenDocumentFile(file);
-        documentFile.setPassword(TestFileUtil.getPassword(file.getName()));
+        TestFile testFile = chooser.getSelectedTestFile();
+        OpenDocumentFile documentFile = testFile.getDocumentFile();
         OpenDocument document = documentFile.getAsDocument();
         
         FileCache cache = new DefaultFileCache("/tmp/odr/");
         
-        File htmlFile = cache.create(file.getName() + ".html");
+        File htmlFile = cache.create(testFile.getFile().getName() + ".html");
         LWXMLWriter out = new LWXMLStreamWriter(new FileWriter(htmlFile));
         
         TranslationSettings settings = new TranslationSettings();

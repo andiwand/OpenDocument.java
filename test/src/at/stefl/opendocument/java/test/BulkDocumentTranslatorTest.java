@@ -7,7 +7,6 @@ import javax.swing.JFileChooser;
 
 import at.stefl.commons.lwxml.writer.LWXMLMultiWriter;
 import at.stefl.commons.lwxml.writer.LWXMLWriter;
-import at.stefl.opendocument.java.odf.LocatedOpenDocumentFile;
 import at.stefl.opendocument.java.odf.OpenDocument;
 import at.stefl.opendocument.java.odf.OpenDocumentFile;
 import at.stefl.opendocument.java.odf.OpenDocumentPresentation;
@@ -22,16 +21,14 @@ import at.stefl.opendocument.java.util.DefaultFileCache;
 
 public class BulkDocumentTranslatorTest {
     
-    @SuppressWarnings("resource")
     public static void main(String[] args) throws Throwable {
-        JFileChooser fileChooser = new TestFileChooser();
-        int option = fileChooser.showOpenDialog(null);
+        TestFileChooser chooser = new TestFileChooser();
+        int option = chooser.showOpenDialog(null);
         
         if (option == JFileChooser.CANCEL_OPTION) return;
         
-        File file = fileChooser.getSelectedFile();
-        OpenDocumentFile documentFile = new LocatedOpenDocumentFile(file);
-        documentFile.setPassword(TestFileUtil.getPassword(file.getName()));
+        TestFile testFile = chooser.getSelectedTestFile();
+        OpenDocumentFile documentFile = testFile.getDocumentFile();
         OpenDocument document = documentFile.getAsDocument();
         
         DefaultFileCache cache = new DefaultFileCache("/tmp/odr/");

@@ -38,7 +38,13 @@ public class GeneralStyleElementTranslator extends
         
         addPropertyTranslator("style:width");
         addPropertyTranslator("style:height");
-        addPropertyTranslator("draw:fill-color", "background-color");
+        
+        // odp
+        // addPropertyTranslator("draw:fill-color", "background-color");
+        
+        // svg translation
+        addPropertyTranslator("draw:fill-color", "fill");
+        addPropertyTranslator("svg:stroke-color", "stroke");
         
         addPropertyTranslator("fo:page-width", "width");
         addPropertyTranslator("fo:page-height", "height");

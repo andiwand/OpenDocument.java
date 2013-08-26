@@ -27,6 +27,10 @@ public class SpaceTranslator extends LWXMLElementTranslator<TranslationContext> 
     }
     
     @Override
+    public void translateAttributeList(LWXMLPushbackReader in, LWXMLWriter out,
+            TranslationContext context) throws IOException {}
+    
+    @Override
     public void translateEndAttributeList(LWXMLPushbackReader in,
             LWXMLWriter out, TranslationContext context) throws IOException {}
     

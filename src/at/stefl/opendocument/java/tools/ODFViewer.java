@@ -92,7 +92,7 @@ public class ODFViewer extends JFrame {
         super("ODF Viewer");
         
         fileChooser.setFileFilter(new FileNameExtensionFilter(
-                "OpenDocument Files", OpenDocumentType.getExtensions()));
+                "OpenDocument Files", OpenDocumentType.getExtensionsArray()));
         
         add(new JScrollPane(tree));
         

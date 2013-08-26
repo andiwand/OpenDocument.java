@@ -17,6 +17,12 @@ public class DefaultTextContentTranslator<C extends TranslationContext> extends
                 new SimpleTableElementTranslator("tr"));
         addElementTranslator("table:table-cell",
                 new SimpleTableElementTranslator("td"));
+        
+        DrawingTranslator drawingTranslator = new DrawingTranslator();
+        addElementTranslator("draw:rect", drawingTranslator);
+        addElementTranslator("draw:ellipse", drawingTranslator);
+        // addElementTranslator("draw:path", drawingTranslator);
+        // addElementTranslator("draw:custom-shape", drawingTranslator);
     }
     
 }

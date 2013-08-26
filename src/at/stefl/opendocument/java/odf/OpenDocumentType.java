@@ -2,20 +2,18 @@ package at.stefl.opendocument.java.odf;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
 import at.stefl.commons.util.array.ArrayUtil;
-import at.stefl.commons.util.collection.CollectionUtil;
-import at.stefl.commons.util.object.ObjectTransformer;
 
 // TODO: provide "application/vnd.oasis.opendocument" check
 public enum OpenDocumentType {
     
     TEXT(new String[] { "odt", "fodt" },
             "application/vnd.oasis.opendocument.text", OpenDocumentText.class) {
-        
         @Override
         OpenDocumentText getDocument(OpenDocumentFile documentFile) {
             return new OpenDocumentText(documentFile);
@@ -24,7 +22,6 @@ public enum OpenDocumentType {
     SPREADSHEET(new String[] { "ods", "fods" },
             "application/vnd.oasis.opendocument.spreadsheet",
             OpenDocumentSpreadsheet.class) {
-        
         @Override
         OpenDocumentSpreadsheet getDocument(OpenDocumentFile documentFile) {
             return new OpenDocumentSpreadsheet(documentFile);
@@ -33,40 +30,23 @@ public enum OpenDocumentType {
     PRESENTATION(new String[] { "odp", "fodp" },
             "application/vnd.oasis.opendocument.presentation",
             OpenDocumentPresentation.class) {
-        
         @Override
         OpenDocumentPresentation getDocument(OpenDocumentFile documentFile) {
             return new OpenDocumentPresentation(documentFile);
         }
     };
     
-    private static final OpenDocumentType[] VALUES = values();
-    private static final String[] EXTENSIONS;
-    
-    private static final ObjectTransformer<OpenDocumentType, Class<? extends OpenDocument>> CLASS_KEY_GENERATOR = new ObjectTransformer<OpenDocumentType, Class<? extends OpenDocument>>() {
-        
-        @Override
-        public Class<? extends OpenDocument> transform(OpenDocumentType value) {
-            return value.documentClass;
-        }
-    };
-    
-    private static final Map<Class<? extends OpenDocument>, OpenDocumentType> BY_CLASS_MAP = CollectionUtil
-            .toHashMap(CLASS_KEY_GENERATOR, values());
+    private static final Map<Class<? extends OpenDocument>, OpenDocumentType> BY_CLASS_MAP = new HashMap<Class<? extends OpenDocument>, OpenDocumentType>();
+    private static final Map<String, OpenDocumentType> BY_EXTESNION = new HashMap<String, OpenDocumentType>();
     
     static {
-        int count = 0;
-        
-        for (OpenDocumentType type : VALUES) {
-            count += type.extensions.size();
-        }
-        
-        EXTENSIONS = new String[count];
-        
-        int index = 0;
-        for (OpenDocumentType type : VALUES) {
-            CollectionUtil.toArray(type.extensions, EXTENSIONS, index);
-            index += type.extensions.size();
+        for (OpenDocumentType type : values()) {
+            BY_CLASS_MAP.put(type.documentClass, type);
+            
+            for (String extension : type.extensions) {
+                if (BY_EXTESNION.put(extension, type) != null) throw new IllegalStateException(
+                        "extension was overwritten!");
+            }
         }
     }
     
@@ -86,14 +66,22 @@ public enum OpenDocumentType {
         throw new UnsupportedMimeTypeException(mimeType);
     }
     
+    public static OpenDocumentType getByExtension(String extension) {
+        return BY_EXTESNION.get(extension.toLowerCase());
+    }
+    
     public static OpenDocument getSuitableDocument(OpenDocumentFile documentFile)
             throws IOException {
         return getByMimeType(documentFile.getMimetype()).getDocument(
                 documentFile);
     }
     
-    public static String[] getExtensions() {
-        return EXTENSIONS.clone();
+    public static Set<String> getExtensions() {
+        return Collections.unmodifiableSet(BY_EXTESNION.keySet());
+    }
+    
+    public static String[] getExtensionsArray() {
+        return BY_EXTESNION.keySet().toArray(new String[BY_EXTESNION.size()]);
     }
     
     private final Set<String> extensions;

@@ -1,13 +1,11 @@
 package at.stefl.opendocument.java.test;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 import at.stefl.commons.lwxml.writer.LWXMLNullWriter;
 import at.stefl.commons.util.string.StringUtil;
-import at.stefl.opendocument.java.odf.LocatedOpenDocumentFile;
 import at.stefl.opendocument.java.odf.OpenDocument;
 import at.stefl.opendocument.java.odf.OpenDocumentFile;
 import at.stefl.opendocument.java.odf.OpenDocumentPresentation;
@@ -25,7 +23,7 @@ public class AutomaticTranslatorTest {
     
     private static final String FILE_GAP = StringUtil.multiply('-', 150);
     
-    private final Map<File, String> files;
+    private final Set<TestFile> testFiles;
     
     private final FileCache cache = new DefaultFileCache("/tmp");
     
@@ -41,25 +39,23 @@ public class AutomaticTranslatorTest {
         }
     };
     
-    public AutomaticTranslatorTest(Map<File, String> files) {
-        this.files = new HashMap<File, String>(files);
+    public AutomaticTranslatorTest(Set<TestFile> testFiles) {
+        this.testFiles = new HashSet<TestFile>(testFiles);
     }
     
     public void start() throws IOException {
-        for (Map.Entry<File, String> entry : files.entrySet()) {
-            testFile(entry.getKey(), entry.getValue());
+        for (TestFile testFile : testFiles) {
+            testFile(testFile);
         }
     }
     
-    private void testFile(File file, String password) throws IOException {
+    private void testFile(TestFile testFile) throws IOException {
         System.out.println();
         System.out.println(FILE_GAP);
-        System.out.println(file);
+        System.out.println(testFile);
         System.out.println(FILE_GAP);
         
-        OpenDocumentFile documentFile = new LocatedOpenDocumentFile(file);
-        documentFile.setPassword(password);
-        
+        OpenDocumentFile documentFile = testFile.getDocumentFile();
         OpenDocumentFileTest.test(documentFile);
         
         try {
@@ -93,8 +89,8 @@ public class AutomaticTranslatorTest {
     }
     
     public static void main(String[] args) throws Throwable {
-        Map<File, String> files = TestFileUtil.getFiles();
-        AutomaticTranslatorTest test = new AutomaticTranslatorTest(files);
+        Set<TestFile> testFiles = TestFileUtil.getFiles();
+        AutomaticTranslatorTest test = new AutomaticTranslatorTest(testFiles);
         test.start();
     }
     
