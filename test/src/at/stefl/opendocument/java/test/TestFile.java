@@ -17,7 +17,6 @@ public class TestFile {
             .compile("^(.*?)-(.*?)-([1-9][0-9]*)(?:\\$(.*)\\$)?\\.(f?od[tspbgf])$");
     private static final int GROUP_GROUP = 1;
     private static final int DESCRIPTION_GROUP = 2;
-    private static final int ID_GROUP = 3;
     private static final int PASSWORD_GROUP = 4;
     private static final int TYPE_GROUP = 5;
     
@@ -28,12 +27,13 @@ public class TestFile {
     
     private static final String GROUP_SEPARATOR = "+";
     
+    private static final String UNDEFINED = "undefined";
+    
     public static TestFile fromPattern(File file) {
         Matcher matcher = FILE_PATTERN.matcher(file.getName());
         
         Set<String> groups = null;
         String description = null;
-        int id = 0;
         String password = null;
         OpenDocumentType type = null;
         
@@ -41,35 +41,44 @@ public class TestFile {
             matcher = SIMPLE_FILE_PATTERN.matcher(file.getName());
             if (!matcher.matches()) return null;
             
+            groups = Collections.emptySet();
             description = matcher.group(SIMPLE_DESCRIPTION_GROUP);
+            password = null;
             type = OpenDocumentType.getByExtension(matcher
                     .group(SIMPLE_TYPE_GROUP));
         } else {
-            groups = ArrayUtil.toHashSet(matcher.group(GROUP_GROUP).split(
-                    Pattern.quote(GROUP_SEPARATOR)));
-            description = matcher.group(DESCRIPTION_GROUP);
-            id = Integer.parseInt(matcher.group(ID_GROUP));
+            if (matcher.group(GROUP_GROUP).equals(UNDEFINED)) {
+                groups = Collections.emptySet();
+            } else {
+                groups = ArrayUtil.toHashSet(matcher.group(GROUP_GROUP).split(
+                        Pattern.quote(GROUP_SEPARATOR)));
+            }
+            
+            if (matcher.group(DESCRIPTION_GROUP).equals(UNDEFINED)) {
+                description = "";
+            } else {
+                description = matcher.group(DESCRIPTION_GROUP);
+            }
+            
             password = (matcher.groupCount() >= TYPE_GROUP) ? matcher
                     .group(PASSWORD_GROUP) : null;
             type = OpenDocumentType.getByExtension(matcher.group(TYPE_GROUP));
         }
         
-        return new TestFile(file, groups, description, id, password, type);
+        return new TestFile(file, groups, description, password, type);
     }
     
     private final File file;
     private final Set<String> groups;
     private final String description;
-    private final int id;
     private final String password;
     private final OpenDocumentType type;
     
-    private TestFile(File file, Set<String> groups, String description, int id,
+    private TestFile(File file, Set<String> groups, String description,
             String password, OpenDocumentType type) {
         this.file = file;
         this.groups = Collections.unmodifiableSet(groups);
         this.description = description;
-        this.id = id;
         this.password = password;
         this.type = type;
     }
@@ -102,10 +111,6 @@ public class TestFile {
     
     public String getDescription() {
         return description;
-    }
-    
-    public int getId() {
-        return id;
     }
     
     public String getPassword() {
