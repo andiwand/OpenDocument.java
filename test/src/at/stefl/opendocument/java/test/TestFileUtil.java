@@ -12,6 +12,7 @@ import java.util.prefs.Preferences;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
+// TODO: debug not matching files
 public class TestFileUtil {
     
     private static final Preferences PREFERENCES = Preferences

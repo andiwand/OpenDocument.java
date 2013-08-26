@@ -17,7 +17,7 @@ public class TestFileChooser extends JFileChooser {
         
         @Override
         public boolean accept(File f) {
-            return TestFile.fromPattern(f) != null;
+            return f.isDirectory() || (TestFile.fromPattern(f) != null);
         }
     };
     

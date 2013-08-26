@@ -21,20 +21,38 @@ public class TestFile {
     private static final int PASSWORD_GROUP = 4;
     private static final int TYPE_GROUP = 5;
     
+    private static final Pattern SIMPLE_FILE_PATTERN = Pattern
+            .compile("^(.*)\\.(f?od[tspbgf])$");
+    private static final int SIMPLE_DESCRIPTION_GROUP = 1;
+    private static final int SIMPLE_TYPE_GROUP = 2;
+    
     private static final String GROUP_SEPARATOR = "+";
     
     public static TestFile fromPattern(File file) {
         Matcher matcher = FILE_PATTERN.matcher(file.getName());
-        if (!matcher.matches()) return null;
         
-        Set<String> groups = ArrayUtil.toHashSet(matcher.group(GROUP_GROUP)
-                .split(Pattern.quote(GROUP_SEPARATOR)));
-        String description = matcher.group(DESCRIPTION_GROUP);
-        int id = Integer.parseInt(matcher.group(ID_GROUP));
-        String password = (matcher.groupCount() >= TYPE_GROUP) ? matcher
-                .group(PASSWORD_GROUP) : null;
-        OpenDocumentType type = OpenDocumentType.getByExtension(matcher
-                .group(TYPE_GROUP));
+        Set<String> groups = null;
+        String description = null;
+        int id = 0;
+        String password = null;
+        OpenDocumentType type = null;
+        
+        if (!matcher.matches()) {
+            matcher = SIMPLE_FILE_PATTERN.matcher(file.getName());
+            if (!matcher.matches()) return null;
+            
+            description = matcher.group(SIMPLE_DESCRIPTION_GROUP);
+            type = OpenDocumentType.getByExtension(matcher
+                    .group(SIMPLE_TYPE_GROUP));
+        } else {
+            groups = ArrayUtil.toHashSet(matcher.group(GROUP_GROUP).split(
+                    Pattern.quote(GROUP_SEPARATOR)));
+            description = matcher.group(DESCRIPTION_GROUP);
+            id = Integer.parseInt(matcher.group(ID_GROUP));
+            password = (matcher.groupCount() >= TYPE_GROUP) ? matcher
+                    .group(PASSWORD_GROUP) : null;
+            type = OpenDocumentType.getByExtension(matcher.group(TYPE_GROUP));
+        }
         
         return new TestFile(file, groups, description, id, password, type);
     }
