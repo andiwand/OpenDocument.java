@@ -72,6 +72,7 @@ public class ODFViewer extends JFrame {
     
     private TreeSelectionListener treeSelectionHandler = new TreeSelectionListener() {
         
+        @Override
         public void valueChanged(TreeSelectionEvent event) {
             Object source = event.getPath().getLastPathComponent();
             if (!(source instanceof FileNode)) return;
@@ -106,6 +107,7 @@ public class ODFViewer extends JFrame {
         
         open.addActionListener(new ActionListener() {
             
+            @Override
             public void actionPerformed(ActionEvent event) {
                 int result = fileChooser.showOpenDialog(ODFViewer.this);
                 if (result == JFileChooser.CANCEL_OPTION) return;

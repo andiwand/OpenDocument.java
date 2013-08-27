@@ -8,16 +8,16 @@ import at.stefl.opendocument.java.translator.style.property.StylePropertyGroup;
 public class StyleAttributeTranslator implements
         LWXMLAttributeTranslator<TranslationContext> {
     
-    private final StylePropertyGroup group;
+    private final StylePropertyGroup[] groups;
     
-    public StyleAttributeTranslator(StylePropertyGroup group) {
-        this.group = group;
+    public StyleAttributeTranslator(StylePropertyGroup... groups) {
+        this.groups = groups.clone();
     }
     
     @Override
     public LWXMLAttribute translate(String name, String value,
             TranslationContext context) {
-        return context.getStyle().getStyleAttribute(value, group);
+        return context.getStyle().getStyleAttribute(value, groups);
     }
     
 }

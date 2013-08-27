@@ -7,11 +7,11 @@ public abstract class DefaultStyledElementTranslator<C extends TranslationContex
         extends DefaultElementTranslator<C> {
     
     public DefaultStyledElementTranslator(String elementName,
-            StyleAttribute attribute, StylePropertyGroup group) {
+            StyleAttribute attribute, StylePropertyGroup... groups) {
         super(elementName);
         
         addAttributeTranslator(attribute.getName(),
-                new StyleAttributeTranslator(group));
+                new StyleAttributeTranslator(groups));
     }
     
 }

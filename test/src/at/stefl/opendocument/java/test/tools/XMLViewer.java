@@ -71,6 +71,7 @@ public class XMLViewer extends JFrame {
     
     private static final ActionListener COPY_TEXT = new ActionListener() {
         
+        @Override
         public void actionPerformed(ActionEvent e) {
             Object source = e.getSource();
             String text;
@@ -152,6 +153,7 @@ public class XMLViewer extends JFrame {
         
         open.addActionListener(new ActionListener() {
             
+            @Override
             public void actionPerformed(ActionEvent event) {
                 int result = fileChooser.showOpenDialog(XMLViewer.this);
                 if (result == JFileChooser.CANCEL_OPTION) return;
@@ -169,6 +171,7 @@ public class XMLViewer extends JFrame {
         
         expandAll.addActionListener(new ActionListener() {
             
+            @Override
             public void actionPerformed(ActionEvent e) {
                 JTreeUtil.expandAll(tree);
             }
@@ -176,6 +179,7 @@ public class XMLViewer extends JFrame {
         
         collapseAll.addActionListener(new ActionListener() {
             
+            @Override
             public void actionPerformed(ActionEvent e) {
                 JTreeUtil.collapseAll(tree);
             }
@@ -183,6 +187,7 @@ public class XMLViewer extends JFrame {
         
         find.addActionListener(new ActionListener() {
             
+            @Override
             public void actionPerformed(ActionEvent e) {
                 String pattern = JOptionPane.showInputDialog(XMLViewer.this,
                         "Enter pattern to search with:", "Find...",
@@ -200,6 +205,7 @@ public class XMLViewer extends JFrame {
         
         findNext.addActionListener(new ActionListener() {
             
+            @Override
             public void actionPerformed(ActionEvent e) {
                 if (lastPattern == null) return;
                 

@@ -23,7 +23,8 @@ public class FrameTranslator extends
     }
     
     public FrameTranslator(boolean translatePosition) {
-        super("div", StyleAttribute.DRAW, StylePropertyGroup.GRAPHIC);
+        super("div", StyleAttribute.PRESENTATION, StylePropertyGroup.GRAPHIC,
+                StylePropertyGroup.PARAGRAPH, StylePropertyGroup.TEXT);
         
         this.translatePosition = translatePosition;
         

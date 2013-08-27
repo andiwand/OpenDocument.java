@@ -27,6 +27,7 @@ public abstract class AbstractFileCache implements FileCache {
         return uriTranslator;
     }
     
+    @Override
     public URI getURI(String name) throws FileNotFoundException {
         File file = getFile(name);
         return uriTranslator.translate(file);

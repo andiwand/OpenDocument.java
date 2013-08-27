@@ -27,6 +27,7 @@ public class PresentationPageTranslator extends
         addParseAttribute(MASTER_PAGE_ATTRIBUTE);
     }
     
+    @Override
     public boolean addAttributeTranslator(
             String attributeName,
             LWXMLAttributeTranslator<? super PresentationTranslationContext> translator) {

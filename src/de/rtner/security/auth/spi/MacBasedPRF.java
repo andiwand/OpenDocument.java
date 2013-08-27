@@ -76,15 +76,18 @@ public class MacBasedPRF implements PRF {
         }
     }
     
+    @Override
     public byte[] doFinal(byte[] M) {
         byte[] r = mac.doFinal(M);
         return r;
     }
     
+    @Override
     public int getHLen() {
         return hLen;
     }
     
+    @Override
     public void init(byte[] P) {
         try {
             mac.init(new SecretKeySpec(P, macAlgorithm));
