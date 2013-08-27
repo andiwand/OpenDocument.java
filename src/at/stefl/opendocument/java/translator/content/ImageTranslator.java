@@ -129,6 +129,9 @@ public class ImageTranslator extends
         try {
             if (converter == null) streamUtil.writeStream(imageIn, imageOut);
             else converter.convert(imageIn, imageOut);
+        } catch (Exception e) {
+            if (e instanceof IOException) throw (IOException) e;
+            // TODO: log conversion fail
         } finally {
             imageIn.close();
             imageOut.close();

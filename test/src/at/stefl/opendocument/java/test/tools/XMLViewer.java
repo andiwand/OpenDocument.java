@@ -1,4 +1,4 @@
-package at.stefl.opendocument.java.tools;
+package at.stefl.opendocument.java.test.tools;
 
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;

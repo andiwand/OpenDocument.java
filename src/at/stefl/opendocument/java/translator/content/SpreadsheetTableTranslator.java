@@ -104,9 +104,11 @@ public class SpreadsheetTableTranslator extends
     
     private LWXMLAttribute getCurrentColumnDefaultStyleAttribute(
             SpreadsheetTranslationContext context) {
+        String name;
         // TODO: log
-        if (!currentColumnDefaultStylesIterator.hasNext()) throw new IllegalStateException();
-        String name = currentColumnDefaultStylesIterator.next();
+        if (!currentColumnDefaultStylesIterator.hasNext()) name = null;
+        else name = currentColumnDefaultStylesIterator.next();
+        if (name == null) return null;
         // TODO: redesign
         return context.getStyle().getStyleAttribute(name);
     }
@@ -116,8 +118,10 @@ public class SpreadsheetTableTranslator extends
         if (span == 0) return;
         for (int i = 1; i < span; i++) {
             // TODO: log
-            if (!currentColumnDefaultStylesIterator.hasNext()) throw new IllegalStateException();
-            currentColumnDefaultStylesIterator.next();
+            // if (!currentColumnDefaultStylesIterator.hasNext()) throw new
+            // IllegalStateException();
+            if (currentColumnDefaultStylesIterator.hasNext()) currentColumnDefaultStylesIterator
+                    .next();
         }
     }
     
@@ -162,6 +166,7 @@ public class SpreadsheetTableTranslator extends
         // LWXMLUtil.flushUntilStartElement(in, COLUMN_ELEMENT_NAME);
         // in.unreadEvent(COLUMN_ELEMENT_NAME);
         
+        // TODO: implement table-source
         translateColumns(in, out, context);
         translateRows(in, out, context);
         
@@ -205,14 +210,14 @@ public class SpreadsheetTableTranslator extends
                 } else if (elementName.equals(ROW_ELEMENT_NAME)) {
                     in.unreadEvent(elementName);
                     break loop;
+                } else {
+                    LWXMLUtil.flushElement(in);
                 }
-                
-                break;
-            case END_EMPTY_ELEMENT:
-            case END_ELEMENT:
-                break;
             default:
                 break;
+            case END_ELEMENT:
+            case END_EMPTY_ELEMENT:
+                break loop;
             }
         }
         

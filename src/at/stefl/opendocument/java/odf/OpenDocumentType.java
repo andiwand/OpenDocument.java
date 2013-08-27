@@ -36,6 +36,8 @@ public enum OpenDocumentType {
         }
     };
     
+    private static final String MIME_TYPE_PARENT = "application/vnd.oasis.opendocument";
+    
     private static final Map<Class<? extends OpenDocument>, OpenDocumentType> BY_CLASS_MAP = new HashMap<Class<? extends OpenDocument>, OpenDocumentType>();
     private static final Map<String, OpenDocumentType> BY_EXTESNION = new HashMap<String, OpenDocumentType>();
     
@@ -56,7 +58,7 @@ public enum OpenDocumentType {
     }
     
     public static OpenDocumentType getByMimeType(String mimeType) {
-        if (!mimeType.startsWith("application/vnd.oasis.opendocument")) throw new IllegalMimeTypeException(
+        if (!isOpenDocumentFile(mimeType)) throw new IllegalMimeTypeException(
                 mimeType);
         
         for (OpenDocumentType type : values()) {
@@ -64,6 +66,10 @@ public enum OpenDocumentType {
         }
         
         throw new UnsupportedMimeTypeException(mimeType);
+    }
+    
+    public static boolean isOpenDocumentFile(String mimeType) {
+        return mimeType.startsWith(MIME_TYPE_PARENT);
     }
     
     public static OpenDocumentType getByExtension(String extension) {

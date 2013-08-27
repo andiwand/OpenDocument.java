@@ -1,4 +1,4 @@
-package at.stefl.opendocument.java.tools;
+package at.stefl.opendocument.java.test.tools;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -30,6 +30,7 @@ import javax.swing.tree.DefaultTreeModel;
 import at.stefl.opendocument.java.odf.LocatedOpenDocumentFile;
 import at.stefl.opendocument.java.odf.OpenDocumentFile;
 import at.stefl.opendocument.java.odf.OpenDocumentType;
+import at.stefl.opendocument.java.test.TestFileChooser;
 
 // TODO: extend JComponent
 public class ODFViewer extends JFrame {
@@ -201,6 +202,7 @@ public class ODFViewer extends JFrame {
     
     public static void main(String[] args) {
         ODFViewer viewer = new ODFViewer();
+        viewer.setFileChooser(new TestFileChooser());
         viewer.setDefaultCloseOperation(EXIT_ON_CLOSE);
         viewer.setSize(300, 400);
         viewer.setLocationRelativeTo(null);

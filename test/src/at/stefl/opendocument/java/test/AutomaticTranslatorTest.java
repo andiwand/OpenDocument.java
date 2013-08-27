@@ -1,7 +1,9 @@
 package at.stefl.opendocument.java.test;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import at.stefl.commons.lwxml.writer.LWXMLNullWriter;
@@ -21,6 +23,24 @@ import at.stefl.opendocument.java.util.FileCache;
 
 public class AutomaticTranslatorTest {
     
+    public static class Result {
+        private final double time;
+        private final Exception exception;
+        
+        public Result(double time, Exception exception) {
+            this.time = time;
+            this.exception = exception;
+        }
+        
+        public double getTime() {
+            return time;
+        }
+        
+        public Exception getException() {
+            return exception;
+        }
+    }
+    
     private static final String FILE_GAP = StringUtil.multiply('-', 150);
     
     private final Set<TestFile> testFiles;
@@ -32,7 +52,6 @@ public class AutomaticTranslatorTest {
     private final PresentationTranslator presentationTranslator = new PresentationTranslator();
     
     private final TranslationSettings translationSettings = new TranslationSettings() {
-        
         {
             setCache(cache);
             setImageStoreMode(ImageStoreMode.INLINE);
@@ -43,18 +62,31 @@ public class AutomaticTranslatorTest {
         this.testFiles = new HashSet<TestFile>(testFiles);
     }
     
-    public void start() throws IOException {
+    public Map<TestFile, Result> testAll() throws IOException {
+        Map<TestFile, Result> result = new HashMap<TestFile, Result>();
+        
         for (TestFile testFile : testFiles) {
-            testFile(testFile);
+            double time = -1;
+            Exception exception = null;
+            
+            try {
+                long start = System.nanoTime();
+                
+                testFile(testFile);
+                
+                long end = System.nanoTime();
+                time = (end - start) / 1000000000d;
+            } catch (Exception e) {
+                exception = e;
+            }
+            
+            result.put(testFile, new Result(time, exception));
         }
+        
+        return result;
     }
     
     private void testFile(TestFile testFile) throws IOException {
-        System.out.println();
-        System.out.println(FILE_GAP);
-        System.out.println(testFile);
-        System.out.println(FILE_GAP);
-        
         OpenDocumentFile documentFile = testFile.getDocumentFile();
         OpenDocumentFileTest.test(documentFile);
         
@@ -91,7 +123,20 @@ public class AutomaticTranslatorTest {
     public static void main(String[] args) throws Throwable {
         Set<TestFile> testFiles = TestFileUtil.getFiles();
         AutomaticTranslatorTest test = new AutomaticTranslatorTest(testFiles);
-        test.start();
+        
+        Map<TestFile, Result> result = test.testAll();
+        
+        for (Map.Entry<TestFile, Result> entry : result.entrySet()) {
+            if (entry.getValue().getException() == null) continue;
+            
+            System.out.println(FILE_GAP);
+            System.out.println(entry.getKey());
+            System.out.println(FILE_GAP);
+            System.out.println();
+            entry.getValue().getException().printStackTrace();
+            System.out.println();
+            System.out.println();
+        }
     }
     
 }

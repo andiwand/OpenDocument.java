@@ -13,8 +13,8 @@ public class OpenDocumentSpreadsheetTest {
     
     public static void test(OpenDocumentSpreadsheet spreadsheet)
             throws IOException {
-        System.out.println(spreadsheet.getTableCount());
-        System.out.println(spreadsheet.getTableDimensionMap());
+        spreadsheet.getTableCount();
+        spreadsheet.getTableDimensionMap();
     }
     
     public static void main(String[] args) throws Exception {

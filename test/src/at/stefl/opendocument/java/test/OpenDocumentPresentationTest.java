@@ -13,8 +13,8 @@ public class OpenDocumentPresentationTest {
     
     public static void test(OpenDocumentPresentation presentation)
             throws IOException {
-        System.out.println(presentation.getPageCount());
-        System.out.println(presentation.getPageNames());
+        presentation.getPageCount();
+        presentation.getPageNames();
     }
     
     public static void main(String[] args) throws Exception {

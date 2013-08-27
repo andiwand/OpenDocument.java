@@ -10,12 +10,11 @@ public class OpenDocumentFileTest {
     
     public static void test(OpenDocumentFile documentFile) throws IOException {
         for (String fileName : documentFile.getFileNames()) {
-            System.out.println(fileName);
-            System.out.println(documentFile.getFileMimetype(fileName));
-            System.out.println(documentFile.getFileSize(fileName));
+            documentFile.getFileMimetype(fileName);
+            documentFile.getFileSize(fileName);
             if (!documentFile.isFile(fileName)) throw new IllegalStateException(
                     "file is not file");
-            System.out.println(documentFile.getEncryptionParameter(fileName));
+            documentFile.getEncryptionParameter(fileName);
             documentFile.getFileStream(fileName).close();
         }
         
