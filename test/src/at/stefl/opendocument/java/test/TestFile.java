@@ -14,7 +14,7 @@ import at.stefl.opendocument.java.odf.OpenDocumentType;
 public class TestFile {
     
     private static final Pattern FILE_PATTERN = Pattern
-            .compile("^(.*?)-(.*?)-([1-9][0-9]*)(?:\\$(.*)\\$)?\\.(f?od[tspbgf])$");
+            .compile("^(.*?)-(.*)-([1-9][0-9]*)(?:\\$(.*)\\$)?\\.(f?od[tspbgf])$");
     private static final int GROUP_GROUP = 1;
     private static final int DESCRIPTION_GROUP = 2;
     private static final int PASSWORD_GROUP = 4;
