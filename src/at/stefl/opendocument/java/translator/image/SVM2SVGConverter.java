@@ -1,5 +1,6 @@
 package at.stefl.opendocument.java.translator.image;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -29,6 +30,7 @@ public class SVM2SVGConverter implements ImageConverter {
     
     @Override
     public String convertName(String from) {
+        from = new File(from).getName();
         if (from.endsWith(".svm")) from = from.substring(0, from.length()
                 - ".svm".length());
         return from + ".svg";

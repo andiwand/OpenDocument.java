@@ -7,7 +7,6 @@ import java.util.regex.Pattern;
 
 import at.stefl.opendocument.java.css.StyleAbsoluteUnit;
 import at.stefl.opendocument.java.css.StyleProperty;
-import at.stefl.opendocument.java.translator.style.PropertyTranslator;
 
 public class BorderPropertyTranslator implements PropertyTranslator {
     

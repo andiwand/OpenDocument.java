@@ -1,7 +1,6 @@
 package at.stefl.opendocument.java.translator.style.property;
 
 import at.stefl.opendocument.java.css.StyleProperty;
-import at.stefl.opendocument.java.translator.style.PropertyTranslator;
 
 public class StaticGeneralPropertyTranslator implements PropertyTranslator {
     

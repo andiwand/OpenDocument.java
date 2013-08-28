@@ -1,0 +1,77 @@
+text
+===
+
+    - table/column size wrong
+        undefined-undefined-1$testpassword$.odt
+        undefined-undefined-24.odt
+    - section numbers hidden
+        undefined-undefined-14.odt
+    - very large gaps
+        undefined-undefined-27.odt
+    - table border missing
+        style+charset-wikipedia-1.odt
+        style-table-1.odt
+    - image escapes parent elements
+        style+charset-wikipedia-1.odt
+    - image not found shown
+        style-missing+image-1.odt
+    - footnode not correct styled
+        style-footnode+table+of+content-1.odt
+    - drawings missing
+        draw-undefined-1.odt
+    - empty table rows are collapsing
+        style+table-empty+rows-1.odt
+
+spreadsheet
+===
+
+    - wrong font size
+        style-various-3.ods
+        style-various-2.ods
+        style+svm-chart-1.ods
+        style+svm-chart+image+various-1.ods
+    - link style wrong
+        undefined-undefined-22.ods
+    - empty rows are collapsing
+        undefined-undefined-28.ods
+        style-empty+rows-1.ods
+    - random cell styles
+        style-various-2.ods
+        style-color+various-2.ods
+    - text is keeped in cell
+        style-various-2.ods
+    - image missing
+        style-various-2.ods
+    - comments are translated into cells
+        style-various-2.ods
+    - columns/rows are not fixed
+        style-various-2.ods
+        style-fixed+row-2.ods
+    - table/column size wrong
+        style-various-2.ods
+        efficiency+style-big+various-1.ods
+        undefined-undefined-18.ods
+        style-column+size-1.ods
+    - background text is not shown
+        efficiency+style-big+various-1.ods
+    - inperformant html
+        efficiency+style-big+various-1.ods
+        undefined-undefined-27.ods
+        undefined-undefined-19.ods
+        efficiency+style-big+various-2.ods
+        efficiency-big-1.ods
+    - line wrapped
+        undefined-undefined-18.ods
+
+presentation
+===
+
+    - drawings missing
+        style-drawing-1.odp
+        style-all-1.odp
+    - header/footer fails
+        style-drawing-1.odp
+    - wrong font size
+        style-all-1.odp
+    - background color missing
+        style-all-1.odp

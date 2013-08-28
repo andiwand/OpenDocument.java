@@ -11,7 +11,7 @@ import at.stefl.commons.util.array.ArrayUtil;
 import at.stefl.opendocument.java.odf.LocatedOpenDocumentFile;
 import at.stefl.opendocument.java.odf.OpenDocumentType;
 
-public class TestFile {
+public class TestFile implements Comparable<TestFile> {
     
     private static final Pattern FILE_PATTERN = Pattern
             .compile("^(.*?)-(.*)-([1-9][0-9]*)(?:\\$(.*)\\$)?\\.(f?od[tspbgf])$");
@@ -125,6 +125,11 @@ public class TestFile {
         LocatedOpenDocumentFile result = new LocatedOpenDocumentFile(file);
         result.setPassword(password);
         return result;
+    }
+    
+    @Override
+    public int compareTo(TestFile o) {
+        return file.compareTo(o.getFile());
     }
     
 }

@@ -4,8 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
@@ -59,7 +59,7 @@ public class TestFileUtil {
     }
     
     public static Set<TestFile> getFiles() {
-        Set<TestFile> result = new HashSet<TestFile>();
+        Set<TestFile> result = new TreeSet<TestFile>();
         getFilesImpl(getDirectory(), result);
         return result;
     }

@@ -14,6 +14,7 @@ import at.stefl.commons.util.array.ArrayUtil;
 import at.stefl.commons.util.collection.CollectionUtil;
 import at.stefl.commons.util.collection.OrderedPair;
 import at.stefl.opendocument.java.css.StyleProperty;
+import at.stefl.opendocument.java.translator.style.property.PropertyTranslator;
 import at.stefl.opendocument.java.translator.style.property.StaticGeneralPropertyTranslator;
 import at.stefl.opendocument.java.translator.style.property.StylePropertyGroup;
 

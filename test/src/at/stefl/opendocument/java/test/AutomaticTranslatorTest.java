@@ -1,18 +1,24 @@
 package at.stefl.opendocument.java.test;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import at.stefl.commons.lwxml.writer.LWXMLNullWriter;
+import at.stefl.commons.lwxml.writer.LWXMLStreamWriter;
+import at.stefl.commons.lwxml.writer.LWXMLWriter;
 import at.stefl.commons.util.string.StringUtil;
 import at.stefl.opendocument.java.odf.OpenDocument;
 import at.stefl.opendocument.java.odf.OpenDocumentFile;
 import at.stefl.opendocument.java.odf.OpenDocumentPresentation;
 import at.stefl.opendocument.java.odf.OpenDocumentSpreadsheet;
 import at.stefl.opendocument.java.odf.OpenDocumentText;
+import at.stefl.opendocument.java.translator.document.DocumentTranslator;
 import at.stefl.opendocument.java.translator.document.PresentationTranslator;
 import at.stefl.opendocument.java.translator.document.SpreadsheetTranslator;
 import at.stefl.opendocument.java.translator.document.TextTranslator;
@@ -27,7 +33,15 @@ public class AutomaticTranslatorTest {
         private final double time;
         private final Exception exception;
         
-        public Result(double time, Exception exception) {
+        public Result(double time) {
+            this(time, null);
+        }
+        
+        public Result(Exception exception) {
+            this(-1, exception);
+        }
+        
+        private Result(double time, Exception exception) {
             this.time = time;
             this.exception = exception;
         }
@@ -51,69 +65,114 @@ public class AutomaticTranslatorTest {
     private final SpreadsheetTranslator spreadsheetTranslator = new SpreadsheetTranslator();
     private final PresentationTranslator presentationTranslator = new PresentationTranslator();
     
-    private final TranslationSettings translationSettings = new TranslationSettings() {
-        {
-            setCache(cache);
-            setImageStoreMode(ImageStoreMode.INLINE);
-        }
-    };
+    private final Set<TranslationSettings> translationSettings = new HashSet<TranslationSettings>();
     
-    public AutomaticTranslatorTest(Set<TestFile> testFiles) {
-        this.testFiles = new HashSet<TestFile>(testFiles);
+    private final boolean viewResults;
+    private final String startAfter;
+    
+    public AutomaticTranslatorTest(Set<TestFile> testFiles,
+            boolean viewResults, String startAfter) {
+        TranslationSettings settings = new TranslationSettings();
+        settings.setCache(cache);
+        settings.setImageStoreMode(ImageStoreMode.CACHE);
+        
+        translationSettings.add(new TranslationSettings(settings));
+        
+        if (!viewResults) {
+            settings.setImageStoreMode(ImageStoreMode.INLINE);
+            translationSettings.add(new TranslationSettings(settings));
+        }
+        
+        this.testFiles = new TreeSet<TestFile>(testFiles);
+        this.viewResults = viewResults;
+        this.startAfter = startAfter;
     }
     
-    public Map<TestFile, Result> testAll() throws IOException {
-        Map<TestFile, Result> result = new HashMap<TestFile, Result>();
+    public Map<TranslationSettings, Map<TestFile, Result>> testAll()
+            throws IOException {
+        Map<TranslationSettings, Map<TestFile, Result>> result = new HashMap<TranslationSettings, Map<TestFile, Result>>();
         
-        for (TestFile testFile : testFiles) {
-            double time = -1;
-            Exception exception = null;
+        for (TranslationSettings settings : translationSettings) {
+            Map<TestFile, Result> fileResult = new HashMap<TestFile, Result>();
+            result.put(settings, fileResult);
             
-            try {
-                long start = System.nanoTime();
+            boolean started = (startAfter == null);
+            
+            for (TestFile testFile : testFiles) {
+                if (!started) {
+                    if (testFile.getFile().getName().equals(startAfter)) started = true;
+                    continue;
+                }
                 
-                testFile(testFile);
-                
-                long end = System.nanoTime();
-                time = (end - start) / 1000000000d;
-            } catch (Exception e) {
-                exception = e;
+                Result testResult = testFile(testFile, settings);
+                fileResult.put(testFile, testResult);
             }
-            
-            result.put(testFile, new Result(time, exception));
         }
         
         return result;
     }
     
-    private void testFile(TestFile testFile) throws IOException {
+    private Result testFile(TestFile testFile, TranslationSettings settings)
+            throws IOException {
+        System.out.println(testFile);
+        
         OpenDocumentFile documentFile = testFile.getDocumentFile();
         OpenDocumentFileTest.test(documentFile);
         
         try {
             OpenDocument document = documentFile.getAsDocument();
+            DocumentTranslator documentTranslator;
             
             if (document instanceof OpenDocumentText) {
-                OpenDocumentText text = (OpenDocumentText) document;
-                OpenDocumentTextTest.test(text);
-                
-                textTranslator.translate(document, LWXMLNullWriter.NULL,
-                        translationSettings);
+                OpenDocumentTextTest.test((OpenDocumentText) document);
+                documentTranslator = textTranslator;
             } else if (document instanceof OpenDocumentSpreadsheet) {
-                OpenDocumentSpreadsheet spreadsheet = (OpenDocumentSpreadsheet) document;
-                OpenDocumentSpreadsheetTest.test(spreadsheet);
-                
-                spreadsheetTranslator.translate(document, LWXMLNullWriter.NULL,
-                        translationSettings);
+                OpenDocumentSpreadsheetTest
+                        .test((OpenDocumentSpreadsheet) document);
+                documentTranslator = spreadsheetTranslator;
             } else if (document instanceof OpenDocumentPresentation) {
-                OpenDocumentPresentation presentation = (OpenDocumentPresentation) document;
-                OpenDocumentPresentationTest.test(presentation);
-                
-                presentationTranslator.translate(document,
-                        LWXMLNullWriter.NULL, translationSettings);
+                OpenDocumentPresentationTest
+                        .test((OpenDocumentPresentation) document);
+                documentTranslator = presentationTranslator;
             } else {
                 throw new IllegalStateException();
             }
+            
+            File htmlFile;
+            LWXMLWriter out;
+            
+            if (viewResults) {
+                htmlFile = cache.create("result.html");
+                out = new LWXMLStreamWriter(new FileWriter(htmlFile));
+            } else {
+                htmlFile = null;
+                out = new LWXMLNullWriter();
+            }
+            
+            long start = System.nanoTime();
+            documentTranslator.translate(document, out, settings);
+            long end = System.nanoTime();
+            double time = (end - start) / 1000000000d;
+            
+            out.close();
+            
+            if (viewResults) {
+                System.out.println(testFile.getFile().getName());
+                System.out.println(testFile.getPassword());
+                System.out.println();
+                Process libreoffice = Runtime.getRuntime().exec(
+                        new String[] { "libreoffice",
+                                testFile.getFile().getPath() });
+                Runtime.getRuntime().exec(
+                        new String[] { "google-chrome", htmlFile.getPath() });
+                
+                libreoffice.waitFor();
+            }
+            
+            return new Result(time);
+        } catch (Exception e) {
+            if (e instanceof IOException) throw (IOException) e;
+            return new Result(e);
         } finally {
             documentFile.close();
             cache.clear();
@@ -122,20 +181,27 @@ public class AutomaticTranslatorTest {
     
     public static void main(String[] args) throws Throwable {
         Set<TestFile> testFiles = TestFileUtil.getFiles();
-        AutomaticTranslatorTest test = new AutomaticTranslatorTest(testFiles);
+        AutomaticTranslatorTest test = new AutomaticTranslatorTest(testFiles,
+                true, "all-undefined-1.odt");
         
-        Map<TestFile, Result> result = test.testAll();
+        Map<TranslationSettings, Map<TestFile, Result>> result = test.testAll();
         
-        for (Map.Entry<TestFile, Result> entry : result.entrySet()) {
-            if (entry.getValue().getException() == null) continue;
-            
-            System.out.println(FILE_GAP);
-            System.out.println(entry.getKey());
-            System.out.println(FILE_GAP);
-            System.out.println();
-            entry.getValue().getException().printStackTrace();
-            System.out.println();
-            System.out.println();
+        for (Map.Entry<TranslationSettings, Map<TestFile, Result>> entry : result
+                .entrySet()) {
+            for (Map.Entry<TestFile, Result> fileEntry : entry.getValue()
+                    .entrySet()) {
+                if (fileEntry.getValue().getException() == null) continue;
+                
+                System.out.println(FILE_GAP);
+                System.out.println(entry.getKey());
+                System.out.println(FILE_GAP);
+                System.out.println();
+                System.out.println(entry.getKey());
+                System.out.println();
+                fileEntry.getValue().getException().printStackTrace();
+                System.out.println();
+                System.out.println();
+            }
         }
     }
     

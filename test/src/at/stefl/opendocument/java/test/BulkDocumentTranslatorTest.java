@@ -1,12 +1,11 @@
 package at.stefl.opendocument.java.test;
 
 import java.io.File;
-import java.util.Iterator;
 
 import javax.swing.JFileChooser;
 
-import at.stefl.commons.lwxml.writer.LWXMLMultiWriter;
 import at.stefl.commons.lwxml.writer.LWXMLWriter;
+import at.stefl.commons.util.collection.OrderedPair;
 import at.stefl.opendocument.java.odf.OpenDocument;
 import at.stefl.opendocument.java.odf.OpenDocumentFile;
 import at.stefl.opendocument.java.odf.OpenDocumentPresentation;
@@ -14,7 +13,7 @@ import at.stefl.opendocument.java.odf.OpenDocumentSpreadsheet;
 import at.stefl.opendocument.java.translator.document.BulkPresentationTranslator;
 import at.stefl.opendocument.java.translator.document.BulkSpreadsheetTranslator;
 import at.stefl.opendocument.java.translator.document.DocumentTranslator;
-import at.stefl.opendocument.java.translator.document.GenericBulkDocumentTranslator;
+import at.stefl.opendocument.java.translator.document.DocumentTranslatorUtil;
 import at.stefl.opendocument.java.translator.settings.ImageStoreMode;
 import at.stefl.opendocument.java.translator.settings.TranslationSettings;
 import at.stefl.opendocument.java.util.DefaultFileCache;
@@ -47,8 +46,10 @@ public class BulkDocumentTranslatorTest {
             throw new IllegalArgumentException();
         }
         
-        LWXMLMultiWriter out = GenericBulkDocumentTranslator.provideOutput(
-                document, cache, "odf", ".html");
+        OrderedPair<String[], LWXMLWriter> output = DocumentTranslatorUtil
+                .provideOutput(document, cache, "odf", ".html");
+        String[] names = output.getElement1();
+        LWXMLWriter out = output.getElement2();
         
         long start = System.nanoTime();
         translator.translate(document, out, settings);
@@ -57,9 +58,8 @@ public class BulkDocumentTranslatorTest {
         
         out.close();
         
-        Iterator<LWXMLWriter> iterator = out.iterator();
-        for (int i = 0; iterator.hasNext(); i++, iterator.next()) {
-            File tableFile = new File(cache.getDirectory(), "odf" + i + ".html");
+        for (String name : names) {
+            File tableFile = cache.getFile(name);
             Runtime.getRuntime().exec(
                     new String[] { "google-chrome",
                             tableFile.getCanonicalPath() });

@@ -1,4 +1,4 @@
-package at.stefl.opendocument.java.translator.style;
+package at.stefl.opendocument.java.translator.style.property;
 
 import at.stefl.opendocument.java.css.StyleProperty;
 
