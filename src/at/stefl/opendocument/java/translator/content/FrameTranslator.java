@@ -6,7 +6,6 @@ import at.stefl.commons.lwxml.LWXMLUtil;
 import at.stefl.commons.lwxml.reader.LWXMLPushbackReader;
 import at.stefl.commons.lwxml.writer.LWXMLWriter;
 import at.stefl.opendocument.java.translator.context.TranslationContext;
-import at.stefl.opendocument.java.translator.style.property.StylePropertyGroup;
 
 public class FrameTranslator extends
         DefaultStyledElementTranslator<TranslationContext> {
@@ -23,8 +22,7 @@ public class FrameTranslator extends
     }
     
     public FrameTranslator(boolean translatePosition) {
-        super("div", StyleAttribute.PRESENTATION, StylePropertyGroup.GRAPHIC,
-                StylePropertyGroup.PARAGRAPH, StylePropertyGroup.TEXT);
+        super("div");
         
         this.translatePosition = translatePosition;
         

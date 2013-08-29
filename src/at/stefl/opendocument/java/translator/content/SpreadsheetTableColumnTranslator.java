@@ -6,7 +6,6 @@ import at.stefl.commons.lwxml.reader.LWXMLPushbackReader;
 import at.stefl.commons.lwxml.writer.LWXMLWriter;
 import at.stefl.commons.util.NumberUtil;
 import at.stefl.opendocument.java.translator.context.SpreadsheetTranslationContext;
-import at.stefl.opendocument.java.translator.style.property.StylePropertyGroup;
 
 public class SpreadsheetTableColumnTranslator extends
         SpreadsheetTableElementTranslator {
@@ -18,7 +17,7 @@ public class SpreadsheetTableColumnTranslator extends
     private String currentDefaultCellStyle;
     
     public SpreadsheetTableColumnTranslator() {
-        super("col", StylePropertyGroup.TABLE_COLUMN);
+        super("col");
         
         addAttributeTranslator(COLUMNS_REPEATED_ATTRIBUTE_NAME, "span");
         

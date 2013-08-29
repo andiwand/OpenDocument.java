@@ -1,17 +1,21 @@
 package at.stefl.opendocument.java.translator.content;
 
 import at.stefl.opendocument.java.translator.context.TranslationContext;
-import at.stefl.opendocument.java.translator.style.property.StylePropertyGroup;
 
 public abstract class DefaultStyledElementTranslator<C extends TranslationContext>
         extends DefaultElementTranslator<C> {
     
     public DefaultStyledElementTranslator(String elementName,
-            StyleAttribute attribute, StylePropertyGroup... groups) {
+            StyleAttribute... attributes) {
         super(elementName);
         
-        addAttributeTranslator(attribute.getName(),
-                new StyleAttributeTranslator(groups));
+        if (attributes.length == 0) attributes = StyleAttribute.values();
+        
+        String[] names = new String[attributes.length];
+        for (int i = 0; i < names.length; i++)
+            names[i] = attributes[i].getName();
+        
+        addComplexAttributeTranslator(new StyleAttributeTranslator(), names);
     }
     
 }

@@ -3,12 +3,11 @@ package at.stefl.opendocument.java.translator.content;
 import java.io.IOException;
 
 import at.stefl.commons.lwxml.reader.LWXMLPushbackReader;
-import at.stefl.commons.lwxml.translator.LWXMLAttributeTranslator;
+import at.stefl.commons.lwxml.translator.LWXMLSimpleAttributeTranslator;
 import at.stefl.commons.lwxml.writer.LWXMLWriter;
 import at.stefl.commons.util.string.StringUtil;
 import at.stefl.opendocument.java.translator.context.PresentationTranslationContext;
 import at.stefl.opendocument.java.translator.style.DocumentStyle;
-import at.stefl.opendocument.java.translator.style.property.StylePropertyGroup;
 
 // TODO: improve with complex attribute translator
 public class PresentationPageTranslator extends
@@ -30,7 +29,7 @@ public class PresentationPageTranslator extends
     @Override
     public boolean addAttributeTranslator(
             String attributeName,
-            LWXMLAttributeTranslator<? super PresentationTranslationContext> translator) {
+            LWXMLSimpleAttributeTranslator<? super PresentationTranslationContext> translator) {
         return false;
     }
     
@@ -43,11 +42,9 @@ public class PresentationPageTranslator extends
         String styleName = getCurrentParsedAttribute(STYLE_ATTRIBUTE);
         String masterPage = getCurrentParsedAttribute(MASTER_PAGE_ATTRIBUTE);
         
-        String classValue = StringUtil.concateNotNull(" ", style
-                .getStyleReference(masterPage, StylePropertyGroup.PAGE_LAYOUT),
-                style.getStyleReference(styleName,
-                        StylePropertyGroup.PAGE_LAYOUT));
+        String classValue = StringUtil.concateNotNull(" ",
+                style.getStyleReference(masterPage),
+                style.getStyleReference(styleName));
         out.writeAttribute(CLASS_ATTRIBUTE, classValue);
     }
-    
 }

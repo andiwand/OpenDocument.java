@@ -7,6 +7,7 @@
 	<path id="classpath">
 		<pathelement location="bin" />
 		<pathelement location="dep/commons/bin" />
+		<pathelement location="dep/svm/bin" />
 	</path>
 	
 	<target name="init">

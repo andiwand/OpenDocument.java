@@ -16,9 +16,7 @@ import at.stefl.commons.util.collection.OrderedPair;
 import at.stefl.opendocument.java.css.StyleProperty;
 import at.stefl.opendocument.java.translator.style.property.PropertyTranslator;
 import at.stefl.opendocument.java.translator.style.property.StaticGeneralPropertyTranslator;
-import at.stefl.opendocument.java.translator.style.property.StylePropertyGroup;
 
-// TODO: switch by StylePropertyGroup?
 public class DefaultStyleElementTranslator extends
         StyleElementTranslator<DocumentStyle> {
     
@@ -129,24 +127,14 @@ public class DefaultStyleElementTranslator extends
         Set<String> parents = getParentStyles(attributes);
         out.addStyleInheritance(name, parents);
         
-        StylePropertyGroup group = null;
+        out.writeClass(name);
         
         loop:
         while (true) {
             LWXMLEvent event = in.readEvent();
             
             switch (event) {
-            case START_ELEMENT:
-                // TODO: optimize
-                String element = in.readValue();
-                group = StylePropertyGroup.getGroupByElement(element);
-                if (group != null) out.writeClass(name, group);
-                break;
-            case END_ELEMENT:
-                group = null;
-                break;
             case ATTRIBUTE_NAME:
-                if (group == null) break;
                 OrderedPair<String, PropertyTranslator> match = attributeTranslatorMap
                         .match(in);
                 

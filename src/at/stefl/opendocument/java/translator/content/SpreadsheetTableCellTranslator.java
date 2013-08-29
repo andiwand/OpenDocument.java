@@ -21,7 +21,7 @@ public class SpreadsheetTableCellTranslator extends
     private LWXMLAttribute currentDefaultStyleAttribute;
     
     public SpreadsheetTableCellTranslator() {
-        super("td", null);
+        super("td");
         
         addParseAttribute(STYLE_ATTRIBUTE_NAME);
         addParseAttribute(COLUMNS_REPEATED_ATTRIBUTE_NAME);
@@ -47,6 +47,7 @@ public class SpreadsheetTableCellTranslator extends
             SpreadsheetTranslationContext context) throws IOException {
         super.translateAttributeList(in, out, context);
         
+        // TODO: add to every element
         if ((getCurrentParsedAttribute(STYLE_ATTRIBUTE_NAME) == null)
                 && (currentDefaultStyleAttribute != null)) out
                 .writeAttribute(currentDefaultStyleAttribute);

@@ -9,16 +9,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import at.stefl.commons.lwxml.LWXMLAttribute;
 import at.stefl.opendocument.java.css.StyleProperty;
 import at.stefl.opendocument.java.css.StyleSheet;
 import at.stefl.opendocument.java.css.StyleSheetParser;
 import at.stefl.opendocument.java.css.StyleSheetWriter;
-import at.stefl.opendocument.java.translator.style.property.StylePropertyGroup;
 
 public class DocumentStyle {
-    
-    private static final String GROUP_PREFIX = "_group-";
     
     protected static StyleSheet loadStyleSheet(String name, Class<?> location)
             throws IOException {
@@ -36,10 +32,6 @@ public class DocumentStyle {
         return name.replaceAll("\\.", "_");
     }
     
-    private static String escapeStyleGroup(StylePropertyGroup group) {
-        return GROUP_PREFIX + group;
-    }
-    
     private Map<String, Set<String>> styleInheritance = new HashMap<String, Set<String>>();
     private final StyleSheetWriter styleOut;
     
@@ -54,20 +46,11 @@ public class DocumentStyle {
         return new ArrayList<String>(parents);
     }
     
-    public String getStyleReference(String name, StylePropertyGroup... groups) {
+    public String getStyleReference(String name) {
         Set<String> parents = styleInheritance.get(name);
         if (parents == null) return null;
-        // TODO: redesign
-        if ((groups == null) || (groups.length == 0)
-                || ((groups.length == 1) && (groups[0] == null))) groups = StylePropertyGroup
-                .values();
         
         StringBuilder builder = new StringBuilder();
-        
-        for (int i = 0; i < groups.length; i++) {
-            builder.append(escapeStyleGroup(groups[i]));
-            builder.append(' ');
-        }
         
         builder.append(escapeStyleName(name));
         for (String parent : parents) {
@@ -76,13 +59,6 @@ public class DocumentStyle {
         }
         
         return builder.toString();
-    }
-    
-    public LWXMLAttribute getStyleAttribute(String name,
-            StylePropertyGroup... groups) {
-        String reference = getStyleReference(name, groups);
-        if (reference == null) reference = "null";
-        return new LWXMLAttribute("class", reference);
     }
     
     public void addStyleInheritance(String name, Set<String> parents) {
@@ -99,11 +75,9 @@ public class DocumentStyle {
         styleInheritance.put(name, parentSet);
     }
     
-    public void writeClass(String name, StylePropertyGroup group)
-            throws IOException {
+    public void writeClass(String name) throws IOException {
         if (styleOut.isDefinitionStarted()) styleOut.writeEndDefinition();
-        styleOut.writeStartDefinition("." + escapeStyleName(name) + "."
-                + escapeStyleGroup(group));
+        styleOut.writeStartDefinition("." + escapeStyleName(name));
     }
     
     public void writeProperty(StyleProperty property) throws IOException {

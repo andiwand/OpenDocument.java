@@ -6,7 +6,6 @@ import at.stefl.commons.lwxml.reader.LWXMLPushbackReader;
 import at.stefl.commons.lwxml.writer.LWXMLWriter;
 import at.stefl.commons.util.NumberUtil;
 import at.stefl.opendocument.java.translator.context.SpreadsheetTranslationContext;
-import at.stefl.opendocument.java.translator.style.property.StylePropertyGroup;
 
 public class SpreadsheetTableRowTranslator extends
         SpreadsheetTableElementTranslator {
@@ -16,7 +15,7 @@ public class SpreadsheetTableRowTranslator extends
     private int currentRepeated;
     
     public SpreadsheetTableRowTranslator() {
-        super("tr", StylePropertyGroup.TABLE);
+        super("tr");
         
         addParseAttribute(ROWS_REPEATED_ATTRIBUTE_NAME);
     }

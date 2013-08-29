@@ -21,7 +21,6 @@ import at.stefl.commons.math.vector.Vector2i;
 import at.stefl.commons.util.collection.OrderedPair;
 import at.stefl.opendocument.java.translator.StyleScriptUtil;
 import at.stefl.opendocument.java.translator.context.SpreadsheetTranslationContext;
-import at.stefl.opendocument.java.translator.style.property.StylePropertyGroup;
 
 // TODO: implement remove methods
 // TODO: renew
@@ -79,7 +78,7 @@ public class SpreadsheetTableTranslator extends
     
     public SpreadsheetTableTranslator(
             ContentTranslator<SpreadsheetTranslationContext> contentTranslator) {
-        super("table", StylePropertyGroup.TABLE);
+        super("table");
         
         this.contentTranslator = contentTranslator;
         
@@ -102,15 +101,14 @@ public class SpreadsheetTableTranslator extends
                 .iterator();
     }
     
-    private LWXMLAttribute getCurrentColumnDefaultStyleAttribute(
+    private LWXMLAttribute getCurrentColumnDefaultStyle(
             SpreadsheetTranslationContext context) {
         String name;
         // TODO: log
         if (!currentColumnDefaultStylesIterator.hasNext()) name = null;
         else name = currentColumnDefaultStylesIterator.next();
         if (name == null) return null;
-        // TODO: redesign
-        return context.getStyle().getStyleAttribute(name);
+        return StyleAttributeTranslator.translate(name, context.getStyle());
     }
     
     private void spanCurrentColumnDefaultStyle(int span) {
@@ -387,7 +385,7 @@ public class SpreadsheetTableTranslator extends
     
     private void translateCellStart(LWXMLPushbackReader in, LWXMLWriter out,
             SpreadsheetTranslationContext context) throws IOException {
-        LWXMLAttribute currentDefaultStyleAttribute = getCurrentColumnDefaultStyleAttribute(context);
+        LWXMLAttribute currentDefaultStyleAttribute = getCurrentColumnDefaultStyle(context);
         cellTranslator
                 .setCurrentDefaultStyleAttribute(currentDefaultStyleAttribute);
         cellTranslator.translate(in, out, context);

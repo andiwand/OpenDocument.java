@@ -2,57 +2,51 @@ package at.stefl.opendocument.java.translator.content;
 
 import java.io.IOException;
 
+import at.stefl.commons.lwxml.LWXMLUtil;
 import at.stefl.commons.lwxml.reader.LWXMLPushbackReader;
 import at.stefl.commons.lwxml.writer.LWXMLWriter;
 import at.stefl.opendocument.java.translator.context.TranslationContext;
-import at.stefl.opendocument.java.translator.style.DocumentStyle;
-import at.stefl.opendocument.java.translator.style.property.StylePropertyGroup;
 
 public class ParagraphTranslator extends
-        DefaultBlockTranslator<TranslationContext> {
+        DefaultStyledElementTranslator<TranslationContext> {
     
-    private final boolean strictStyling;
+    private final boolean insertSpan;
     
     public ParagraphTranslator(String elementName) {
         this(elementName, false);
     }
     
-    public ParagraphTranslator(String elementName, boolean strictStyling) {
+    public ParagraphTranslator(String elementName, boolean insertSpan) {
         super(elementName);
         
-        this.strictStyling = strictStyling;
+        this.insertSpan = insertSpan;
         
         addParseAttribute(StyleAttribute.TEXT.getName());
     }
     
     @Override
-    public void translateAttributeList(LWXMLPushbackReader in, LWXMLWriter out,
+    public void translateStartElement(LWXMLPushbackReader in, LWXMLWriter out,
             TranslationContext context) throws IOException {
-        super.translateAttributeList(in, out, context);
+        super.translateStartElement(in, out, context);
         
-        String name = getCurrentParsedAttribute(StyleAttribute.TEXT.getName());
-        if (name == null) return;
-        
-        DocumentStyle style = context.getStyle();
-        
-        if (strictStyling) {
-            out.writeAttribute(style.getStyleAttribute(name,
-                    StylePropertyGroup.PARAGRAPH));
-            
-            out.writeStartElement("span");
-            out.writeAttribute(style.getStyleAttribute(name,
-                    StylePropertyGroup.TEXT));
+        if (insertSpan) out.writeStartElement("span");
+    }
+    
+    // TODO: fix me (whitespace?)
+    @Override
+    public void translateChildren(LWXMLPushbackReader in, LWXMLWriter out,
+            TranslationContext context) throws IOException {
+        if (LWXMLUtil.isEmptyElement(in)) {
+            out.writeEmptyElement("br");
         } else {
-            out.writeAttribute(style.getStyleAttribute(name));
+            in.unreadEvent();
         }
     }
     
     @Override
     public void translateEndElement(LWXMLPushbackReader in, LWXMLWriter out,
             TranslationContext context) throws IOException {
-        if (strictStyling) {
-            out.writeEndElement("span");
-        }
+        if (insertSpan) out.writeEndElement("span");
         
         super.translateEndElement(in, out, context);
     }

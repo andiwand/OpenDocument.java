@@ -5,13 +5,12 @@ import java.io.IOException;
 import at.stefl.commons.lwxml.reader.LWXMLPushbackReader;
 import at.stefl.commons.lwxml.writer.LWXMLWriter;
 import at.stefl.opendocument.java.translator.context.TranslationContext;
-import at.stefl.opendocument.java.translator.style.property.StylePropertyGroup;
 
 public class DrawingTranslator extends
         DefaultStyledElementTranslator<TranslationContext> {
     
     public DrawingTranslator() {
-        super("svg", StyleAttribute.DRAW, StylePropertyGroup.GRAPHIC);
+        super("svg");
         
         addAttributeTranslator("svg:x", "x");
         addAttributeTranslator("svg:y", "y");

@@ -6,13 +6,12 @@ import at.stefl.commons.lwxml.LWXMLUtil;
 import at.stefl.commons.lwxml.reader.LWXMLPushbackReader;
 import at.stefl.commons.lwxml.writer.LWXMLWriter;
 import at.stefl.opendocument.java.translator.context.TranslationContext;
-import at.stefl.opendocument.java.translator.style.property.StylePropertyGroup;
 
 public class SpanTranslator extends
         DefaultStyledElementTranslator<TranslationContext> {
     
     public SpanTranslator() {
-        super("span", StyleAttribute.TEXT, StylePropertyGroup.TEXT);
+        super("span");
     }
     
     // TODO: fix me (whitespace?)

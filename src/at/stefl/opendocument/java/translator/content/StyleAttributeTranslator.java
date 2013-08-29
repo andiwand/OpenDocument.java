@@ -1,23 +1,43 @@
 package at.stefl.opendocument.java.translator.content;
 
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.Map;
+
 import at.stefl.commons.lwxml.LWXMLAttribute;
-import at.stefl.commons.lwxml.translator.LWXMLAttributeTranslator;
+import at.stefl.commons.lwxml.translator.LWXMLComplexAttributeTranslator;
+import at.stefl.commons.lwxml.writer.LWXMLWriter;
 import at.stefl.opendocument.java.translator.context.TranslationContext;
-import at.stefl.opendocument.java.translator.style.property.StylePropertyGroup;
+import at.stefl.opendocument.java.translator.style.DocumentStyle;
 
 public class StyleAttributeTranslator implements
-        LWXMLAttributeTranslator<TranslationContext> {
+        LWXMLComplexAttributeTranslator<TranslationContext> {
     
-    private final StylePropertyGroup[] groups;
-    
-    public StyleAttributeTranslator(StylePropertyGroup... groups) {
-        this.groups = groups.clone();
+    public static LWXMLAttribute translate(String styleName, DocumentStyle style) {
+        String reference = style.getStyleReference(styleName);
+        // TODO: log
+        if (reference == null) return null;
+        return new LWXMLAttribute("class", reference);
     }
     
     @Override
-    public LWXMLAttribute translate(String name, String value,
-            TranslationContext context) {
-        return context.getStyle().getStyleAttribute(value, groups);
+    public void translate(Map<String, String> in, LWXMLWriter out,
+            TranslationContext context) throws IOException {
+        if (in.isEmpty()) return;
+        DocumentStyle style = context.getStyle();
+        
+        out.writeAttribute("class", "");
+        
+        Iterator<Map.Entry<String, String>> iterator = in.entrySet().iterator();
+        while (true) {
+            Map.Entry<String, String> attribute = iterator.next();
+            String reference = style.getStyleReference(attribute.getValue());
+            // TODO: log
+            if (reference == null) continue;
+            out.write(reference);
+            if (!iterator.hasNext()) break;
+            out.write(" ");
+        }
     }
     
 }
