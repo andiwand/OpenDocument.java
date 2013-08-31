@@ -1,12 +1,13 @@
 package at.stefl.opendocument.java.translator.content;
 
 import java.io.IOException;
+import java.util.Map;
 
-import at.stefl.commons.lwxml.LWXMLAttribute;
 import at.stefl.commons.lwxml.reader.LWXMLPushbackReader;
 import at.stefl.commons.lwxml.writer.LWXMLWriter;
 import at.stefl.commons.util.NumberUtil;
 import at.stefl.opendocument.java.translator.context.SpreadsheetTranslationContext;
+import at.stefl.opendocument.java.translator.context.TranslationContext;
 
 public class SpreadsheetTableCellTranslator extends
         SpreadsheetTableElementTranslator {
@@ -15,10 +16,11 @@ public class SpreadsheetTableCellTranslator extends
     private static final String COLUMNS_REPEATED_ATTRIBUTE_NAME = "table:number-columns-repeated";
     private static final String COLUMNS_SPANNED_ATTRIBUTE_NAME = "table:number-columns-spanned";
     private static final String ROWS_SPANNED_ATTRIBUTE_NAME = "table:number-rows-spanned";
+    private static final String DEFAULT_CELL_STYLE_ATTRIBUTE_NAME = "table:default-cell-style-name";
     
     private int currentRepeated;
     private int currentWidth;
-    private LWXMLAttribute currentDefaultStyleAttribute;
+    private String currentDefaultStyle;
     
     public SpreadsheetTableCellTranslator() {
         super("td");
@@ -29,6 +31,18 @@ public class SpreadsheetTableCellTranslator extends
         addParseAttribute(ROWS_SPANNED_ATTRIBUTE_NAME);
     }
     
+    @Override
+    protected StyleAttributeTranslator createAttributeTranslator() {
+        return new StyleAttributeTranslator() {
+            @Override
+            public void translate(Map<String, String> in, LWXMLWriter out,
+                    TranslationContext context) throws IOException {
+                in.put(DEFAULT_CELL_STYLE_ATTRIBUTE_NAME, currentDefaultStyle);
+                super.translate(in, out, context);
+            }
+        };
+    }
+    
     public int getCurrentRepeated() {
         return currentRepeated;
     }
@@ -37,20 +51,14 @@ public class SpreadsheetTableCellTranslator extends
         return currentWidth;
     }
     
-    public void setCurrentDefaultStyleAttribute(
-            LWXMLAttribute currentDefaultStyleAttribute) {
-        this.currentDefaultStyleAttribute = currentDefaultStyleAttribute;
+    public void setCurrentDefaultStyle(String name) {
+        this.currentDefaultStyle = name;
     }
     
     @Override
     public void translateAttributeList(LWXMLPushbackReader in, LWXMLWriter out,
             SpreadsheetTranslationContext context) throws IOException {
         super.translateAttributeList(in, out, context);
-        
-        // TODO: add to every element
-        if ((getCurrentParsedAttribute(STYLE_ATTRIBUTE_NAME) == null)
-                && (currentDefaultStyleAttribute != null)) out
-                .writeAttribute(currentDefaultStyleAttribute);
         
         currentRepeated = NumberUtil.parseInt(
                 getCurrentParsedAttribute(COLUMNS_REPEATED_ATTRIBUTE_NAME), 1);

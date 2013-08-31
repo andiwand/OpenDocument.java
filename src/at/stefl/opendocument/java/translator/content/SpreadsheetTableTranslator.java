@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import at.stefl.commons.lwxml.LWXMLAttribute;
 import at.stefl.commons.lwxml.LWXMLEvent;
 import at.stefl.commons.lwxml.LWXMLIllegalElementException;
 import at.stefl.commons.lwxml.LWXMLIllegalEventException;
@@ -101,14 +100,13 @@ public class SpreadsheetTableTranslator extends
                 .iterator();
     }
     
-    private LWXMLAttribute getCurrentColumnDefaultStyle(
-            SpreadsheetTranslationContext context) {
+    private String getCurrentColumnDefaultStyle() {
         String name;
         // TODO: log
         if (!currentColumnDefaultStylesIterator.hasNext()) name = null;
         else name = currentColumnDefaultStylesIterator.next();
         if (name == null) return null;
-        return StyleAttributeTranslator.translate(name, context.getStyle());
+        return name;
     }
     
     private void spanCurrentColumnDefaultStyle(int span) {
@@ -385,9 +383,9 @@ public class SpreadsheetTableTranslator extends
     
     private void translateCellStart(LWXMLPushbackReader in, LWXMLWriter out,
             SpreadsheetTranslationContext context) throws IOException {
-        LWXMLAttribute currentDefaultStyleAttribute = getCurrentColumnDefaultStyle(context);
+        String currentDefaultStyle = getCurrentColumnDefaultStyle();
         cellTranslator
-                .setCurrentDefaultStyleAttribute(currentDefaultStyleAttribute);
+                .setCurrentDefaultStyle(currentDefaultStyle);
         cellTranslator.translate(in, out, context);
         spanCurrentColumnDefaultStyle(cellTranslator.getCurrentRepeated() - 1);
     }

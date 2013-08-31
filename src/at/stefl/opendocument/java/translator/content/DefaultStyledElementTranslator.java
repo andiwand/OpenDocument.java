@@ -15,7 +15,11 @@ public abstract class DefaultStyledElementTranslator<C extends TranslationContex
         for (int i = 0; i < names.length; i++)
             names[i] = attributes[i].getName();
         
-        addComplexAttributeTranslator(new StyleAttributeTranslator(), names);
+        addComplexAttributeTranslator(createAttributeTranslator(), names);
+    }
+    
+    protected StyleAttributeTranslator createAttributeTranslator() {
+        return new StyleAttributeTranslator();
     }
     
 }

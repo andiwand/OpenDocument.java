@@ -32,11 +32,15 @@ public class StyleAttributeTranslator implements
         while (true) {
             Map.Entry<String, String> attribute = iterator.next();
             String reference = style.getStyleReference(attribute.getValue());
-            // TODO: log
-            if (reference == null) continue;
-            out.write(reference);
-            if (!iterator.hasNext()) break;
-            out.write(" ");
+            
+            if (reference == null) {
+                // TODO: log
+                if (!iterator.hasNext()) break;
+            } else {
+                out.write(reference);
+                if (!iterator.hasNext()) break;
+                out.write(" ");
+            }
         }
     }
     
