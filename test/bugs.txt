@@ -14,7 +14,7 @@ general
             table's width is fixed to screen size, but column sizes are
             translated correctly
         - fix
-            *this* - set table's width to 0px (random html fix)
+            77caf6c - set table's width to 0px (random html fix)
 
 
 text
@@ -66,7 +66,7 @@ spreadsheet
         - issue
             default cell style should be on each cell
         - fix
-            d6dea26ec7 - add default cell style to every cell
+            f704455 - add default cell style to every cell
     
     - wrong font size
         - file
