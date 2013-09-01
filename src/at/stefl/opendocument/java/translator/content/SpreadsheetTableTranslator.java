@@ -384,8 +384,7 @@ public class SpreadsheetTableTranslator extends
     private void translateCellStart(LWXMLPushbackReader in, LWXMLWriter out,
             SpreadsheetTranslationContext context) throws IOException {
         String currentDefaultStyle = getCurrentColumnDefaultStyle();
-        cellTranslator
-                .setCurrentDefaultStyle(currentDefaultStyle);
+        cellTranslator.setCurrentDefaultStyle(currentDefaultStyle);
         cellTranslator.translate(in, out, context);
         spanCurrentColumnDefaultStyle(cellTranslator.getCurrentRepeated() - 1);
     }

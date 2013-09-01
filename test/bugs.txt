@@ -1,82 +1,140 @@
 general
 ===
 
-	- ODF element/attribute names should be stored centrally
+    - ODF element/attribute names should be stored centrally
+    
+    - table/column size wrong
+        - file
+            encrypted-undefined-2$testpassword$.odt
+            style-various-2.ods
+            efficiency+style-big+various-1.ods
+            style-various-4.ods
+            style-column+size-1.ods
+        - issue
+            table's width is fixed to screen size, but column sizes are
+            translated correctly
+        - fix
+            *this* - set table's width to 0px (random html fix)
+
 
 text
 ===
 
-    - table/column size wrong
-        undefined-undefined-1$testpassword$.odt
-        undefined-undefined-24.odt
     - section numbers hidden
-        undefined-undefined-14.odt
+        - file
+            efficiency+style-big+various-1.odt
+    
     - very large gaps
-        undefined-undefined-27.odt
+        - file
+            efficiency+style-big+various-2.odt
+    
     - table border missing
-        style+charset-wikipedia-1.odt
-        style-table-1.odt
+        - file
+            style+charset-wikipedia-1.odt
+            style-table-1.odt
+    
     - image escapes parent elements
-        style+charset-wikipedia-1.odt
+        - file
+            style+charset-wikipedia-1.odt
+    
     - image not found shown
-        style-missing+image-1.odt
+        - file
+            style-missing+image-1.odt
+    
     - footnode not correct styled
-        style-footnode+table+of+content-1.odt
+        - file
+            style-footnode+table+of+content-1.odt
+    
     - drawings missing
-        draw-undefined-1.odt
+        - file
+            draw-undefined-1.odt
+    
     - empty table rows are collapsing
-        style+table-empty+rows-1.odt
+        - file
+            style+table-empty+rows-1.odt
+
 
 spreadsheet
 ===
 
+    - wrong default cell styling
+        - file
+            style-various-3.ods
+            style-various-2.ods
+            style+svm-chart-1.ods
+            style+svm-chart+image+various-1.ods
+        - issue
+            default cell style should be on each cell
+        - fix
+            d6dea26ec7 - add default cell style to every cell
+    
     - wrong font size
-        style-various-3.ods
-        style-various-2.ods
-        style+svm-chart-1.ods
-        style+svm-chart+image+various-1.ods
+        - file
+            style-various-2.ods
+    
     - link style wrong
-        undefined-undefined-22.ods
+        - file
+            style-color+various-1.ods
+    
     - empty rows are collapsing
-        undefined-undefined-28.ods
-        style-empty+rows-1.ods
+        - file
+            style-empty+rows-1.ods
+            style-empty+rows-2.ods
+    
     - random cell styles
-        style-various-2.ods
-        style-color+various-2.ods
+        - file
+            style-various-2.ods
+            style-color+various-2.ods
+    
     - text is keeped in cell
-        style-various-2.ods
+        - file
+            style-various-2.ods
+    
     - image missing
-        style-various-2.ods
+        - file
+            style-various-2.ods
+    
     - comments are translated into cells
-        style-various-2.ods
+        - file
+            style-various-2.ods
+    
     - columns/rows are not fixed
-        style-various-2.ods
-        style-fixed+row-2.ods
-    - table/column size wrong
-        style-various-2.ods
-        efficiency+style-big+various-1.ods
-        undefined-undefined-18.ods
-        style-column+size-1.ods
+        - file
+            style-various-2.ods
+            style-fixed+row-2.ods
+    
     - background text is not shown
-        efficiency+style-big+various-1.ods
+        - file
+            efficiency+style-big+various-1.ods
+    
     - inperformant html
-        efficiency+style-big+various-1.ods
-        undefined-undefined-27.ods
-        undefined-undefined-19.ods
-        efficiency+style-big+various-2.ods
-        efficiency-big-1.ods
+            efficiency+style-big+various-1.ods
+            efficiency+style-big-1.ods
+            style-fixed+row-1.ods
+            efficiency+style-big+various-2.ods
+            efficiency-big-1.ods
+    
     - line wrapped
-        undefined-undefined-18.ods
+        - file
+            style-various-4.ods
+
 
 presentation
 ===
 
     - drawings missing
-        style-drawing-1.odp
-        style-all-1.odp
+        - file
+            style-drawing-1.odp
+            style-all-1.odp
+    
     - header/footer fails
-        style-drawing-1.odp
+        - file
+            style-drawing-1.odp
+    
     - wrong font size
-        style-all-1.odp
+        - file
+            style-all-1.odp
+    
     - background color missing
-        style-all-1.odp
+        - file
+            style-all-1.odp
