@@ -297,7 +297,6 @@ public class SpreadsheetTableTranslator extends
         return repeat;
     }
     
-    // TODO: fix repeated with different default-cell-style
     private void translateCells(LWXMLPushbackReader in, LWXMLWriter directOut,
             LinkedList<OrderedPair<Integer, LWXMLEventQueueWriter>> cacheOut,
             boolean cache, SpreadsheetTranslationContext context)
@@ -345,6 +344,7 @@ public class SpreadsheetTableTranslator extends
         in.unreadEvent(ROW_ELEMENT_NAME);
     }
     
+ // TODO: fix repeated with different default-cell-style
     private int translateCell(LWXMLPushbackReader in, LWXMLWriter out,
             int maxRepeated, SpreadsheetTranslationContext context)
             throws IOException {
@@ -365,6 +365,7 @@ public class SpreadsheetTableTranslator extends
         return repeat;
     }
     
+ // TODO: fix repeated with different default-cell-style
     private int cacheCell(LWXMLPushbackReader in,
             LinkedList<OrderedPair<Integer, LWXMLEventQueueWriter>> tmpContent,
             int maxRepeated, SpreadsheetTranslationContext context)

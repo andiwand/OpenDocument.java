@@ -24,6 +24,9 @@ public abstract class GenericDocumentTranslator<D extends OpenDocument, S extend
     protected final DocumentStyleTranslator<S> styleTranslator;
     protected final ContentTranslator<C> contentTranslator;
     
+    // TODO: kick me
+    private C currentContext;
+    
     public GenericDocumentTranslator(
             DocumentStyleTranslator<S> styleTranslator,
             ContentTranslator<C> contentTranslator) {
@@ -34,6 +37,10 @@ public abstract class GenericDocumentTranslator<D extends OpenDocument, S extend
     public GenericDocumentTranslator(
             GenericDocumentTranslator<D, S, C> translator) {
         this(translator.styleTranslator, translator.contentTranslator);
+    }
+    
+    public double getCurrentProgress() {
+        return (currentContext == null) ? 0 : currentContext.getProgress();
     }
     
     protected void translateStyle(LWXMLReader in, StyleSheetWriter out,
@@ -106,7 +113,7 @@ public abstract class GenericDocumentTranslator<D extends OpenDocument, S extend
     
     private void translateGeneric(D document, LWXMLWriter out,
             TranslationSettings settings) throws IOException {
-        C context = createContext();
+        C context = currentContext = createContext();
         context.setDocument(document);
         context.setSettings(settings);
         
