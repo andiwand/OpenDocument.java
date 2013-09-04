@@ -7,14 +7,19 @@ public class TranslationSettings {
     
     private FileCache cache;
     private ImageStoreMode imageStoreMode;
-    private Vector2i maxTableDimension;
     
-    public TranslationSettings() {}
+    private Vector2i maxTableDimension;
+    private int maxRowRepetition;
+    
+    public TranslationSettings() {
+        this.maxRowRepetition = -1;
+    }
     
     public TranslationSettings(TranslationSettings settings) {
         this.cache = settings.cache;
         this.imageStoreMode = settings.imageStoreMode;
         this.maxTableDimension = settings.maxTableDimension;
+        this.maxRowRepetition = settings.maxRowRepetition;
     }
     
     public FileCache getCache() {
@@ -29,6 +34,10 @@ public class TranslationSettings {
         return maxTableDimension;
     }
     
+    public int getMaxRowRepetition() {
+        return maxRowRepetition;
+    }
+    
     public void setCache(FileCache cache) {
         this.cache = cache;
     }
@@ -39,6 +48,10 @@ public class TranslationSettings {
     
     public void setMaxTableDimension(Vector2i maxTableDimension) {
         this.maxTableDimension = maxTableDimension;
+    }
+    
+    public void setMaxRowRepetition(int maxRowRepetition) {
+        this.maxRowRepetition = maxRowRepetition;
     }
     
 }

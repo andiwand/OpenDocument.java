@@ -285,7 +285,9 @@ public class SpreadsheetTableTranslator extends
             translateCells(in, null, tmpContent, true, context);
             rowTranslation.translate(in, tmpBottom, context);
             
-            // TODO: limit repeated?
+            int maxRowRepetition = context.getSettings().getMaxRowRepetition();
+            if (maxRowRepetition != -1) repeat = Math.max(repeat,
+                    maxRowRepetition);
             for (int i = 0; i < repeat; i++) {
                 tmpRowHead.writeTo(out);
                 writeRepeatCacheWriter(tmpContent, out);
@@ -344,7 +346,7 @@ public class SpreadsheetTableTranslator extends
         in.unreadEvent(ROW_ELEMENT_NAME);
     }
     
- // TODO: fix repeated with different default-cell-style
+    // TODO: fix repeated with different default-cell-style
     private int translateCell(LWXMLPushbackReader in, LWXMLWriter out,
             int maxRepeated, SpreadsheetTranslationContext context)
             throws IOException {
@@ -365,7 +367,7 @@ public class SpreadsheetTableTranslator extends
         return repeat;
     }
     
- // TODO: fix repeated with different default-cell-style
+    // TODO: fix repeated with different default-cell-style
     private int cacheCell(LWXMLPushbackReader in,
             LinkedList<OrderedPair<Integer, LWXMLEventQueueWriter>> tmpContent,
             int maxRepeated, SpreadsheetTranslationContext context)
