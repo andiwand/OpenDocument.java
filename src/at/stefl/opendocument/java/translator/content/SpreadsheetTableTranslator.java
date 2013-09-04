@@ -347,6 +347,7 @@ public class SpreadsheetTableTranslator extends
     }
     
     // TODO: fix repeated with different default-cell-style
+    // tee reader or filter writer
     private int translateCell(LWXMLPushbackReader in, LWXMLWriter out,
             int maxRepeated, SpreadsheetTranslationContext context)
             throws IOException {
@@ -361,13 +362,15 @@ public class SpreadsheetTableTranslator extends
         cellTranslator.translate(in, cellOut, context);
         repeat--;
         
-        for (int i = 0; i < repeat; i++)
+        for (int i = 0; i < repeat; i++) {
             tmpCellOut.writeTo(out);
+        }
         
         return repeat;
     }
     
     // TODO: fix repeated with different default-cell-style
+    // tee reader or filter writer
     private int cacheCell(LWXMLPushbackReader in,
             LinkedList<OrderedPair<Integer, LWXMLEventQueueWriter>> tmpContent,
             int maxRepeated, SpreadsheetTranslationContext context)
