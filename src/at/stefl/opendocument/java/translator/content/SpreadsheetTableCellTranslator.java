@@ -32,7 +32,7 @@ public class SpreadsheetTableCellTranslator extends
     }
     
     @Override
-    protected StyleAttributeTranslator createAttributeTranslator() {
+    protected StyleAttributeTranslator createStyleAttributeTranslator() {
         return new StyleAttributeTranslator() {
             @Override
             public void translate(Map<String, String> in, LWXMLWriter out,
