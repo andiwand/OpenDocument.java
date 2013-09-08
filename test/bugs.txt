@@ -59,16 +59,16 @@ text
 spreadsheet
 ===
 
-    - wrong default cell styling
+    - wrong default text styling
         - file
             style-various-3.ods
             style-various-2.ods
             style+svm-chart-1.ods
             style+svm-chart+image+various-1.ods
         - issue
-            default cell style should be on each cell
+            default cell style should defined in css
         - fix
-            f704455 - add default cell style to every cell
+            f704455 - add default cell style to css
     
     - wrong font size
         - file

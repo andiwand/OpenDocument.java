@@ -14,10 +14,11 @@ import at.stefl.commons.lwxml.reader.LWXMLBranchReader;
 import at.stefl.commons.lwxml.reader.LWXMLPushbackReader;
 import at.stefl.commons.lwxml.reader.LWXMLReader;
 import at.stefl.commons.lwxml.writer.LWXMLEventQueueWriter;
+import at.stefl.commons.lwxml.writer.LWXMLFilterWriter;
 import at.stefl.commons.lwxml.writer.LWXMLTeeWriter;
 import at.stefl.commons.lwxml.writer.LWXMLWriter;
 import at.stefl.commons.math.vector.Vector2i;
-import at.stefl.commons.util.collection.OrderedPair;
+import at.stefl.commons.util.string.CharSequenceUtil;
 import at.stefl.opendocument.java.translator.StyleScriptUtil;
 import at.stefl.opendocument.java.translator.context.SpreadsheetTranslationContext;
 
@@ -26,38 +27,112 @@ import at.stefl.opendocument.java.translator.context.SpreadsheetTranslationConte
 public class SpreadsheetTableTranslator extends
         SpreadsheetTableElementTranslator {
     
+    private static class CachedCell {
+        private static CachedCell instance(
+                SpreadsheetTableCellTranslator cellTranslator,
+                LWXMLEventQueueWriter out) {
+            return new CachedCell(cellTranslator.getCurrentRepeated(),
+                    cellTranslator.getCurrentSpan(), out);
+        }
+        
+        private final int repeat;
+        private final int span;
+        private final LWXMLEventQueueWriter cell;
+        
+        public CachedCell(int repeat, int span, LWXMLEventQueueWriter cell) {
+            this.repeat = repeat;
+            this.span = span;
+            this.cell = cell;
+        }
+    }
+    
+    private static class StyleAlterFilter extends LWXMLFilterWriter {
+        private static final String STYLE_ATTRIBUTE = "class";
+        
+        private static StyleAlterFilter instance(LWXMLWriter out,
+                SpreadsheetTranslationContext context, String styleName) {
+            String style = context.getStyle().getStyleReference(styleName);
+            return new StyleAlterFilter(out, style);
+        }
+        
+        private final String style;
+        
+        private int match;
+        private boolean nomatch;
+        private boolean styled;
+        private boolean done;
+        
+        public StyleAlterFilter(LWXMLWriter out, String style) {
+            super(out);
+            
+            this.style = style;
+        }
+        
+        @Override
+        public void writeEvent(LWXMLEvent event) throws IOException {
+            if (!done) {
+                switch (event) {
+                case ATTRIBUTE_NAME:
+                    nomatch = false;
+                    break;
+                case ATTRIBUTE_VALUE:
+                    styled = (match >= STYLE_ATTRIBUTE.length());
+                    break;
+                case END_ATTRIBUTE_LIST:
+                    if (!styled && (style != null)) out.writeAttribute(
+                            STYLE_ATTRIBUTE, style);
+                    done = true;
+                    break;
+                default:
+                    break;
+                }
+            }
+            
+            out.writeEvent(event);
+        }
+        
+        @Override
+        public void write(int c) throws IOException {
+            out.write(c);
+            
+            if (done | nomatch) return;
+            
+            if (getCurrentEvent() == LWXMLEvent.ATTRIBUTE_NAME) {
+                if (((match + 1) <= STYLE_ATTRIBUTE.length())
+                        && (c == STYLE_ATTRIBUTE.charAt(match))) {
+                    match++;
+                } else {
+                    match = 0;
+                    nomatch = true;
+                }
+            }
+        }
+        
+        @Override
+        public void write(char[] cbuf, int off, int len) throws IOException {
+            out.write(cbuf, off, len);
+            
+            if (done | nomatch) return;
+            
+            if (getCurrentEvent() == LWXMLEvent.ATTRIBUTE_NAME) {
+                if (((match + len) <= STYLE_ATTRIBUTE.length())
+                        && CharSequenceUtil.equals(STYLE_ATTRIBUTE, match,
+                                cbuf, off, len)) {
+                    match += len;
+                } else {
+                    match = 0;
+                    nomatch = true;
+                }
+            }
+        }
+    }
+    
     private static final String TABLE_ELEMENT_NAME = "table:table";
     private static final String TABLE_NAME_ATTRIBUTE_NAME = "table:name";
     private static final String SHAPES_ELEMENT_NAME = "table:shapes";
     private static final String COLUMN_ELEMENT_NAME = "table:table-column";
     private static final String ROW_ELEMENT_NAME = "table:table-row";
     private static final String CELL_ELEMENT_NAME = "table:table-cell";
-    
-    private static void setRepeatCacheWriter(
-            LinkedList<OrderedPair<Integer, LWXMLEventQueueWriter>> out,
-            LWXMLEventQueueWriter cellOut, int repeated) {
-        OrderedPair<Integer, LWXMLEventQueueWriter> last = (out.size() <= 0) ? null
-                : out.getLast();
-        
-        if ((last == null) || (last.getElement1() > 1)) {
-            last = new OrderedPair<Integer, LWXMLEventQueueWriter>(repeated,
-                    new LWXMLEventQueueWriter());
-            out.add(last);
-        }
-        
-        last.setElement2(cellOut);
-    }
-    
-    private static void writeRepeatCacheWriter(
-            LinkedList<OrderedPair<Integer, LWXMLEventQueueWriter>> in,
-            LWXMLWriter out) throws IOException {
-        for (OrderedPair<Integer, LWXMLEventQueueWriter> repeatIn : in) {
-            for (int j = 0; j < repeatIn.getElement1(); j++) {
-                repeatIn.getElement2().writeTo(out);
-            }
-        }
-        
-    }
     
     private final SpreadsheetTableColumnTranslator columnTranslation = new SpreadsheetTableColumnTranslator();
     private final SpreadsheetTableRowTranslator rowTranslation = new SpreadsheetTableRowTranslator();
@@ -111,11 +186,10 @@ public class SpreadsheetTableTranslator extends
     
     private void spanCurrentColumnDefaultStyle(int span) {
         if (span < 0) throw new IllegalArgumentException();
-        if (span == 0) return;
-        for (int i = 1; i < span; i++) {
+        
+        for (int i = 0; i < span; i++) {
             // TODO: log
-            // if (!currentColumnDefaultStylesIterator.hasNext()) throw new
-            // IllegalStateException();
+            if (!currentColumnDefaultStylesIterator.hasNext()) return;
             if (currentColumnDefaultStylesIterator.hasNext()) currentColumnDefaultStylesIterator
                     .next();
         }
@@ -124,6 +198,21 @@ public class SpreadsheetTableTranslator extends
     private void addCurrentColumnDefaultStyleName(String name, int span) {
         for (int i = 0; i < span; i++) {
             currentColumnDefaultStyles.add(name);
+        }
+    }
+    
+    private void writeRepeatCacheWriter(LinkedList<CachedCell> in,
+            LWXMLWriter out, SpreadsheetTranslationContext context)
+            throws IOException {
+        for (CachedCell repeatIn : in) {
+            for (int j = 0; j < repeatIn.repeat; j++) {
+                String styleName = getCurrentColumnDefaultStyle();
+                repeatIn.cell.writeTo(StyleAlterFilter.instance(out, context,
+                        styleName));
+                spanCurrentColumnDefaultStyle(repeatIn.span - 1);
+            }
+            
+            resetColumnDefaultStyle();
         }
     }
     
@@ -279,7 +368,7 @@ public class SpreadsheetTableTranslator extends
             translateCells(in, out, null, false, context);
             rowTranslation.translate(in, out, context);
         } else {
-            LinkedList<OrderedPair<Integer, LWXMLEventQueueWriter>> tmpContent = new LinkedList<OrderedPair<Integer, LWXMLEventQueueWriter>>();
+            LinkedList<CachedCell> tmpContent = new LinkedList<CachedCell>();
             LWXMLEventQueueWriter tmpBottom = new LWXMLEventQueueWriter();
             
             translateCells(in, null, tmpContent, true, context);
@@ -290,7 +379,7 @@ public class SpreadsheetTableTranslator extends
                     maxRowRepetition);
             for (int i = 0; i < repeat; i++) {
                 tmpRowHead.writeTo(out);
-                writeRepeatCacheWriter(tmpContent, out);
+                writeRepeatCacheWriter(tmpContent, out, context);
                 tmpBottom.writeTo(out);
             }
         }
@@ -300,9 +389,8 @@ public class SpreadsheetTableTranslator extends
     }
     
     private void translateCells(LWXMLPushbackReader in, LWXMLWriter directOut,
-            LinkedList<OrderedPair<Integer, LWXMLEventQueueWriter>> cacheOut,
-            boolean cache, SpreadsheetTranslationContext context)
-            throws IOException {
+            LinkedList<CachedCell> cacheOut, boolean cache,
+            SpreadsheetTranslationContext context) throws IOException {
         for (int i = 0; i < currentMaxDimension.getX();) {
             LWXMLEvent event = in.readEvent();
             
@@ -346,53 +434,46 @@ public class SpreadsheetTableTranslator extends
         in.unreadEvent(ROW_ELEMENT_NAME);
     }
     
-    // TODO: fix repeated with different default-cell-style
-    // tee reader or filter writer
     private int translateCell(LWXMLPushbackReader in, LWXMLWriter out,
             int maxRepeated, SpreadsheetTranslationContext context)
             throws IOException {
         LWXMLEventQueueWriter tmpCellOut = new LWXMLEventQueueWriter();
-        LWXMLWriter cellOut = new LWXMLTeeWriter(out, tmpCellOut);
+        LWXMLWriter cellOut = new LWXMLTeeWriter(StyleAlterFilter.instance(out,
+                context, getCurrentColumnDefaultStyle()), tmpCellOut);
         
-        translateCellStart(in, cellOut, context);
+        cellTranslator.translate(in, cellOut, context);
         int repeat = Math.min(maxRepeated, cellTranslator.getCurrentRepeated());
         if (repeat == 1) cellOut = out;
         
         translateCellContent(in, cellOut, context);
         cellTranslator.translate(in, cellOut, context);
+        
         repeat--;
+        spanCurrentColumnDefaultStyle(cellTranslator.getCurrentSpan() - 1);
         
         for (int i = 0; i < repeat; i++) {
-            tmpCellOut.writeTo(out);
+            tmpCellOut.writeTo(StyleAlterFilter.instance(out, context,
+                    getCurrentColumnDefaultStyle()));
+            spanCurrentColumnDefaultStyle(cellTranslator.getCurrentSpan() - 1);
         }
         
         return repeat;
     }
     
     // TODO: fix repeated with different default-cell-style
-    // tee reader or filter writer
     private int cacheCell(LWXMLPushbackReader in,
-            LinkedList<OrderedPair<Integer, LWXMLEventQueueWriter>> tmpContent,
-            int maxRepeated, SpreadsheetTranslationContext context)
-            throws IOException {
+            LinkedList<CachedCell> tmpContent, int maxRepeated,
+            SpreadsheetTranslationContext context) throws IOException {
         LWXMLEventQueueWriter cellOut = new LWXMLEventQueueWriter();
         
-        translateCellStart(in, cellOut, context);
+        cellTranslator.translate(in, cellOut, context);
         int repeat = Math.min(maxRepeated, cellTranslator.getCurrentRepeated());
         translateCellContent(in, cellOut, context);
         cellTranslator.translate(in, cellOut, context);
         
-        setRepeatCacheWriter(tmpContent, cellOut, repeat);
+        tmpContent.add(CachedCell.instance(cellTranslator, cellOut));
         
         return repeat;
-    }
-    
-    private void translateCellStart(LWXMLPushbackReader in, LWXMLWriter out,
-            SpreadsheetTranslationContext context) throws IOException {
-        String currentDefaultStyle = getCurrentColumnDefaultStyle();
-        cellTranslator.setCurrentDefaultStyle(currentDefaultStyle);
-        cellTranslator.translate(in, out, context);
-        spanCurrentColumnDefaultStyle(cellTranslator.getCurrentRepeated() - 1);
     }
     
     private void translateCellContent(LWXMLPushbackReader in, LWXMLWriter out,

@@ -6,3 +6,8 @@ table {
 td {
 	vertical-align: top;
 }
+
+p {
+	font-family: "Arial";
+	font-size: 10pt;
+}
