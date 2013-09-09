@@ -70,6 +70,12 @@ spreadsheet
         - fix
             f704455 - add default cell style to css
     
+    - wrong boarder
+        - file
+            style-color+various-2.ods
+        - issue
+            thicker boarder is not translated
+    
     - wrong font size
         - file
             style-various-2.ods
