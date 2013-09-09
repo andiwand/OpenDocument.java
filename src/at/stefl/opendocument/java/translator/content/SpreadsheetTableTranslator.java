@@ -374,9 +374,8 @@ public class SpreadsheetTableTranslator extends
             translateCells(in, null, tmpContent, true, context);
             rowTranslation.translate(in, tmpBottom, context);
             
-            int maxRowRepetition = context.getSettings().getMaxRowRepetition();
-            if (maxRowRepetition != -1) repeat = Math.max(repeat,
-                    maxRowRepetition);
+            if (context.getSettings().hasMaxRowRepetition()) repeat = Math.max(
+                    repeat, context.getSettings().getMaxRowRepetition());
             for (int i = 0; i < repeat; i++) {
                 tmpRowHead.writeTo(out);
                 writeRepeatCacheWriter(tmpContent, out, context);

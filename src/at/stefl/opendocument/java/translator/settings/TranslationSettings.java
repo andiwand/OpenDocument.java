@@ -38,6 +38,10 @@ public class TranslationSettings {
         return maxRowRepetition;
     }
     
+    public boolean hasMaxRowRepetition() {
+        return maxRowRepetition != -1;
+    }
+    
     public void setCache(FileCache cache) {
         this.cache = cache;
     }
