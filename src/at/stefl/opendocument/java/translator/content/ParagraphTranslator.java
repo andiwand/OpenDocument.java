@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import at.stefl.commons.lwxml.LWXMLUtil;
 import at.stefl.commons.lwxml.reader.LWXMLPushbackReader;
+import at.stefl.commons.lwxml.writer.LWXMLEventQueueWriter;
+import at.stefl.commons.lwxml.writer.LWXMLTeeWriter;
 import at.stefl.commons.lwxml.writer.LWXMLWriter;
 import at.stefl.opendocument.java.translator.context.TranslationContext;
 
@@ -20,16 +22,20 @@ public class ParagraphTranslator extends
         super(elementName);
         
         this.insertSpan = insertSpan;
-        
-        addParseAttribute(StyleAttribute.TEXT.getName());
     }
     
     @Override
-    public void translateStartElement(LWXMLPushbackReader in, LWXMLWriter out,
+    public void translateAttributeList(LWXMLPushbackReader in, LWXMLWriter out,
             TranslationContext context) throws IOException {
-        super.translateStartElement(in, out, context);
-        
-        if (insertSpan) out.writeStartElement("span");
+        if (insertSpan) {
+            LWXMLEventQueueWriter tmpOut = new LWXMLEventQueueWriter();
+            super.translateAttributeList(in, new LWXMLTeeWriter(out, tmpOut),
+                    context);
+            out.writeStartElement("span");
+            tmpOut.writeTo(out);
+        } else {
+            super.translateAttributeList(in, out, context);
+        }
     }
     
     // TODO: fix me (whitespace?)
