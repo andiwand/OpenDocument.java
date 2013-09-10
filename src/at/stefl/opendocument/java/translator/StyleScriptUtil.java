@@ -7,6 +7,7 @@ import java.io.Writer;
 
 import at.stefl.commons.io.CharStreamUtil;
 
+// TODO: put under RescourceUtil into commons
 public class StyleScriptUtil {
     
     public static void pipeResource(Class<?> clazz, String name, Writer out)

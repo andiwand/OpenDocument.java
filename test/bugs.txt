@@ -15,13 +15,20 @@ general
             translated correctly
         - fix
             77caf6c - set table's width to 0px (random html fix)
-	
-	- replace break in empty block with css (?)
+    
+    - replace break in empty block with css (?)
 
 
 text
 ===
 
+    - strict styling for paragraphs
+        - file
+            style-about-1.odt
+        - issue
+            paragraph tags are not correct translated, maybe in other
+            documents too
+    
     - section numbers hidden
         - file
             efficiency+style-big+various-1.odt
