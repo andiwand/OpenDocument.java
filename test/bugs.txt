@@ -66,6 +66,14 @@ text
 spreadsheet
 ===
 
+	- wrong cell alignment
+		- file
+			style+svm-chart+image+various-1.ods
+
+	- wrong cell maring/padding
+		- file
+			style+svm-chart+image+various-1.ods
+
     - wrong default text styling
         - file
             style-various-3.ods
