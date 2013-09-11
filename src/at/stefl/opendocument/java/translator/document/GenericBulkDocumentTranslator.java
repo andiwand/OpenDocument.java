@@ -41,7 +41,8 @@ public abstract class GenericBulkDocumentTranslator<D extends OpenDocument, S ex
     @Override
     public void translate(OpenDocument document, LWXMLWriter out,
             TranslationSettings settings) throws IOException {
-        if (!(out instanceof LWXMLMultiWriter)) throw new IllegalArgumentException();
+        if (!(out instanceof LWXMLMultiWriter)) throw new IllegalArgumentException(
+                "out is not an instance of LWXMLMultiWriter");
         
         super.translate(document, out, settings);
     }

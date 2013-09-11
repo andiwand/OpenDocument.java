@@ -3,11 +3,13 @@ package at.stefl.opendocument.java.translator.document;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import at.stefl.commons.lwxml.writer.LWXMLMultiWriter;
 import at.stefl.commons.lwxml.writer.LWXMLStreamWriter;
 import at.stefl.commons.lwxml.writer.LWXMLWriter;
-import at.stefl.commons.util.collection.OrderedPair;
 import at.stefl.opendocument.java.odf.OpenDocument;
 import at.stefl.opendocument.java.odf.OpenDocumentPresentation;
 import at.stefl.opendocument.java.odf.OpenDocumentSpreadsheet;
@@ -15,39 +17,59 @@ import at.stefl.opendocument.java.util.FileCache;
 
 public class DocumentTranslatorUtil {
     
+    public static class BulkOutput {
+        private int count;
+        private List<String> names;
+        private List<String> titles;
+        private LWXMLMultiWriter writer;
+        
+        public int getCount() {
+            return count;
+        }
+        
+        public List<String> getNames() {
+            return names;
+        }
+        
+        public List<String> getTitles() {
+            return titles;
+        }
+        
+        public LWXMLMultiWriter getWriter() {
+            return writer;
+        }
+    }
+    
     // TODO: improve
-    public static OrderedPair<String[], LWXMLWriter> provideOutput(
-            OpenDocument document, FileCache cache, String cachePrefix,
-            String cacheSuffix) throws IOException {
-        int count;
+    public static BulkOutput provideBulkOutput(OpenDocument document,
+            FileCache cache, String cachePrefix, String cacheSuffix)
+            throws IOException {
+        BulkOutput output = new BulkOutput();
         
         if (document instanceof OpenDocumentSpreadsheet) {
-            count = document.getAsSpreadsheet().getTableCount();
+            output.count = document.getAsSpreadsheet().getTableCount();
+            output.titles = document.getAsSpreadsheet().getTableNames();
         } else if (document instanceof OpenDocumentPresentation) {
-            count = document.getAsPresentation().getPageCount();
+            output.count = document.getAsPresentation().getPageCount();
+            output.titles = document.getAsPresentation().getPageNames();
         } else {
-            count = 1;
+            throw new IllegalArgumentException("illegal document given");
         }
         
-        if (count == 1) {
-            String name = cachePrefix + cacheSuffix;
-            LWXMLWriter out = new LWXMLStreamWriter(new FileWriter(
-                    cache.create(cachePrefix + cacheSuffix)));
-            return new OrderedPair<String[], LWXMLWriter>(
-                    new String[] { name }, out);
-        }
+        output.names = new ArrayList<String>();
+        LWXMLWriter[] outs = new LWXMLWriter[output.count];
         
-        String[] names = new String[count];
-        LWXMLWriter[] outs = new LWXMLWriter[count];
-        
-        for (int i = 0; i < count; i++) {
-            names[i] = cachePrefix + i + cacheSuffix;
-            File file = cache.create(names[i]);
+        for (int i = 0; i < output.count; i++) {
+            String name = cachePrefix + i + cacheSuffix;
+            output.names.add(name);
+            
+            File file = cache.create(name);
             outs[i] = new LWXMLStreamWriter(new FileWriter(file));
         }
         
-        return new OrderedPair<String[], LWXMLWriter>(names,
-                new LWXMLMultiWriter(outs));
+        output.names = Collections.unmodifiableList(output.names);
+        
+        return output;
     }
     
     private DocumentTranslatorUtil() {}

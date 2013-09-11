@@ -1,8 +1,9 @@
 package at.stefl.opendocument.java.odf;
 
 import java.io.IOException;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import at.stefl.commons.lwxml.reader.LWXMLStreamReader;
@@ -11,6 +12,7 @@ import at.stefl.commons.math.vector.Vector2i;
 public final class OpenDocumentSpreadsheet extends OpenDocument {
     
     private Map<String, Vector2i> tableMap;
+    private List<String> tableNames;
     
     public OpenDocumentSpreadsheet(OpenDocumentFile documentFile) {
         super(documentFile);
@@ -36,8 +38,13 @@ public final class OpenDocumentSpreadsheet extends OpenDocument {
         return tableMap;
     }
     
-    public Collection<String> getTableNames() throws IOException {
-        return getTableDimensionMap().keySet();
+    public List<String> getTableNames() throws IOException {
+        if (tableNames == null) {
+            tableNames = Collections.unmodifiableList(new ArrayList<String>(
+                    getTableDimensionMap().keySet()));
+        }
+        
+        return tableNames;
     }
     
 }

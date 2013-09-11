@@ -4,8 +4,6 @@ import java.io.File;
 
 import javax.swing.JFileChooser;
 
-import at.stefl.commons.lwxml.writer.LWXMLWriter;
-import at.stefl.commons.util.collection.OrderedPair;
 import at.stefl.opendocument.java.odf.OpenDocument;
 import at.stefl.opendocument.java.odf.OpenDocumentFile;
 import at.stefl.opendocument.java.odf.OpenDocumentPresentation;
@@ -46,19 +44,17 @@ public class BulkDocumentTranslatorTest {
             throw new IllegalArgumentException();
         }
         
-        OrderedPair<String[], LWXMLWriter> output = DocumentTranslatorUtil
-                .provideOutput(document, cache, "odf", ".html");
-        String[] names = output.getElement1();
-        LWXMLWriter out = output.getElement2();
+        DocumentTranslatorUtil.BulkOutput output = DocumentTranslatorUtil
+                .provideBulkOutput(document, cache, "odf", ".html");
         
         long start = System.nanoTime();
-        translator.translate(document, out, settings);
+        translator.translate(document, output.getWriter(), settings);
         long end = System.nanoTime();
         System.out.println((end - start) / 1000000000d);
         
-        out.close();
+        output.getWriter().close();
         
-        for (String name : names) {
+        for (String name : output.getNames()) {
             File tableFile = cache.getFile(name);
             Runtime.getRuntime().exec(
                     new String[] { "google-chrome",
