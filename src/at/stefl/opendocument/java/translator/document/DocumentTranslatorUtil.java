@@ -68,6 +68,7 @@ public class DocumentTranslatorUtil {
         }
         
         output.names = Collections.unmodifiableList(output.names);
+        output.writer = new LWXMLMultiWriter(outs);
         
         return output;
     }
