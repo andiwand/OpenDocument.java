@@ -16,6 +16,8 @@ public class ParagraphTranslator extends
     
     private final boolean strict;
     
+    private long currentStartEventNumber;
+    
     public ParagraphTranslator(String elementName) {
         this(elementName, false);
     }
@@ -33,6 +35,14 @@ public class ParagraphTranslator extends
     }
     
     @Override
+    public void translateStartElement(LWXMLPushbackReader in, LWXMLWriter out,
+            TranslationContext context) throws IOException {
+        super.translateStartElement(in, out, context);
+        
+        currentStartEventNumber = in.getCurrentEventNumber();
+    }
+    
+    @Override
     public void translateAttributeList(LWXMLPushbackReader in, LWXMLWriter out,
             TranslationContext context) throws IOException {
         if (strict) {
@@ -44,6 +54,10 @@ public class ParagraphTranslator extends
         } else {
             super.translateAttributeList(in, out, context);
         }
+        
+        // TODO: out-source literal
+        out.writeAttribute("contenteditable", "true");
+        out.writeAttribute("__origin", "" + currentStartEventNumber);
     }
     
     // TODO: fix me (whitespace?)
