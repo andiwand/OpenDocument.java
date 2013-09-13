@@ -6,8 +6,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
+import at.stefl.commons.io.ByteStreamUtil;
 import at.stefl.commons.io.CharStreamUtil;
+import at.stefl.commons.io.CloseableOutputStream;
 import at.stefl.commons.lwxml.LWXMLEvent;
 import at.stefl.commons.lwxml.LWXMLIllegalEventException;
 import at.stefl.commons.lwxml.LWXMLUtil;
@@ -18,6 +22,7 @@ import at.stefl.commons.lwxml.writer.LWXMLStreamWriter;
 import at.stefl.commons.lwxml.writer.LWXMLWriter;
 import at.stefl.opendocument.java.odf.LocatedOpenDocumentFile;
 import at.stefl.opendocument.java.odf.OpenDocument;
+import at.stefl.opendocument.java.odf.OpenDocumentFile;
 
 public class Retranslator {
     
@@ -52,9 +57,13 @@ public class Retranslator {
     
     public static void retranslate(OpenDocument document, InputStream html,
             OutputStream out) throws IOException {
+        ZipOutputStream zout = new ZipOutputStream(out);
+        zout.putNextEntry(new ZipEntry("content.xml"));
+        
         LWXMLReader contentIn = new LWXMLStreamReader(document.getContent());
         LWXMLReader htmlIn = new LWXMLStreamReader(html);
-        LWXMLWriter contentOut = new LWXMLStreamWriter(out);
+        LWXMLWriter contentOut = new LWXMLStreamWriter(
+                new CloseableOutputStream(zout));
         
         LWXMLReader tee = new LWXMLTeeReader(contentIn, contentOut);
         
@@ -78,15 +87,27 @@ public class Retranslator {
         }
         
         flushValues(tee);
-        tee.close();
+        contentOut.close();
+        
+        OpenDocumentFile documentFile = document.getDocumentFile();
+        
+        for (String fileName : documentFile.getFileNames()) {
+            if (fileName.equals("content.xml")) continue;
+            
+            zout.putNextEntry(new ZipEntry(fileName));
+            ByteStreamUtil.writeStreamBuffered(
+                    documentFile.getFileStream(fileName), zout);
+        }
+        
+        zout.close();
     }
     
     public static void main(String[] args) throws Throwable {
-        retranslate(new LocatedOpenDocumentFile(
-                "/home/andreas/style-various-1.odt").getAsDocument(),
+        retranslate(
+                new LocatedOpenDocumentFile("/home/andreas/style-various-1.odt")
+                        .getAsDocument(),
                 new FileInputStream("/home/andreas/style-various-1.odt.html"),
-                new FileOutputStream(
-                        "/home/andreas/style-various-1.odt.html.content.xml"));
+                new FileOutputStream("/home/andreas/style-various-1.edited.odt"));
     }
     
     private Retranslator() {}
