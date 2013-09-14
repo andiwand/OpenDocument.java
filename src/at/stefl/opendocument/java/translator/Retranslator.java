@@ -103,11 +103,16 @@ public class Retranslator {
     }
     
     public static void main(String[] args) throws Throwable {
-        retranslate(
-                new LocatedOpenDocumentFile("/home/andreas/style-various-1.odt")
-                        .getAsDocument(),
-                new FileInputStream("/home/andreas/style-various-1.odt.html"),
-                new FileOutputStream("/home/andreas/style-various-1.edited.odt"));
+        OpenDocumentFile documentFile = new LocatedOpenDocumentFile(
+                "/home/andreas/style-various-1.odt");
+        InputStream htmlIn = new FileInputStream(
+                "/home/andreas/style-various-1.odt.html");
+        OutputStream out = new FileOutputStream(
+                "/home/andreas/style-various-1.edited.odt");
+        
+        retranslate(documentFile.getAsDocument(), htmlIn, out);
+        
+        documentFile.close();
     }
     
     private Retranslator() {}
