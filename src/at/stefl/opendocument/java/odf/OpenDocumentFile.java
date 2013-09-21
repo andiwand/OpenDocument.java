@@ -147,7 +147,7 @@ public abstract class OpenDocumentFile implements Closeable {
                     
                     break;
                 case END_ATTRIBUTE_LIST:
-                    if ((mimetype != null) && !mimetype.trim().isEmpty()) result
+                    if ((mimetype != null) && (mimetype.trim().length() != 0)) result
                             .put(name, mimetype);
                     
                     mimetype = null;
