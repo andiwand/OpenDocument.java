@@ -16,7 +16,7 @@ public class DefaultTextContentTranslator<C extends TranslationContext> extends
         addElementTranslator("table:table-row",
                 new SimpleTableElementTranslator("tr"));
         addElementTranslator("table:table-cell",
-                new SimpleTableElementTranslator("td"));
+                new SimpleTableCellTranslator());
         
         DrawingTranslator drawingTranslator = new DrawingTranslator();
         addElementTranslator("draw:rect", drawingTranslator);
