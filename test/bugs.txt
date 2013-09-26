@@ -29,6 +29,12 @@ text
             paragraph tags are not correct translated, maybe in other
             documents too
     
+    - split styling
+    	- file
+    		style-line+separator-2.odt
+    	- issue
+    		page styling is mixed with paragraph style
+    
     - section numbers hidden
         - file
             efficiency+style-big+various-1.odt

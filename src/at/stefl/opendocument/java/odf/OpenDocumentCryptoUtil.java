@@ -11,6 +11,7 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
+import java.util.zip.ZipException;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -85,6 +86,9 @@ public class OpenDocumentCryptoUtil {
             byte[] calculatedChecksum = digest.digest();
             
             if (!Arrays.equals(checksum, calculatedChecksum)) return false;
+        } catch (ZipException e) {
+            // TODO: sufficient?
+            return false;
         } catch (NoSuchAlgorithmException e) {
             throw new UnsupportedEncryptionException(
                     "unsupported message digest: "
