@@ -42,6 +42,7 @@ public class DocumentTranslatorTest {
         TranslationSettings settings = new TranslationSettings();
         settings.setCache(cache);
         settings.setImageStoreMode(ImageStoreMode.INLINE);
+        settings.setBackTranslateable(true);
         
         DocumentTranslator translator;
         

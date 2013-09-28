@@ -1,8 +1,6 @@
 package at.stefl.opendocument.java.translator;
 
 import java.io.EOFException;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -20,10 +18,10 @@ import at.stefl.commons.lwxml.reader.LWXMLStreamReader;
 import at.stefl.commons.lwxml.reader.LWXMLTeeReader;
 import at.stefl.commons.lwxml.writer.LWXMLStreamWriter;
 import at.stefl.commons.lwxml.writer.LWXMLWriter;
-import at.stefl.opendocument.java.odf.LocatedOpenDocumentFile;
 import at.stefl.opendocument.java.odf.OpenDocument;
 import at.stefl.opendocument.java.odf.OpenDocumentFile;
 
+// TODO: improve
 public class Retranslator {
     
     public static void flushValues(LWXMLReader in) throws IOException {
@@ -76,7 +74,6 @@ public class Retranslator {
             }
             
             long eventNumber = Long.parseLong(htmlIn.readFollowingValue());
-            System.out.println(eventNumber);
             
             LWXMLUtil.flushUntilEvent(htmlIn, LWXMLEvent.CHARACTERS);
             
@@ -100,19 +97,6 @@ public class Retranslator {
         }
         
         zout.close();
-    }
-    
-    public static void main(String[] args) throws Throwable {
-        OpenDocumentFile documentFile = new LocatedOpenDocumentFile(
-                "/home/andreas/style-various-1.odt");
-        InputStream htmlIn = new FileInputStream(
-                "/home/andreas/style-various-1.odt.html");
-        OutputStream out = new FileOutputStream(
-                "/home/andreas/style-various-1.edited.odt");
-        
-        retranslate(documentFile.getAsDocument(), htmlIn, out);
-        
-        documentFile.close();
     }
     
     private Retranslator() {}

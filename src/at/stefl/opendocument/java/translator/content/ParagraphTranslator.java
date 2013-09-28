@@ -39,7 +39,9 @@ public class ParagraphTranslator extends
             TranslationContext context) throws IOException {
         super.translateStartElement(in, out, context);
         
-        currentStartEventNumber = in.getCurrentEventNumber();
+        if (context.getSettings().isBackTranslateable()) {
+            currentStartEventNumber = in.getCurrentEventNumber();
+        }
     }
     
     @Override
@@ -55,9 +57,11 @@ public class ParagraphTranslator extends
             super.translateAttributeList(in, out, context);
         }
         
-        // TODO: out-source literal
-        out.writeAttribute("contenteditable", "true");
-        out.writeAttribute("__origin", "" + currentStartEventNumber);
+        if (context.getSettings().isBackTranslateable()) {
+            // TODO: out-source literal
+            out.writeAttribute("contenteditable", "true");
+            out.writeAttribute("__origin", "" + currentStartEventNumber);
+        }
     }
     
     // TODO: fix me (whitespace?)
