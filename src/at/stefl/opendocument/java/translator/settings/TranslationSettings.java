@@ -14,6 +14,7 @@ public class TranslationSettings {
     private boolean backTranslateable = true;
     
     public TranslationSettings() {
+        this.maxTableDimension = new Vector2i(Integer.MAX_VALUE);
         this.maxRowRepetition = -1;
     }
     

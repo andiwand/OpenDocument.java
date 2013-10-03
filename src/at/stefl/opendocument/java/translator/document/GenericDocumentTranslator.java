@@ -12,12 +12,13 @@ import at.stefl.opendocument.java.css.StyleSheetWriter;
 import at.stefl.opendocument.java.odf.OpenDocument;
 import at.stefl.opendocument.java.translator.content.ContentTranslator;
 import at.stefl.opendocument.java.translator.context.GenericTranslationContext;
+import at.stefl.opendocument.java.translator.context.TranslationContext;
 import at.stefl.opendocument.java.translator.settings.TranslationSettings;
 import at.stefl.opendocument.java.translator.style.DocumentStyle;
 import at.stefl.opendocument.java.translator.style.DocumentStyleTranslator;
 
 public abstract class GenericDocumentTranslator<D extends OpenDocument, S extends DocumentStyle, C extends GenericTranslationContext<D, S>>
-        implements DocumentTranslator {
+        extends DocumentTranslator {
     
     private static final String AUTOMATIC_STYLES_ELEMENT_NAME = "office:automatic-styles";
     
@@ -39,8 +40,10 @@ public abstract class GenericDocumentTranslator<D extends OpenDocument, S extend
         this(translator.styleTranslator, translator.contentTranslator);
     }
     
-    public double getCurrentProgress() {
-        return (currentContext == null) ? 0 : currentContext.getProgress();
+    // TODO: kick me
+    @Override
+    public TranslationContext getCurrentContext() {
+        return currentContext;
     }
     
     protected void translateStyle(LWXMLReader in, StyleSheetWriter out,

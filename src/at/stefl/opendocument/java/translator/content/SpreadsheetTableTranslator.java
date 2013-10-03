@@ -23,7 +23,7 @@ import at.stefl.opendocument.java.translator.StyleScriptUtil;
 import at.stefl.opendocument.java.translator.context.SpreadsheetTranslationContext;
 
 // TODO: implement remove methods
-// TODO: renew
+// TODO: renew with js
 public class SpreadsheetTableTranslator extends
         SpreadsheetTableElementTranslator {
     
@@ -140,7 +140,7 @@ public class SpreadsheetTableTranslator extends
     
     private final ContentTranslator<SpreadsheetTranslationContext> contentTranslator;
     
-    private Vector2i currentMaxDimension;
+    private Vector2i currentTableDimension;
     
     // TODO: implement collapsed list
     private final List<String> currentColumnDefaultStyles = new LinkedList<String>();
@@ -227,10 +227,8 @@ public class SpreadsheetTableTranslator extends
             SpreadsheetTranslationContext context) throws IOException {
         super.translateAttributeList(in, untilShapes, context);
         
-        currentMaxDimension = context.getDocument().getTableDimensionMap()
+        currentTableDimension = context.getDocument().getTableDimensionMap()
                 .get(getCurrentParsedAttribute(TABLE_NAME_ATTRIBUTE_NAME));
-        if (context.getSettings().getMaxTableDimension() != null) currentMaxDimension = currentMaxDimension
-                .min(context.getSettings().getMaxTableDimension());
     }
     
     @Override
@@ -251,7 +249,7 @@ public class SpreadsheetTableTranslator extends
         // LWXMLUtil.flushUntilStartElement(in, COLUMN_ELEMENT_NAME);
         // in.unreadEvent(COLUMN_ELEMENT_NAME);
         
-        // TODO: implement table-source
+        // TODO: implement <table-source>
         translateColumns(in, out, context);
         translateRows(in, out, context);
         
@@ -324,7 +322,12 @@ public class SpreadsheetTableTranslator extends
     
     private void translateRows(LWXMLPushbackReader in, LWXMLWriter out,
             SpreadsheetTranslationContext context) throws IOException {
-        for (int i = 0; i < currentMaxDimension.getY();) {
+        int maxTableRows = context.getSettings().getMaxTableDimension().getY();
+        int maxRows = Math.min(maxTableRows, currentTableDimension.getY());
+        int rows = 0;
+        
+        loop:
+        while (rows < currentTableDimension.getY()) {
             LWXMLEvent event = in.readEvent();
             
             switch (event) {
@@ -336,16 +339,19 @@ public class SpreadsheetTableTranslator extends
                     if (event != LWXMLEvent.START_ELEMENT) throw new LWXMLIllegalEventException(
                             event);
                     
+                    if (rows >= maxTableRows) {
+                        context.setOutputTruncated();
+                        break loop;
+                    }
+                    
                     in.unreadEvent(elementName);
-                    i += translateRow(in, out, context);
+                    rows += translateRow(in, out, maxRows - rows, context);
                 } else if (elementName.equals(TABLE_ELEMENT_NAME)) {
                     if (event != LWXMLEvent.END_ELEMENT) throw new LWXMLIllegalEventException(
                             event);
                     
                     return;
                 }
-                
-                break;
             default:
                 break;
             }
@@ -355,7 +361,8 @@ public class SpreadsheetTableTranslator extends
     }
     
     private int translateRow(LWXMLPushbackReader in, LWXMLWriter out,
-            SpreadsheetTranslationContext context) throws IOException {
+            int maxRepeated, SpreadsheetTranslationContext context)
+            throws IOException {
         resetColumnDefaultStyle();
         
         rowTranslation.translate(in, tmpRowHead, context);
@@ -374,8 +381,21 @@ public class SpreadsheetTableTranslator extends
             translateCells(in, null, tmpContent, true, context);
             rowTranslation.translate(in, tmpBottom, context);
             
-            if (context.getSettings().hasMaxRowRepetition()) repeat = Math.max(
-                    repeat, context.getSettings().getMaxRowRepetition());
+            if (repeat > maxRepeated) {
+                repeat = maxRepeated;
+                context.setOutputTruncated();
+            }
+            
+            if (context.getSettings().hasMaxRowRepetition()) {
+                int maxRowRepetition = context.getSettings()
+                        .getMaxRowRepetition();
+                
+                if (repeat > maxRowRepetition) {
+                    repeat = maxRowRepetition;
+                    context.setOutputTruncated();
+                }
+            }
+            
             for (int i = 0; i < repeat; i++) {
                 tmpRowHead.writeTo(out);
                 writeRepeatCacheWriter(tmpContent, out, context);
@@ -390,7 +410,20 @@ public class SpreadsheetTableTranslator extends
     private void translateCells(LWXMLPushbackReader in, LWXMLWriter directOut,
             LinkedList<CachedCell> cacheOut, boolean cache,
             SpreadsheetTranslationContext context) throws IOException {
-        for (int i = 0; i < currentMaxDimension.getX();) {
+        int maxTableColumns = context.getSettings().getMaxTableDimension()
+                .getX();
+        int maxColumns = currentTableDimension.getX();
+        boolean setTruncate = false;
+        
+        if (maxColumns > maxTableColumns) {
+            maxColumns = maxTableColumns;
+            setTruncate = true;
+        }
+        
+        int columns = 0;
+        
+        loop:
+        while (columns < currentTableDimension.getX()) {
             LWXMLEvent event = in.readEvent();
             
             switch (event) {
@@ -398,14 +431,19 @@ public class SpreadsheetTableTranslator extends
                 String startElementName = in.readValue();
                 
                 if (startElementName.equals(CELL_ELEMENT_NAME)) {
+                    if (columns >= maxTableColumns) {
+                        context.setOutputTruncated();
+                        break loop;
+                    }
+                    
                     in.unreadEvent(startElementName);
                     
                     if (cache) {
-                        i += cacheCell(in, cacheOut, currentMaxDimension.getX()
-                                - i, context);
+                        columns += cacheCell(in, cacheOut,
+                                maxColumns - columns, setTruncate, context);
                     } else {
-                        i += translateCell(in, directOut,
-                                currentMaxDimension.getX() - i, context);
+                        columns += translateCell(in, directOut, maxColumns
+                                - columns, setTruncate, context);
                     }
                 } else {
                     LWXMLUtil.flushBranch(in);
@@ -433,24 +471,33 @@ public class SpreadsheetTableTranslator extends
         in.unreadEvent(ROW_ELEMENT_NAME);
     }
     
+    // TODO: return columns, not repeated
+    // TODO: unite with cacheCell
     private int translateCell(LWXMLPushbackReader in, LWXMLWriter out,
-            int maxRepeated, SpreadsheetTranslationContext context)
-            throws IOException {
+            int maxRepeated, boolean setTruncate,
+            SpreadsheetTranslationContext context) throws IOException {
+        if (maxRepeated <= 0) throw new IllegalArgumentException();
+        
         LWXMLEventQueueWriter tmpCellOut = new LWXMLEventQueueWriter();
         LWXMLWriter cellOut = new LWXMLTeeWriter(StyleAlterFilter.instance(out,
                 context, getCurrentColumnDefaultStyle()), tmpCellOut);
         
         cellTranslator.translate(in, cellOut, context);
-        int repeat = Math.min(maxRepeated, cellTranslator.getCurrentRepeated());
+        int repeat = cellTranslator.getCurrentRepeated();
+        
+        if (repeat > maxRepeated) {
+            repeat = maxRepeated;
+            if (setTruncate) context.setOutputTruncated();
+        }
+        
         if (repeat == 1) cellOut = out;
         
         translateCellContent(in, cellOut, context);
         cellTranslator.translate(in, cellOut, context);
         
-        repeat--;
         spanCurrentColumnDefaultStyle(cellTranslator.getCurrentSpan() - 1);
         
-        for (int i = 0; i < repeat; i++) {
+        for (int i = 0; i < repeat - 1; i++) {
             tmpCellOut.writeTo(StyleAlterFilter.instance(out, context,
                     getCurrentColumnDefaultStyle()));
             spanCurrentColumnDefaultStyle(cellTranslator.getCurrentSpan() - 1);
@@ -459,14 +506,24 @@ public class SpreadsheetTableTranslator extends
         return repeat;
     }
     
-    // TODO: fix repeated with different default-cell-style
+    // TODO: return columns, not repeated
+    // TODO: unite with translateCell
     private int cacheCell(LWXMLPushbackReader in,
             LinkedList<CachedCell> tmpContent, int maxRepeated,
-            SpreadsheetTranslationContext context) throws IOException {
+            boolean setTruncate, SpreadsheetTranslationContext context)
+            throws IOException {
+        if (maxRepeated <= 0) throw new IllegalArgumentException();
+        
         LWXMLEventQueueWriter cellOut = new LWXMLEventQueueWriter();
         
         cellTranslator.translate(in, cellOut, context);
-        int repeat = Math.min(maxRepeated, cellTranslator.getCurrentRepeated());
+        int repeat = cellTranslator.getCurrentRepeated();
+        
+        if (repeat > maxRepeated) {
+            repeat = maxRepeated;
+            if (setTruncate) context.setOutputTruncated();
+        }
+        
         translateCellContent(in, cellOut, context);
         cellTranslator.translate(in, cellOut, context);
         

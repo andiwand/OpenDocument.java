@@ -11,6 +11,8 @@ public abstract class TranslationContext {
     private CountingInputStream counter;
     private long size;
     
+    private boolean outputTruncated;
+    
     public double getProgress() {
         if (counter == null) return 0;
         return (double) counter.count() / size;
@@ -26,6 +28,10 @@ public abstract class TranslationContext {
     
     public abstract TranslationSettings getSettings();
     
+    public boolean isOutputTruncated() {
+        return outputTruncated;
+    }
+    
     public void setCounter(CountingInputStream counter) {
         this.counter = counter;
     }
@@ -37,5 +43,13 @@ public abstract class TranslationContext {
     public abstract void setStyle(DocumentStyle style);
     
     public abstract void setSettings(TranslationSettings settings);
+    
+    public void setOutputTruncated() {
+        setOutputTruncated(true);
+    }
+    
+    public void setOutputTruncated(boolean outputTruncated) {
+        this.outputTruncated = outputTruncated;
+    }
     
 }

@@ -8,8 +8,8 @@ public class SpreadsheetContentTranslator extends
     public SpreadsheetContentTranslator() {
         addElementTranslator("table:tracked-changes",
                 new DefaultNothingTranslator());
-        addElementTranslator("table:table", new SpreadsheetTableTranslator(
-                this));
+        addElementTranslator("table:table",
+                new SpreadsheetTableTranslator(this));
     }
     
 }

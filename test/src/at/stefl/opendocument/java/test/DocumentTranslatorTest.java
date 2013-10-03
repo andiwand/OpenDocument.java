@@ -61,6 +61,8 @@ public class DocumentTranslatorTest {
         long end = System.nanoTime();
         System.out.println((end - start) / 1000000000d);
         
+        System.out.println(translator.isCurrentOutputTruncated());
+        
         out.close();
         
         Runtime.getRuntime().exec(
