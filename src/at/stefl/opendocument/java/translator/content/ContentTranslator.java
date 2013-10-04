@@ -15,18 +15,20 @@ public abstract class ContentTranslator<C extends TranslationContext> extends
     
     @Override
     public void generateStyle(Writer out, C context) throws IOException {
-        for (LWXMLElementTranslator<? super C> lwxmlTranslator : elementTranslators()) {
+        for (LWXMLElementTranslator<?, ?, ? super C> lwxmlTranslator : elementTranslators()) {
             if (!(lwxmlTranslator instanceof DefaultElementTranslator)) continue;
-            DefaultElementTranslator<? super C> translator = (DefaultElementTranslator<? super C>) lwxmlTranslator;
+            @SuppressWarnings("unchecked")
+            DefaultElementTranslator<C> translator = (DefaultElementTranslator<C>) lwxmlTranslator;
             translator.generateStyle(out, context);
         }
     }
     
     @Override
     public void generateScript(Writer out, C context) throws IOException {
-        for (LWXMLElementTranslator<? super C> lwxmlTranslator : elementTranslators()) {
+        for (LWXMLElementTranslator<?, ?, ? super C> lwxmlTranslator : elementTranslators()) {
             if (!(lwxmlTranslator instanceof DefaultElementTranslator)) continue;
-            DefaultElementTranslator<? super C> translator = (DefaultElementTranslator<? super C>) lwxmlTranslator;
+            @SuppressWarnings("unchecked")
+            DefaultElementTranslator<C> translator = (DefaultElementTranslator<C>) lwxmlTranslator;
             translator.generateScript(out, context);
         }
     }

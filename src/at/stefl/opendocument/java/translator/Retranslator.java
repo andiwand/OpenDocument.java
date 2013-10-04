@@ -24,6 +24,8 @@ import at.stefl.opendocument.java.odf.OpenDocumentFile;
 // TODO: improve
 public class Retranslator {
     
+    public static final String PREFIX_EVENT_NUMBER = "ODR ";
+    
     public static void flushValues(LWXMLReader in) throws IOException {
         while (in.readEvent() != LWXMLEvent.END_DOCUMENT)
             in.readValue();
@@ -36,8 +38,8 @@ public class Retranslator {
         while (true) {
             LWXMLEvent currentEvent = in.readEvent();
             if (currentEvent == LWXMLEvent.END_DOCUMENT) throw new EOFException();
-            
             if (currentEvent == event) return;
+            
             in.readValue();
         }
     }
@@ -46,15 +48,17 @@ public class Retranslator {
             long eventNumber) throws IOException {
         while (true) {
             LWXMLEvent event = in.readEvent();
-            in.readValue();
             if (event == LWXMLEvent.END_DOCUMENT) throw new EOFException();
-            
             if (in.getCurrentEventNumber() >= eventNumber) return;
+            
+            in.readValue();
         }
     }
     
     public static void retranslate(OpenDocument document, InputStream html,
             OutputStream out) throws IOException {
+        CharStreamUtil charStreamUtil = new CharStreamUtil();
+        
         ZipOutputStream zout = new ZipOutputStream(out);
         zout.putNextEntry(new ZipEntry("content.xml"));
         
@@ -67,20 +71,30 @@ public class Retranslator {
         
         while (true) {
             try {
-                LWXMLUtil.flushUntilEventValue(htmlIn,
-                        LWXMLEvent.ATTRIBUTE_NAME, "__origin");
+                do {
+                    LWXMLUtil.flushUntilEvent(htmlIn, LWXMLEvent.COMMENT);
+                } while (!CharStreamUtil
+                        .matchChars(htmlIn, PREFIX_EVENT_NUMBER));
             } catch (EOFException e) {
                 break;
             }
             
-            long eventNumber = Long.parseLong(htmlIn.readFollowingValue());
+            // get original characters event number
+            long eventNumber = Long.parseLong(htmlIn.readValue());
+            // next event has to be characters
+            if (htmlIn.readEvent() != LWXMLEvent.CHARACTERS) throw new LWXMLIllegalEventException(
+                    htmlIn);
             
-            LWXMLUtil.flushUntilEvent(htmlIn, LWXMLEvent.CHARACTERS);
-            
+            // flush content until characters event number
             flushValuesUntilEventNumber(tee, eventNumber);
-            flushValuesUntilEvent(tee, LWXMLEvent.CHARACTERS);
+            // current event has to be characters
+            if (tee.getCurrentEvent() != LWXMLEvent.CHARACTERS) throw new LWXMLIllegalEventException(
+                    tee);
+            // skip original characters
+            charStreamUtil.flush(contentIn);
             
-            CharStreamUtil.writeStreamBuffered(htmlIn, contentOut);
+            // copy html content
+            contentOut.write(htmlIn);
         }
         
         flushValues(tee);

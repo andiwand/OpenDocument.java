@@ -3,7 +3,6 @@ package at.stefl.opendocument.java.translator.content;
 import java.io.IOException;
 import java.io.Writer;
 
-import at.stefl.commons.lwxml.LWXMLUtil;
 import at.stefl.commons.lwxml.reader.LWXMLPushbackReader;
 import at.stefl.commons.lwxml.writer.LWXMLEventQueueWriter;
 import at.stefl.commons.lwxml.writer.LWXMLTeeWriter;
@@ -12,11 +11,9 @@ import at.stefl.opendocument.java.translator.StyleScriptUtil;
 import at.stefl.opendocument.java.translator.context.TranslationContext;
 
 public class ParagraphTranslator extends
-        DefaultStyledElementTranslator<TranslationContext> {
+        DefaultStyledContentElementTranslator<TranslationContext> {
     
     private final boolean strict;
-    
-    private long currentStartEventNumber;
     
     public ParagraphTranslator(String elementName) {
         this(elementName, false);
@@ -38,16 +35,13 @@ public class ParagraphTranslator extends
     public void translateStartElement(LWXMLPushbackReader in, LWXMLWriter out,
             TranslationContext context) throws IOException {
         super.translateStartElement(in, out, context);
-        
-        if (context.getSettings().isBackTranslateable()) {
-            currentStartEventNumber = in.getCurrentEventNumber();
-        }
     }
     
     @Override
     public void translateAttributeList(LWXMLPushbackReader in, LWXMLWriter out,
             TranslationContext context) throws IOException {
         if (strict) {
+            // TODO: do not copy all attributes
             LWXMLEventQueueWriter tmpOut = new LWXMLEventQueueWriter();
             super.translateAttributeList(in, new LWXMLTeeWriter(out, tmpOut),
                     context);
@@ -55,23 +49,6 @@ public class ParagraphTranslator extends
             tmpOut.writeTo(out);
         } else {
             super.translateAttributeList(in, out, context);
-        }
-        
-        if (context.getSettings().isBackTranslateable()) {
-            // TODO: out-source literal
-            out.writeAttribute("contenteditable", "true");
-            out.writeAttribute("__origin", "" + currentStartEventNumber);
-        }
-    }
-    
-    // TODO: fix me (whitespace?)
-    @Override
-    public void translateChildren(LWXMLPushbackReader in, LWXMLWriter out,
-            TranslationContext context) throws IOException {
-        if (LWXMLUtil.isEmptyElement(in)) {
-            out.writeEmptyElement("br");
-        } else {
-            in.unreadEvent();
         }
     }
     
