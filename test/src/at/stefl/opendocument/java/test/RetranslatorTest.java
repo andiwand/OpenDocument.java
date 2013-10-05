@@ -16,7 +16,7 @@ public class RetranslatorTest {
                 "/home/andreas/test.odt");
         InputStream htmlIn = new FileInputStream(
                 "/home/andreas/test-edited.html");
-        OutputStream out = new FileOutputStream("/home/andreas/test.edited.odt");
+        OutputStream out = new FileOutputStream("/home/andreas/test-edited.odt");
         
         Retranslator.retranslate(documentFile.getAsDocument(), htmlIn, out);
         

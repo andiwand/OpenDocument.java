@@ -7,7 +7,7 @@ import at.stefl.commons.lwxml.writer.LWXMLWriter;
 import at.stefl.opendocument.java.translator.context.TranslationContext;
 
 public class LinkTranslator extends
-        DefaultElementTranslator<TranslationContext> {
+        DefaultStyledContentElementTranslator<TranslationContext> {
     
     private static final String HREF_ATTRIBUTE = "xlink:href";
     
