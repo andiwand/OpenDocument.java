@@ -17,6 +17,10 @@ general
             77caf6c - set table's width to 0px (random html fix)
     
     - replace break in empty block with css (?)
+    
+    - improve svm
+    	- file
+    		style+charset+svm-various-1.odt
 
 
 text

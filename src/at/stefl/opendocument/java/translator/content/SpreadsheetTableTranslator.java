@@ -296,11 +296,17 @@ public class SpreadsheetTableTranslator extends
                 } else {
                     LWXMLUtil.flushElement(in);
                 }
-            default:
+                
                 break;
             case END_ELEMENT:
+                elementName = in.readValue();
+                
+                if (!elementName.equals(COLUMN_ELEMENT_NAME)) in
+                        .unreadEvent(elementName);
             case END_EMPTY_ELEMENT:
                 break loop;
+            default:
+                break;
             }
         }
         
@@ -332,13 +338,9 @@ public class SpreadsheetTableTranslator extends
             
             switch (event) {
             case START_ELEMENT:
-            case END_ELEMENT:
                 String elementName = in.readValue();
                 
                 if (elementName.equals(ROW_ELEMENT_NAME)) {
-                    if (event != LWXMLEvent.START_ELEMENT) throw new LWXMLIllegalEventException(
-                            event);
-                    
                     if (rows >= maxTableRows) {
                         context.setOutputTruncated();
                         break loop;
@@ -346,12 +348,12 @@ public class SpreadsheetTableTranslator extends
                     
                     in.unreadEvent(elementName);
                     rows += translateRow(in, out, maxRows - rows, context);
-                } else if (elementName.equals(TABLE_ELEMENT_NAME)) {
-                    if (event != LWXMLEvent.END_ELEMENT) throw new LWXMLIllegalEventException(
-                            event);
-                    
-                    return;
                 }
+                
+                break;
+            case END_ELEMENT:
+                elementName = in.readValue();
+                if (elementName.equals(TABLE_ELEMENT_NAME)) return;
             default:
                 break;
             }
