@@ -92,12 +92,6 @@ public abstract class GenericDocumentTranslator<D extends OpenDocument, S extend
         out.writeAttribute("http-equiv", "Content-Type");
         out.writeAttribute("content", "text/html; charset=UTF-8");
         out.writeEndElement("meta");
-        
-        out.writeStartElement("meta");
-        out.writeAttribute("name", "viewport");
-        out.writeAttribute("content",
-                "initial-scale=1.0, minimum-scale=0.1, maximum-scale=5.0, width=device-width");
-        out.writeEndElement("meta");
     }
     
     protected void translateContent(LWXMLReader in, LWXMLWriter out, C context)
