@@ -1,7 +1,9 @@
 package at.stefl.opendocument.java.test;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 
 import javax.swing.JFileChooser;
 
@@ -37,7 +39,8 @@ public class DocumentTranslatorTest {
         FileCache cache = new DefaultFileCache("/tmp/odr/");
         
         File htmlFile = cache.create(testFile.getFile().getName() + ".html");
-        LWXMLWriter out = new LWXMLStreamWriter(new FileWriter(htmlFile));
+        LWXMLWriter out = new LWXMLStreamWriter(new OutputStreamWriter(
+                new FileOutputStream(htmlFile), Charset.forName("UTF-8")));
         
         TranslationSettings settings = new TranslationSettings();
         settings.setCache(cache);

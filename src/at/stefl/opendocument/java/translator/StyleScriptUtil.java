@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Writer;
+import java.nio.charset.Charset;
 
 import at.stefl.commons.io.CharStreamUtil;
 
@@ -12,7 +13,8 @@ public class StyleScriptUtil {
     
     public static void pipeResource(Class<?> clazz, String name, Writer out)
             throws IOException {
-        Reader in = new InputStreamReader(clazz.getResourceAsStream(name));
+        Reader in = new InputStreamReader(clazz.getResourceAsStream(name),
+                Charset.forName("UTF-8"));
         CharStreamUtil.writeStreamBuffered(in, out);
     }
     

@@ -182,7 +182,7 @@ public class AutomaticTranslatorTest {
     public static void main(String[] args) throws Throwable {
         Set<TestFile> testFiles = TestFileUtil.getFiles();
         AutomaticTranslatorTest test = new AutomaticTranslatorTest(testFiles,
-                false, null);//"efficiency-big-1.ods");
+                false, null);// "efficiency-big-1.ods");
         
         Map<TranslationSettings, Map<TestFile, Result>> result = test.testAll();
         
