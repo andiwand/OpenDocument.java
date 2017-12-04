@@ -139,6 +139,7 @@ public class ODFViewer extends JFrame {
             do {
                 password = showPasswordDialog(this, "Password");
                 if (password == null) return;
+                documentFile.setPassword(password);
             } while (!documentFile.isPasswordValid());
         }
         
@@ -150,7 +151,6 @@ public class ODFViewer extends JFrame {
         tree.removeTreeSelectionListener(treeSelectionHandler);
         treeModel.setRoot(root);
         tree.addTreeSelectionListener(treeSelectionHandler);
-        
     }
     
     private DefaultMutableTreeNode generateTree(List<String> fileList,

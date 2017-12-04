@@ -20,6 +20,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import at.stefl.commons.io.ByteStreamUtil;
 import at.stefl.commons.io.CountingInputStream;
+import at.stefl.commons.io.LimitedInputStream;
 import at.stefl.commons.util.collection.CollectionUtil;
 import at.stefl.commons.util.comparator.MapEntryValueComparator;
 import de.rtner.security.auth.spi.MacBasedPRF;
@@ -30,7 +31,6 @@ import de.rtner.security.auth.spi.PBKDF2Parameters;
 public class OpenDocumentCryptoUtil {
     
     private static final Comparator<EncryptionParameter> PLAIN_SIZE_COMPERATOR = new Comparator<EncryptionParameter>() {
-        
         @Override
         public int compare(EncryptionParameter o1, EncryptionParameter o2) {
             return o1.getPlainSize() - o2.getPlainSize();
@@ -40,17 +40,10 @@ public class OpenDocumentCryptoUtil {
     private static final MapEntryValueComparator<EncryptionParameter> ENTRY_PLAIN_SIZE_COMPERATOR = new MapEntryValueComparator<EncryptionParameter>(
             PLAIN_SIZE_COMPERATOR);
     
-    // TODO: improve?
-    private static void flushInflatedBytewise(InputStream in)
-            throws IOException {
-        InflaterInputStream iin = new InflaterInputStream(in,
-                new Inflater(true), 1);
-        ByteStreamUtil.flushBytewise(iin);
-    }
-    
     public static int getDeflatedSize(InputStream in) throws IOException {
+    	in = new InflaterInputStream(in, new Inflater(true), 1);
         CountingInputStream cin = new CountingInputStream(in);
-        flushInflatedBytewise(cin);
+        ByteStreamUtil.flushBytewise(cin);
         return (int) cin.count();
     }
     
@@ -79,10 +72,12 @@ public class OpenDocumentCryptoUtil {
             String checksumAlgorithm = encryptionParameter
                     .getChecksumAlgorithm();
             byte[] checksum = encryptionParameter.getChecksum();
+            int checksumUsedSize = encryptionParameter.getChecksumUsedSize();
             
             MessageDigest digest = MessageDigest.getInstance(checksumAlgorithm);
-            DigestInputStream din = new DigestInputStream(in, digest);
-            flushInflatedBytewise(din);
+        	in = new LimitedInputStream(in, checksumUsedSize);
+            in = new DigestInputStream(in, digest);
+            ByteStreamUtil.flushBytewise(in);
             byte[] calculatedChecksum = digest.digest();
             
             if (!Arrays.equals(checksum, calculatedChecksum)) return false;
