@@ -33,7 +33,7 @@
 		<delete file="${jar}" />
 		<jar destfile="${jar}">
 			<fileset dir="bin">
-				<include name="**/*.class" />
+				<include name="**" />
 				<exclude name="**/test/**" />
 			</fileset>
 		</jar>
