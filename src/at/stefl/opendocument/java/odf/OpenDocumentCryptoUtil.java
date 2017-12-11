@@ -1,5 +1,6 @@
 package at.stefl.opendocument.java.odf;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.DigestInputStream;
@@ -75,9 +76,14 @@ public class OpenDocumentCryptoUtil {
             int checksumUsedSize = encryptionParameter.getChecksumUsedSize();
             
             MessageDigest digest = MessageDigest.getInstance(checksumAlgorithm);
-        	in = new LimitedInputStream(in, checksumUsedSize);
             in = new DigestInputStream(in, digest);
-            ByteStreamUtil.flushBytewise(in);
+            in = new LimitedInputStream(in, checksumUsedSize);
+            in = new InflaterInputStream(in, new Inflater(true), 1);
+            try {
+            	ByteStreamUtil.flushBytewise(in);
+            } catch (EOFException ee) {
+            	// TODO: could be logged
+            }
             byte[] calculatedChecksum = digest.digest();
             
             if (!Arrays.equals(checksum, calculatedChecksum)) return false;

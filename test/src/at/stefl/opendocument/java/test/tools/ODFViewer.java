@@ -30,6 +30,7 @@ import javax.swing.tree.DefaultTreeModel;
 import at.stefl.opendocument.java.odf.LocatedOpenDocumentFile;
 import at.stefl.opendocument.java.odf.OpenDocumentFile;
 import at.stefl.opendocument.java.odf.OpenDocumentType;
+import at.stefl.opendocument.java.test.TestFile;
 import at.stefl.opendocument.java.test.TestFileChooser;
 
 // TODO: extend JComponent
@@ -133,14 +134,17 @@ public class ODFViewer extends JFrame {
     }
     
     public void open(File file) throws IOException {
+    	TestFile testFile = TestFile.fromPattern(file);
+    	
         documentFile = new LocatedOpenDocumentFile(file);
         if (documentFile.isEncrypted()) {
-            String password;
-            do {
-                password = showPasswordDialog(this, "Password");
+            if ((testFile != null) && (testFile.getPassword() != null))
+            	documentFile.setPassword(testFile.getPassword());
+            while (!documentFile.isPasswordValid()) {
+            	String password = showPasswordDialog(this, "Password");
                 if (password == null) return;
                 documentFile.setPassword(password);
-            } while (!documentFile.isPasswordValid());
+            }
         }
         
         List<String> fileList = new ArrayList<String>(
