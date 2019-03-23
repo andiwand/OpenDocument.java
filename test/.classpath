@@ -3,6 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/commons"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/java"/>
+	<classpathentry kind="src" path="/OpenDocument.java"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

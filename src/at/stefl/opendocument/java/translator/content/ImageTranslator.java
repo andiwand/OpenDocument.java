@@ -1,5 +1,6 @@
 package at.stefl.opendocument.java.translator.content;
 
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -130,7 +131,9 @@ public class ImageTranslator extends
             if (converter == null) streamUtil.writeStream(imageIn, imageOut);
             else converter.convert(imageIn, imageOut);
         } catch (Exception e) {
-            if (e instanceof IOException) throw (IOException) e;
+        	// do not rethrow EOFException, thrown by SVM for some images
+        	// https://github.com/andiwand/OpenDocument.java/issues/23
+            if (e instanceof IOException && !(e instanceof EOFException)) throw (IOException) e;
             // TODO: log conversion fail
         } finally {
             imageIn.close();

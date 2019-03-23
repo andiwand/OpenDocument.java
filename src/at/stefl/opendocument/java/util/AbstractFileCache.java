@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 
 import at.stefl.commons.io.ByteStreamUtil;
@@ -49,15 +50,28 @@ public abstract class AbstractFileCache implements FileCache {
     @Override
     public String create(InputStream in) throws IOException {
         String name = create();
-        ByteStreamUtil.writeStreamBuffered(in, getOutputStream(name));
+        
+        writeAndClose(in, name);
+		
         return name;
     }
     
     @Override
     public File create(String name, InputStream in) throws IOException {
         File file = create(name);
-        ByteStreamUtil.writeStreamBuffered(in, getOutputStream(name));
+        
+        writeAndClose(in, name);
+        
         return file;
     }
-    
+
+	private void writeAndClose(InputStream in, String name) throws FileNotFoundException, IOException {
+		OutputStream outputStream = getOutputStream(name);
+		try {
+			ByteStreamUtil.writeStreamBuffered(in, outputStream);
+		} finally {
+			outputStream.close();
+		}
+	}
+	
 }
