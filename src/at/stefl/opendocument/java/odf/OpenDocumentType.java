@@ -37,10 +37,10 @@ public enum OpenDocumentType {
     },
     GRAPHICS(new String[] { "odg", "fodg" },
             "application/vnd.oasis.opendocument.graphics",
-            OpenDocumentPresentation.class) {
+            OpenDocumentGraphics.class) {
         @Override
-        OpenDocumentPresentation getDocument(OpenDocumentFile documentFile) {
-            return new OpenDocumentPresentation(documentFile);
+        OpenDocumentGraphics getDocument(OpenDocumentFile documentFile) {
+            return new OpenDocumentGraphics(documentFile);
         }
     };
     

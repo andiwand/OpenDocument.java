@@ -11,6 +11,7 @@ import at.stefl.commons.lwxml.writer.LWXMLMultiWriter;
 import at.stefl.commons.lwxml.writer.LWXMLStreamWriter;
 import at.stefl.commons.lwxml.writer.LWXMLWriter;
 import at.stefl.opendocument.java.odf.OpenDocument;
+import at.stefl.opendocument.java.odf.OpenDocumentGraphics;
 import at.stefl.opendocument.java.odf.OpenDocumentPresentation;
 import at.stefl.opendocument.java.odf.OpenDocumentSpreadsheet;
 import at.stefl.opendocument.java.odf.OpenDocumentText;
@@ -86,7 +87,7 @@ public class DocumentTranslatorUtil {
 		Output output = new Output();
 		FileCache cache = settings.getCache();
 
-		if (!settings.isSplitPages() || (document instanceof OpenDocumentText)) {
+		if (!settings.isSplitPages() || (document instanceof OpenDocumentText || document instanceof OpenDocumentGraphics)) {
 			output.count = 1;
 			output.titles = SINGLE_TITLE;
 		} else {
@@ -132,13 +133,15 @@ public class DocumentTranslatorUtil {
 			TranslationSettings settings, Output output) throws IOException {
 		DocumentTranslator translator;
 
-		if (!settings.isSplitPages() || (document instanceof OpenDocumentText)) {
+		if (!settings.isSplitPages() || (document instanceof OpenDocumentText || document instanceof OpenDocumentGraphics)) {
 			if (document instanceof OpenDocumentText) {
 				translator = new TextTranslator();
 			} else if (document instanceof OpenDocumentSpreadsheet) {
 				translator = new SpreadsheetTranslator();
 			} else if (document instanceof OpenDocumentPresentation) {
 				translator = new PresentationTranslator();
+			} else if (document instanceof OpenDocumentGraphics) {
+				translator = new GraphicsTranslator();
 			} else {
 				throw new IllegalStateException("unsupported document");
 			}
