@@ -11,10 +11,12 @@ import at.stefl.commons.lwxml.writer.LWXMLStreamWriter;
 import at.stefl.commons.lwxml.writer.LWXMLWriter;
 import at.stefl.opendocument.java.odf.OpenDocument;
 import at.stefl.opendocument.java.odf.OpenDocumentFile;
+import at.stefl.opendocument.java.odf.OpenDocumentGraphics;
 import at.stefl.opendocument.java.odf.OpenDocumentPresentation;
 import at.stefl.opendocument.java.odf.OpenDocumentSpreadsheet;
 import at.stefl.opendocument.java.odf.OpenDocumentText;
 import at.stefl.opendocument.java.translator.document.DocumentTranslator;
+import at.stefl.opendocument.java.translator.document.GraphicsTranslator;
 import at.stefl.opendocument.java.translator.document.PresentationTranslator;
 import at.stefl.opendocument.java.translator.document.SpreadsheetTranslator;
 import at.stefl.opendocument.java.translator.document.TextTranslator;
@@ -55,6 +57,8 @@ public class DocumentTranslatorTest {
             translator = new SpreadsheetTranslator();
         } else if (document instanceof OpenDocumentPresentation) {
             translator = new PresentationTranslator();
+        } else if (document instanceof OpenDocumentGraphics) {
+            translator = new GraphicsTranslator();
         } else {
             throw new IllegalArgumentException();
         }

@@ -34,6 +34,14 @@ public enum OpenDocumentType {
         OpenDocumentPresentation getDocument(OpenDocumentFile documentFile) {
             return new OpenDocumentPresentation(documentFile);
         }
+    },
+    GRAPHICS(new String[] { "odg", "fodg" },
+            "application/vnd.oasis.opendocument.graphics",
+            OpenDocumentGraphics.class) {
+        @Override
+        OpenDocumentGraphics getDocument(OpenDocumentFile documentFile) {
+            return new OpenDocumentGraphics(documentFile);
+        }
     };
     
     private static final String MIME_TYPE_PARENT = "application/vnd.oasis.opendocument";
